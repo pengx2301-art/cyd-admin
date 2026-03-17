@@ -1,0 +1,168 @@
+---
+description: 
+alwaysApply: true
+enabled: true
+updatedAt: 2026-03-15T14:07:31.515Z
+provider: 
+---
+
+# UI 设计风格规范 — 智能轻质感设计语言
+
+## 核心理念
+AI 产品界面应传递「智能、流动、温暖」的产品调性，告别冰冷科技感，用轻质感视觉让用户更愿意主动交互。
+
+---
+
+## 1. 色彩系统
+
+### 主色调
+- 以 **Indigo / Cyan / Emerald / Violet** 为主色系，低饱和渐变
+- 避免高饱和原色（如纯蓝 `#0000ff`、纯红等）
+- 背景色：`#f4f6fb`（偏暖白，不用冷灰）
+
+### 渐变规范
+```css
+/* 主渐变 */
+--gradient-primary: linear-gradient(135deg, #6366f1, #8b5cf6);
+--gradient-cyan:    linear-gradient(135deg, #06b6d4, #0ea5e9);
+--gradient-emerald: linear-gradient(135deg, #10b981, #059669);
+--gradient-amber:   linear-gradient(135deg, #f59e0b, #f97316);
+```
+
+### 彩色发光阴影（glow）
+每个色系配专属 box-shadow，不用通用灰色阴影：
+```css
+box-shadow: 0 8px 32px rgba(99, 102, 241, 0.25); /* Indigo glow */
+box-shadow: 0 8px 32px rgba(6, 182, 212, 0.25);  /* Cyan glow */
+```
+
+---
+
+## 2. 视觉符号 — 渐变玻璃球
+
+用渐变玻璃球替代生硬图标，结构如下：
+```html
+<div class="orb orb-indigo">
+  <div class="orb-inner">🤖</div>
+</div>
+```
+```css
+.orb {
+  width: 56px; height: 56px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #6366f1, #8b5cf6);
+  box-shadow: 0 8px 32px rgba(99,102,241,0.35);
+  position: relative;
+}
+/* 高光反射层 */
+.orb::before {
+  content: '';
+  position: absolute;
+  top: 8px; left: 8px;
+  width: 40%; height: 40%;
+  background: rgba(255,255,255,0.4);
+  border-radius: 50%;
+  filter: blur(4px);
+}
+```
+
+---
+
+## 3. 圆角规范
+
+| 元素 | 圆角值 |
+|------|--------|
+| 大卡片 / 容器 | `20px ~ 28px` |
+| 按钮 / 标签 | `12px ~ 16px` |
+| 输入框 | `14px ~ 16px` |
+| 小图标容器 | `50%`（圆形）|
+
+**禁止**使用 `4px` 以下的圆角，避免生硬感。
+
+---
+
+## 4. 毛玻璃卡片（Glass Morphism）
+
+```css
+.glass-card {
+  background: rgba(255, 255, 255, 0.72);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  border-radius: 20px;
+  box-shadow: 0 4px 24px rgba(99, 102, 241, 0.08);
+}
+```
+
+---
+
+## 5. 流体装饰层（气泡 / 光晕）
+
+在重点卡片内叠加伪元素气泡，增加流动感：
+```css
+.card::before {
+  content: '';
+  position: absolute;
+  width: 80px; height: 80px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, rgba(99,102,241,0.15), rgba(139,92,246,0.08));
+  top: -20px; right: -20px;
+  filter: blur(20px);
+}
+```
+
+---
+
+## 6. 布局原则
+
+1. **交互入口优先**：输入框、生成按钮固定在最显眼位置，功能卡片弱对比排布
+2. **用留白分模块**，不用分割线
+3. **弱对比卡片**：功能卡片背景 `rgba(255,255,255,0.6)`，不要实色满铺
+4. **最大宽度**：主内容区 `1400px`，内边距 `24px`
+
+---
+
+## 7. 动画规范
+
+```css
+/* 统一缓动曲线 */
+transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+/* 卡片入场：交错淡入上移 */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* 交错延迟：nth-child 累加 0.08s */
+.card:nth-child(1) { animation-delay: 0.08s; }
+.card:nth-child(2) { animation-delay: 0.16s; }
+```
+
+---
+
+## 8. 图表配色
+
+ECharts / Chart.js 统一使用渐变配色：
+- 折线主色：`#6366f1`（Indigo）
+- 面积填充：`rgba(99,102,241,0.15)` → `transparent`
+- 辅助线颜色：`#06b6d4`（Cyan）
+- 柱状图：渐变填充，顶部深底部浅
+
+---
+
+## 9. Header / 导航
+
+```css
+header {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(99, 102, 241, 0.12);
+}
+```
+不用深色实心 Header，统一毛玻璃透明风格。
+
+---
+
+## 参考关键词
+`glass morphism` · `fluid gradient` · `light weight` · `soft glow` · `breathing whitespace` · `AI interface`

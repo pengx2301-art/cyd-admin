@@ -1,0 +1,61 @@
+# Node.js
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+package-lock.json
+yarn.lock
+
+# 数据库文件
+data/
+*.db
+*.sqlite
+*.sqlite3
+
+# 环境配置
+.env
+.env.local
+.env.*.local
+
+# 日志文件
+*.log
+logs/
+deploy_log.txt
+deployment_log.txt
+
+# 临时文件
+*.tmp
+*.temp
+$null
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# CloudBase
+.cloudbaserc.local
+
+# 系统文件
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# 备份文件
+*.bak
+*.backup
+
+# ZIP 文件
+*.zip
+
+# 部署脚本（可选）
+deploy_*.bat
+install_*.bat
+fix_*.bat
+run_*.bat
+configure_*.bat
+
+# 技能相关
+conversion-copywriter.zip

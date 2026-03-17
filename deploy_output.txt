@@ -1,0 +1,4 @@
+CloudBase CLI 2.12.7
+Try the tcb ai command to start your AI full-stack development experience
+Error: deploy is not a valid command
+Use tcb -h to view all commands

@@ -1,0 +1,2375 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>充易达 | 一站式・智能化・可扩展</title>
+  <link rel="stylesheet" href="style.css" />
+  <script src="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"></script>
+</head>
+<body>
+
+<div class="app-layout" id="app">
+
+  <!-- ── SIDEBAR ─────────────────────────────────────────────── -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-logo">
+      <div class="logo-orb">
+        <span class="logo-icon">⚡</span>
+        <div class="logo-glow"></div>
+      </div>
+      <span class="logo-text">充易达</span>
+    </div>
+
+    <nav class="sidebar-nav">
+
+      <!-- 仪表盘 -->
+      <div class="nav-group">
+        <a class="nav-item active" data-page="dashboard">
+          <span class="nav-icon-wrap nav-purple"><i class="icon">📊</i></span>
+          <span class="nav-label">仪表盘</span>
+          <span class="nav-badge pulse"></span>
+        </a>
+      </div>
+
+      <!-- 订单中心 -->
+      <div class="nav-divider"><span>订单中心</span></div>
+      <div class="nav-group">
+        <a class="nav-item" data-page="orders">
+          <span class="nav-icon-wrap nav-blue"><i class="icon">📋</i></span>
+          <span class="nav-label">订单管理</span>
+          <span class="nav-count">12</span>
+        </a>
+        <a class="nav-item" data-page="recharge-records">
+          <span class="nav-icon-wrap nav-cyan"><i class="icon">💳</i></span>
+          <span class="nav-label">充值记录</span>
+        </a>
+        <a class="nav-item" data-page="callback-logs">
+          <span class="nav-icon-wrap nav-emerald"><i class="icon">🔄</i></span>
+          <span class="nav-label">回调日志</span>
+        </a>
+      </div>
+
+      <!-- 产品管理 -->
+      <div class="nav-divider"><span>产品管理</span></div>
+      <div class="nav-group">
+        <a class="nav-item" data-page="products">
+          <span class="nav-icon-wrap nav-orange"><i class="icon">📦</i></span>
+          <span class="nav-label">产品列表</span>
+        </a>
+        <a class="nav-item" data-page="categories">
+          <span class="nav-icon-wrap nav-amber"><i class="icon">🗂️</i></span>
+          <span class="nav-label">产品分类</span>
+        </a>
+        <a class="nav-item" data-page="suppliers">
+          <span class="nav-icon-wrap nav-teal"><i class="icon">🏭</i></span>
+          <span class="nav-label">供应商管理</span>
+        </a>
+        <a class="nav-item" data-page="direct-recharge">
+          <span class="nav-icon-wrap nav-violet"><i class="icon">⚡</i></span>
+          <span class="nav-label">直冲产品</span>
+        </a>
+      </div>
+
+      <!-- 代理/用户管理 -->
+      <div class="nav-divider"><span>用户/代理管理</span></div>
+      <div class="nav-group">
+        <a class="nav-item" data-page="agents">
+          <span class="nav-icon-wrap nav-indigo"><i class="icon">🤝</i></span>
+          <span class="nav-label">用户/代理列表</span>
+        </a>
+        <a class="nav-item" data-page="agent-levels">
+          <span class="nav-icon-wrap nav-violet"><i class="icon">🏅</i></span>
+          <span class="nav-label">代理级别管理</span>
+        </a>
+        <a class="nav-item" data-page="agent-products">
+          <span class="nav-icon-wrap nav-blue"><i class="icon">💰</i></span>
+          <span class="nav-label">代理产品价格</span>
+        </a>
+        <a class="nav-item" data-page="agent-balance">
+          <span class="nav-icon-wrap nav-emerald"><i class="icon">💵</i></span>
+          <span class="nav-label">余额管理</span>
+        </a>
+      </div>
+
+      <!-- API 管理 -->
+      <div class="nav-divider"><span>API 管理</span></div>
+      <div class="nav-group">
+        <a class="nav-item" data-page="api-users">
+          <span class="nav-icon-wrap nav-cyan"><i class="icon">🔌</i></span>
+          <span class="nav-label">API 用户</span>
+        </a>
+        <a class="nav-item" data-page="api-logs">
+          <span class="nav-icon-wrap nav-violet"><i class="icon">📝</i></span>
+          <span class="nav-label">API 调用日志</span>
+        </a>
+        <a class="nav-item" data-page="api-docs">
+          <span class="nav-icon-wrap nav-teal"><i class="icon">📖</i></span>
+          <span class="nav-label">API 文档</span>
+        </a>
+      </div>
+
+      <!-- 财务管理 -->
+      <div class="nav-divider"><span>财务管理</span></div>
+      <div class="nav-group">
+        <a class="nav-item" data-page="finance-overview">
+          <span class="nav-icon-wrap nav-amber"><i class="icon">💹</i></span>
+          <span class="nav-label">财务概览</span>
+        </a>
+        <a class="nav-item" data-page="recharge-apply">
+          <span class="nav-icon-wrap nav-orange"><i class="icon">💰</i></span>
+          <span class="nav-label">充值申请</span>
+          <span class="nav-count" id="nav-rc-pending">3</span>
+        </a>
+        <a class="nav-item" data-page="withdraw-apply">
+          <span class="nav-icon-wrap nav-purple"><i class="icon">🏦</i></span>
+          <span class="nav-label">提现申请</span>
+        </a>
+        <a class="nav-item" data-page="payment-methods">
+          <span class="nav-icon-wrap nav-emerald"><i class="icon">💳</i></span>
+          <span class="nav-label">收款方式</span>
+        </a>
+      </div>
+
+      <!-- 系统管理 -->
+      <div class="nav-divider"><span>系统管理</span></div>
+      <div class="nav-group">
+        <a class="nav-item" data-page="sys-accounts">
+          <span class="nav-icon-wrap nav-red"><i class="icon">👤</i></span>
+          <span class="nav-label">管理员账号</span>
+        </a>
+        <a class="nav-item" data-page="roles">
+          <span class="nav-icon-wrap nav-violet"><i class="icon">🛡️</i></span>
+          <span class="nav-label">角色管理</span>
+        </a>
+        <a class="nav-item" data-page="permissions">
+          <span class="nav-icon-wrap nav-indigo"><i class="icon">🔑</i></span>
+          <span class="nav-label">权限管理</span>
+        </a>
+        <a class="nav-item" data-page="settings">
+          <span class="nav-icon-wrap nav-teal"><i class="icon">⚙️</i></span>
+          <span class="nav-label">系统设置</span>
+        </a>
+      </div>
+
+    </nav>
+
+    <!-- Sidebar Footer -->
+    <div class="sidebar-footer">
+      <div class="user-mini" style="cursor:pointer;" onclick="navigateTo('profile')" title="个人中心">
+        <div class="user-avatar-mini" id="sidebar-avatar">A</div>
+        <div class="user-info-mini">
+          <div class="user-name-mini" id="sidebar-nickname">超级管理员</div>
+          <div class="user-role-mini" id="sidebar-username">admin</div>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ── MAIN ────────────────────────────────────────────────── -->
+  <main class="main-content">
+
+    <!-- Header -->
+    <header class="topbar">
+      <div class="topbar-left">
+        <button class="btn-icon" id="sidebarToggle">☰</button>
+        <div class="breadcrumb" id="breadcrumb">首页 / 仪表盘</div>
+      </div>
+      <div class="topbar-right">
+        <div class="search-wrap">
+          <span class="search-icon">🔍</span>
+          <input type="text" class="search-input" placeholder="搜索功能、订单、代理...">
+        </div>
+        <div class="topbar-actions">
+          <button class="btn-icon notify-btn" title="通知">
+            🔔
+            <span class="notify-dot"></span>
+          </button>
+          <div class="user-avatar">A</div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Page Wrapper -->
+    <div class="page-wrap" id="pageWrap">
+
+      <!-- ══════════════════════ PAGE: DASHBOARD ══════════════════════ -->
+      <div class="page active" id="page-dashboard">
+        <div class="page-header">
+          <div>
+            <h1 class="page-title">仪表盘</h1>
+            <p class="page-sub">欢迎回来，今日充值业务运行良好 🎉</p>
+          </div>
+          <div class="page-header-actions">
+            <select class="select-sm">
+              <option>今日</option>
+              <option>本周</option>
+              <option>本月</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- KPI 卡片 -->
+        <div class="kpi-grid">
+          <div class="kpi-card kpi-indigo">
+            <div class="kpi-orb"><span>💳</span></div>
+            <div class="kpi-info">
+              <div class="kpi-val">¥128,560</div>
+              <div class="kpi-label">今日充值金额</div>
+              <div class="kpi-trend up">↑ 12.5%</div>
+            </div>
+            <div class="kpi-bg-glow"></div>
+          </div>
+          <div class="kpi-card kpi-cyan">
+            <div class="kpi-orb"><span>📋</span></div>
+            <div class="kpi-info">
+              <div class="kpi-val">2,318</div>
+              <div class="kpi-label">今日订单量</div>
+              <div class="kpi-trend up">↑ 8.3%</div>
+            </div>
+            <div class="kpi-bg-glow"></div>
+          </div>
+          <div class="kpi-card kpi-emerald">
+            <div class="kpi-orb"><span>✅</span></div>
+            <div class="kpi-info">
+              <div class="kpi-val">98.7%</div>
+              <div class="kpi-label">充值成功率</div>
+              <div class="kpi-trend up">↑ 0.5%</div>
+            </div>
+            <div class="kpi-bg-glow"></div>
+          </div>
+          <div class="kpi-card kpi-amber">
+            <div class="kpi-orb"><span>🤝</span></div>
+            <div class="kpi-info">
+              <div class="kpi-val">156</div>
+              <div class="kpi-label">活跃代理数</div>
+              <div class="kpi-trend up">↑ 3 今日</div>
+            </div>
+            <div class="kpi-bg-glow"></div>
+          </div>
+          <div class="kpi-card kpi-violet">
+            <div class="kpi-orb"><span>🔌</span></div>
+            <div class="kpi-info">
+              <div class="kpi-val">48,920</div>
+              <div class="kpi-label">API 调用次数</div>
+              <div class="kpi-trend up">↑ 15.2%</div>
+            </div>
+            <div class="kpi-bg-glow"></div>
+          </div>
+          <div class="kpi-card kpi-teal">
+            <div class="kpi-orb"><span>⏱️</span></div>
+            <div class="kpi-info">
+              <div class="kpi-val">1.2s</div>
+              <div class="kpi-label">平均充值耗时</div>
+              <div class="kpi-trend down">↓ 0.3s</div>
+            </div>
+            <div class="kpi-bg-glow"></div>
+          </div>
+        </div>
+
+        <!-- 图表区域 -->
+        <div class="chart-grid">
+          <div class="glass-card chart-card chart-large">
+            <div class="card-header">
+              <h3 class="card-title">充值金额趋势</h3>
+              <div class="card-actions">
+                <button class="btn-tag active">日</button>
+                <button class="btn-tag">周</button>
+                <button class="btn-tag">月</button>
+              </div>
+            </div>
+            <div id="chart-revenue" style="height:260px;"></div>
+          </div>
+          <div class="glass-card chart-card">
+            <div class="card-header">
+              <h3 class="card-title">产品类型分布</h3>
+            </div>
+            <div id="chart-product-type" style="height:260px;"></div>
+          </div>
+        </div>
+
+        <!-- 下方两栏 -->
+        <div class="two-col-grid">
+          <!-- 最新订单 -->
+          <div class="glass-card">
+            <div class="card-header">
+              <h3 class="card-title">最新订单</h3>
+              <a class="link-more" data-page="orders">查看全部 →</a>
+            </div>
+            <table class="mini-table">
+              <thead><tr><th>订单号</th><th>产品</th><th>金额</th><th>状态</th></tr></thead>
+              <tbody>
+                <tr><td class="mono">#ORD20260315001</td><td>话费充值 100元</td><td class="num">¥98.00</td><td><span class="badge badge-success">成功</span></td></tr>
+                <tr><td class="mono">#ORD20260315002</td><td>游戏点卡 50元</td><td class="num">¥48.50</td><td><span class="badge badge-success">成功</span></td></tr>
+                <tr><td class="mono">#ORD20260315003</td><td>流量充值 5GB</td><td class="num">¥25.00</td><td><span class="badge badge-warning">处理中</span></td></tr>
+                <tr><td class="mono">#ORD20260315004</td><td>话费充值 50元</td><td class="num">¥49.00</td><td><span class="badge badge-success">成功</span></td></tr>
+                <tr><td class="mono">#ORD20260315005</td><td>视频会员月卡</td><td class="num">¥18.00</td><td><span class="badge badge-danger">失败</span></td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- 代理排行 -->
+          <div class="glass-card">
+            <div class="card-header">
+              <h3 class="card-title">代理充值排行</h3>
+              <a class="link-more" data-page="agents">查看全部 →</a>
+            </div>
+            <div class="rank-list">
+              <div class="rank-item"><span class="rank-no rank-gold">1</span><span class="rank-name">深圳充值王</span><span class="rank-val">¥28,500</span></div>
+              <div class="rank-item"><span class="rank-no rank-silver">2</span><span class="rank-name">北京极速充</span><span class="rank-val">¥21,300</span></div>
+              <div class="rank-item"><span class="rank-no rank-bronze">3</span><span class="rank-name">上海优惠充</span><span class="rank-val">¥19,870</span></div>
+              <div class="rank-item"><span class="rank-no">4</span><span class="rank-name">广州代理商</span><span class="rank-val">¥15,200</span></div>
+              <div class="rank-item"><span class="rank-no">5</span><span class="rank-name">成都充值站</span><span class="rank-val">¥12,600</span></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 快捷入口 -->
+        <div class="quick-grid">
+          <div class="quick-card" data-page="orders"><div class="quick-icon">📋</div><div class="quick-label">订单管理</div></div>
+          <div class="quick-card" data-page="products"><div class="quick-icon">📦</div><div class="quick-label">产品管理</div></div>
+          <div class="quick-card" data-page="agents"><div class="quick-icon">🤝</div><div class="quick-label">代理管理</div></div>
+          <div class="quick-card" data-page="api-users"><div class="quick-icon">🔌</div><div class="quick-label">API管理</div></div>
+          <div class="quick-card" data-page="finance-overview"><div class="quick-icon">💹</div><div class="quick-label">财务管理</div></div>
+          <div class="quick-card" data-page="settings"><div class="quick-icon">⚙️</div><div class="quick-label">系统设置</div></div>
+        </div>
+      </div>
+
+      <!-- ══════════════════════ PAGE: ORDERS ══════════════════════ -->
+      <div class="page" id="page-orders">
+        <div class="page-header">
+          <div><h1 class="page-title">订单管理</h1><p class="page-sub">管理所有充值订单，查看状态及处理异常</p></div>
+        </div>
+        <!-- 状态统计条 -->
+        <div class="order-stats-bar">
+          <div class="ostat-item active"><div class="ostat-num">2318</div><div class="ostat-label">全部</div></div>
+          <div class="ostat-item"><div class="ostat-num text-success">2289</div><div class="ostat-label">成功</div></div>
+          <div class="ostat-item"><div class="ostat-num text-warning">12</div><div class="ostat-label">处理中</div></div>
+          <div class="ostat-item"><div class="ostat-num text-danger">17</div><div class="ostat-label">失败</div></div>
+          <div class="ostat-item"><div class="ostat-num text-info">0</div><div class="ostat-label">已退款</div></div>
+        </div>
+        <!-- 搜索筛选 -->
+        <div class="glass-card filter-bar">
+          <input type="text" class="input-field" placeholder="搜索订单号、用户名..." style="width:240px">
+          <select class="select-field"><option>全部状态</option><option>成功</option><option>处理中</option><option>失败</option></select>
+          <select class="select-field"><option>全部产品</option><option>话费充值</option><option>流量充值</option><option>游戏点卡</option><option>视频会员</option></select>
+          <input type="date" class="input-field">
+          <input type="date" class="input-field">
+          <button class="btn btn-primary">🔍 搜索</button>
+          <button class="btn btn-ghost">重置</button>
+          <button class="btn btn-success" style="margin-left:auto">📤 导出</button>
+        </div>
+        <div class="glass-card">
+          <table class="data-table">
+            <thead><tr><th><input type="checkbox"></th><th>订单号</th><th>用户/代理</th><th>产品</th><th>充值账号</th><th>金额</th><th>供应商</th><th>状态</th><th>创建时间</th><th>操作</th></tr></thead>
+            <tbody id="orders-tbody">
+              <tr><td><input type="checkbox"></td><td class="mono">#ORD20260315001</td><td>深圳充值王</td><td>话费充值 100元</td><td>13800138000</td><td class="num">¥98.00</td><td>大猿人</td><td><span class="badge badge-success">成功</span></td><td>03-15 09:12</td><td><button class="btn-link">详情</button><button class="btn-link text-warning">重试</button></td></tr>
+              <tr><td><input type="checkbox"></td><td class="mono">#ORD20260315002</td><td>北京极速充</td><td>游戏点卡 50元</td><td>user_88291</td><td class="num">¥48.50</td><td>直冲</td><td><span class="badge badge-success">成功</span></td><td>03-15 09:18</td><td><button class="btn-link">详情</button></td></tr>
+              <tr><td><input type="checkbox"></td><td class="mono">#ORD20260315003</td><td>API用户001</td><td>流量充值 5GB</td><td>13900139000</td><td class="num">¥25.00</td><td>大猿人</td><td><span class="badge badge-warning">处理中</span></td><td>03-15 09:35</td><td><button class="btn-link">详情</button><button class="btn-link text-danger">查单</button></td></tr>
+              <tr><td><input type="checkbox"></td><td class="mono">#ORD20260315004</td><td>上海优惠充</td><td>话费充值 50元</td><td>15900159000</td><td class="num">¥49.00</td><td>蜜蜂</td><td><span class="badge badge-success">成功</span></td><td>03-15 09:40</td><td><button class="btn-link">详情</button></td></tr>
+              <tr><td><input type="checkbox"></td><td class="mono">#ORD20260315005</td><td>广州代理商</td><td>视频会员月卡</td><td>wechat_user</td><td class="num">¥18.00</td><td>直冲</td><td><span class="badge badge-danger">失败</span></td><td>03-15 09:55</td><td><button class="btn-link">详情</button><button class="btn-link text-warning">退款</button></td></tr>
+            </tbody>
+          </table>
+          <div class="table-footer">
+            <span class="table-total">共 2318 条记录</span>
+            <div class="pagination">
+              <button class="page-btn">‹</button>
+              <button class="page-btn active">1</button>
+              <button class="page-btn">2</button>
+              <button class="page-btn">3</button>
+              <span>...</span>
+              <button class="page-btn">232</button>
+              <button class="page-btn">›</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══════════════════════ PAGE: RECHARGE-RECORDS ══════════════════════ -->
+      <div class="page" id="page-recharge-records">
+        <div class="page-header">
+          <div><h1 class="page-title">充值记录</h1><p class="page-sub">查看所有充值流水记录</p></div>
+        </div>
+        <div class="glass-card filter-bar">
+          <input type="text" class="input-field" placeholder="搜索充值账号、订单号..." style="width:240px">
+          <select class="select-field"><option>全部产品类型</option><option>话费</option><option>流量</option><option>游戏</option><option>视频</option></select>
+          <input type="date" class="input-field">
+          <button class="btn btn-primary">🔍 搜索</button>
+          <button class="btn btn-success" style="margin-left:auto">📤 导出</button>
+        </div>
+        <div class="glass-card">
+          <table class="data-table">
+            <thead><tr><th>流水号</th><th>充值账号</th><th>产品</th><th>面值</th><th>实付</th><th>来源</th><th>时间</th><th>状态</th></tr></thead>
+            <tbody>
+              <tr><td class="mono">REC2026031500001</td><td>138****8000</td><td>中国移动话费</td><td>100元</td><td class="num">¥98.00</td><td>代理端</td><td>03-15 09:12</td><td><span class="badge badge-success">成功</span></td></tr>
+              <tr><td class="mono">REC2026031500002</td><td>159****9000</td><td>联通流量包 5G</td><td>25元</td><td class="num">¥24.00</td><td>API</td><td>03-15 09:22</td><td><span class="badge badge-success">成功</span></td></tr>
+              <tr><td class="mono">REC2026031500003</td><td>game_uid_1234</td><td>王者荣耀点券</td><td>648元</td><td class="num">¥598.00</td><td>直连</td><td>03-15 09:35</td><td><span class="badge badge-warning">充值中</span></td></tr>
+            </tbody>
+          </table>
+          <div class="table-footer"><span class="table-total">共 5,823 条记录</span><div class="pagination"><button class="page-btn active">1</button><button class="page-btn">2</button><button class="page-btn">›</button></div></div>
+        </div>
+      </div>
+
+      <!-- ══════════════════════ PAGE: CALLBACK LOGS ══════════════════════ -->
+      <div class="page" id="page-callback-logs">
+        <div class="page-header">
+          <div><h1 class="page-title">回调日志</h1><p class="page-sub">记录所有订单回调通知状态</p></div>
+        </div>
+        <div class="glass-card filter-bar">
+          <input type="text" class="input-field" placeholder="搜索订单号..." style="width:240px">
+          <select class="select-field"><option>全部状态</option><option>成功</option><option>失败</option><option>待重试</option></select>
+          <button class="btn btn-primary">🔍 搜索</button>
+        </div>
+        <div class="glass-card">
+          <table class="data-table">
+            <thead><tr><th>回调ID</th><th>订单号</th><th>回调URL</th><th>响应码</th><th>重试次数</th><th>时间</th><th>状态</th><th>操作</th></tr></thead>
+            <tbody>
+              <tr><td class="mono">CB001</td><td class="mono">#ORD001</td><td class="text-muted">https://api.agent1.com/cb</td><td>200</td><td>0</td><td>09:12:03</td><td><span class="badge badge-success">成功</span></td><td><button class="btn-link">详情</button></td></tr>
+              <tr><td class="mono">CB002</td><td class="mono">#ORD003</td><td class="text-muted">https://api.agent2.com/cb</td><td>500</td><td>3</td><td>09:35:18</td><td><span class="badge badge-danger">失败</span></td><td><button class="btn-link">详情</button><button class="btn-link text-warning">重试</button></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ══════════════════════ PAGE: PRODUCTS ══════════════════════ -->
+      <div class="page" id="page-products">
+        <div class="page-header">
+          <div><h1 class="page-title">产品列表</h1><p class="page-sub">管理所有可充值产品</p></div>
+          <div class="page-header-actions">
+            <button class="btn btn-ghost" onclick="prodLoad()">🔄 刷新</button>
+            <button class="btn btn-primary" onclick="prodOpenAdd()">+ 新增产品</button>
+          </div>
+        </div>
+        <div class="glass-card filter-bar" style="margin-bottom:12px;">
+          <input id="prod-kw" class="input-field" placeholder="搜索产品名称…" style="width:200px" onkeydown="if(event.key==='Enter')prodSearch()">
+          <select id="prod-cat" class="select-field" onchange="prodSearch()">
+            <option value="">全部分类</option>
+          </select>
+          <select id="prod-sup" class="select-field" onchange="prodSearch()">
+            <option value="">全部供应商</option>
+          </select>
+          <select id="prod-status" class="select-field" onchange="prodSearch()">
+            <option value="">全部状态</option>
+            <option value="1">上架</option>
+            <option value="0">下架</option>
+          </select>
+          <button class="btn btn-primary" onclick="prodSearch()">🔍 搜索</button>
+          <button class="btn btn-ghost" onclick="prodReset()">重置</button>
+        </div>
+        <div class="glass-card">
+          <table class="data-table">
+            <thead>
+              <tr><th>ID</th><th>产品名称</th><th>分类</th><th>供应商</th><th>面值</th><th>成本价</th><th>代理价</th><th>零售价</th><th>运营商</th><th>直冲</th><th>状态</th><th>操作</th></tr>
+            </thead>
+            <tbody id="prod-tbody">
+              <tr><td colspan="12" style="text-align:center;padding:40px;color:var(--text-3);">加载中…</td></tr>
+            </tbody>
+          </table>
+          <div class="table-footer">
+            <span class="table-total" id="prod-total-count">共 0 个产品</span>
+            <div class="pagination" id="prod-pagination"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══════════════════════ PAGE: CATEGORIES ══════════════════════ -->
+      <div class="page" id="page-categories">
+        <div class="page-header">
+          <div><h1 class="page-title">产品分类</h1><p class="page-sub">管理产品主类目与子类目</p></div>
+          <div class="page-header-actions">
+            <button class="btn btn-ghost" onclick="catLoad()">🔄 刷新</button>
+            <button class="btn btn-primary" onclick="catOpenAdd()">+ 新增类目</button>
+          </div>
+        </div>
+        <div style="display:grid;grid-template-columns:280px 1fr;gap:16px;">
+          <!-- 左侧主类目树 -->
+          <div class="glass-card" style="padding:0;overflow:hidden;">
+            <div style="padding:14px 16px;border-bottom:1px solid rgba(99,102,241,.1);display:flex;align-items:center;justify-content:space-between;">
+              <span style="font-weight:700;font-size:14px;color:var(--text);">主类目</span>
+            </div>
+            <div id="cat-tree" style="padding:8px 0;min-height:200px;">
+              <div style="padding:40px;text-align:center;color:var(--text-3);font-size:13px;">加载中…</div>
+            </div>
+          </div>
+          <!-- 右侧子类目列表 -->
+          <div class="glass-card" style="padding:0;overflow:hidden;">
+            <div style="padding:14px 16px;border-bottom:1px solid rgba(99,102,241,.1);display:flex;align-items:center;justify-content:space-between;">
+              <span id="cat-sub-title" style="font-weight:700;font-size:14px;color:var(--text);">请选择主类目</span>
+            </div>
+            <div id="cat-sub-body" style="padding:8px 0;min-height:200px;">
+              <div style="padding:40px;text-align:center;color:var(--text-3);font-size:13px;">← 选择左侧主类目查看子分类</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══════════════════════ PAGE: SUPPLIERS ══════════════════════ -->
+      <div class="page" id="page-suppliers">
+        <div class="page-header">
+          <div><h1 class="page-title">供应商管理</h1><p class="page-sub">管理上游充值渠道，支持大猿人接口对接</p></div>
+          <div class="page-header-actions">
+            <button class="btn btn-ghost" onclick="supplierLoad()">🔄 刷新</button>
+            <button class="btn btn-primary" onclick="supplierOpenAdd()">+ 新增供应商</button>
+          </div>
+        </div>
+        <div class="card-grid" id="supplier-grid">
+          <div style="grid-column:1/-1;padding:40px;text-align:center;color:var(--text-3);">加载中…</div>
+        </div>
+      </div>
+
+      <!-- ══════════════════════ PAGE: DIRECT RECHARGE ══════════════════════ -->
+      <div class="page" id="page-direct-recharge">
+        <div class="page-header">
+          <div><h1 class="page-title">直冲产品</h1><p class="page-sub">管理直充类产品，可设置在售状态</p></div>
+          <div class="page-header-actions">
+            <button class="btn btn-ghost" onclick="dpLoad()">🔄 刷新</button>
+            <button class="btn btn-primary" onclick="dpOpenAdd()">+ 新增直冲产品</button>
+          </div>
+        </div>
+        <div class="glass-card filter-bar" style="margin-bottom:12px;">
+          <input id="dp-kw" class="input-field" placeholder="搜索产品名称…" style="width:200px" onkeydown="if(event.key==='Enter')dpSearch()">
+          <select id="dp-sale" class="select-field" onchange="dpSearch()">
+            <option value="">全部状态</option>
+            <option value="1">在售</option>
+            <option value="0">停售</option>
+          </select>
+          <button class="btn btn-primary" onclick="dpSearch()">🔍 搜索</button>
+          <button class="btn btn-ghost" onclick="dpReset()">重置</button>
+        </div>
+        <div class="glass-card">
+          <table class="data-table">
+            <thead>
+              <tr><th>ID</th><th>产品名称</th><th>充值类型</th><th>面值</th><th>直冲价</th><th>在售状态</th><th>添加时间</th><th>操作</th></tr>
+            </thead>
+            <tbody id="dp-tbody">
+              <tr><td colspan="8" style="text-align:center;padding:40px;color:var(--text-3);">加载中…</td></tr>
+            </tbody>
+          </table>
+          <div class="table-footer">
+            <span class="table-total" id="dp-total-count">共 0 个产品</span>
+            <div class="pagination" id="dp-pagination"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══════════════════════ PAGE: AGENTS (用户/代理列表) ══════════════════════ -->
+      <div class="page" id="page-agents">
+        <div class="page-header">
+          <div><h1 class="page-title">用户 / 代理列表</h1><p class="page-sub">用户即代理，代理即用户 — 通过级别区分权限与折扣体系</p></div>
+          <div class="page-header-actions">
+            <button class="btn btn-ghost" onclick="navigateTo('agent-levels')">🏅 级别管理</button>
+            <button class="btn btn-primary" onclick="memberOpenAdd()">+ 新增用户</button>
+          </div>
+        </div>
+
+        <!-- 类型切换标签 -->
+        <div class="order-stats-bar" id="agent-type-bar">
+          <div class="ostat-item active" data-type="" onclick="agentTypeFilter(this,'')"><div class="ostat-num" id="ag-stat-all">—</div><div class="ostat-label">全部</div></div>
+          <div class="ostat-item" data-type="代理" onclick="agentTypeFilter(this,'代理')"><div class="ostat-num text-indigo" id="ag-stat-agent">—</div><div class="ostat-label">代理</div></div>
+          <div class="ostat-item" data-type="普通用户" onclick="agentTypeFilter(this,'普通用户')"><div class="ostat-num text-cyan" id="ag-stat-normal">—</div><div class="ostat-label">普通用户</div></div>
+        </div>
+
+        <!-- 搜索/过滤栏 -->
+        <div class="glass-card filter-bar">
+          <input id="ag-keyword" type="text" class="input-field" placeholder="用户名、真名、编号、手机…" style="width:220px"
+            onkeydown="if(event.key==='Enter')agentSearch()">
+          <select id="ag-level" class="select-field" style="width:150px" onchange="agentSearch()">
+            <option value="">全部级别</option>
+          </select>
+          <select id="ag-status" class="select-field" onchange="agentSearch()">
+            <option value="">全部状态</option>
+            <option value="1">正常</option>
+            <option value="0">禁用</option>
+          </select>
+          <button class="btn btn-primary" onclick="agentSearch()">🔍 搜索</button>
+          <button class="btn btn-ghost" onclick="agentReset()">重置</button>
+        </div>
+
+        <!-- 表格 -->
+        <div class="glass-card" style="overflow:hidden;">
+          <div style="overflow-x:auto;">
+            <table class="data-table">
+              <thead><tr>
+                <th style="min-width:60px">ID</th>
+                <th style="min-width:100px">用户名</th>
+                <th style="min-width:80px">真实姓名</th>
+                <th style="min-width:110px">手机</th>
+                <th style="min-width:90px">类型/级别</th>
+                <th style="min-width:90px">代理编号</th>
+                <th style="min-width:80px">余额</th>
+                <th style="min-width:70px">状态</th>
+                <th style="min-width:80px">注册时间</th>
+                <th style="min-width:190px">操作</th>
+              </tr></thead>
+              <tbody id="ag-tbody">
+                <tr><td colspan="10" style="text-align:center;padding:40px;color:var(--text-3);">加载中…</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="table-footer">
+            <span class="table-total" id="ag-total">共 0 条</span>
+            <div class="pagination" id="ag-pagination"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══════════════════════ PAGE: AGENT LEVELS (代理级别管理) ══════════════════════ -->
+      <div class="page" id="page-agent-levels">
+        <div class="page-header">
+          <div><h1 class="page-title">代理级别管理</h1><p class="page-sub">配置代理层级体系，不同级别享有不同折扣与权限</p></div>
+          <div class="page-header-actions">
+            <button class="btn btn-primary" onclick="agentLevelOpenAdd()">+ 新增级别</button>
+          </div>
+        </div>
+        <div id="level-card-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px;"></div>
+        <div id="level-empty" style="display:none;text-align:center;padding:60px;color:var(--text-3);">
+          <div style="font-size:48px;margin-bottom:12px;">🏅</div><div>暂无级别，点击右上角新增</div>
+        </div>
+      </div>
+
+      <!-- ══════════════════════ PAGE: AGENT PRODUCTS ══════════════════════ -->
+      <div class="page" id="page-agent-products">
+        <div class="page-header">
+          <div><h1 class="page-title">代理产品价格</h1><p class="page-sub">为不同代理/用户配置个性化产品定价</p></div>
+          <div class="page-header-actions">
+            <button class="btn btn-ghost" onclick="pricingOpenBatchMarkup()">📊 批量加价</button>
+            <button class="btn btn-success" onclick="pricingSaveAll()">💾 批量保存</button>
+          </div>
+        </div>
+        <div class="glass-card filter-bar" style="align-items:center;">
+          <label style="font-size:13px;color:var(--text-2);white-space:nowrap;">选择代理：</label>
+          <select id="pricing-agent-sel" class="select-field" style="width:200px" onchange="pricingLoadList()">
+            <option value="">-- 请选择代理 --</option>
+          </select>
+          <select id="pricing-cat-sel" class="select-field" onchange="pricingFilterCat()">
+            <option value="">全部分类</option>
+          </select>
+          <span id="pricing-agent-bal" style="font-size:13px;color:var(--text-3);margin-left:8px;"></span>
+        </div>
+        <div class="glass-card" style="overflow:hidden;" id="pricing-table-wrap">
+          <div style="overflow-x:auto;">
+            <table class="data-table">
+              <thead><tr>
+                <th style="min-width:180px">产品名称</th>
+                <th>分类</th>
+                <th style="min-width:70px">面值</th>
+                <th style="min-width:85px">官方价</th>
+                <th style="min-width:120px">代理价</th>
+                <th style="min-width:80px">利润空间</th>
+                <th>操作</th>
+              </tr></thead>
+              <tbody id="pricing-tbody">
+                <tr><td colspan="7" style="text-align:center;padding:40px;color:var(--text-3);">请先选择左侧代理</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══════════════════════ PAGE: AGENT BALANCE ══════════════════════ -->
+      <div class="page" id="page-agent-balance">
+        <div class="page-header">
+          <div><h1 class="page-title">余额管理</h1><p class="page-sub">全部用户与代理的余额统计与流水记录</p></div>
+          <div class="page-header-actions">
+            <button class="btn btn-ghost" onclick="balancePageLoad()">🔄 刷新</button>
+          </div>
+        </div>
+
+        <!-- 统计卡片（动态，4列） -->
+        <div class="kpi-grid" style="grid-template-columns:repeat(4,1fr)">
+          <div class="kpi-card kpi-indigo">
+            <div class="kpi-orb" style="background:linear-gradient(135deg,#6366f1,#8b5cf6);box-shadow:0 6px 20px rgba(99,102,241,.3)"><span>💰</span></div>
+            <div class="kpi-info"><div class="kpi-val" id="bal-total">¥—</div><div class="kpi-label">全部用户总余额</div></div>
+            <div class="kpi-bg-glow"></div>
+          </div>
+          <div class="kpi-card kpi-cyan">
+            <div class="kpi-orb" style="background:linear-gradient(135deg,#06b6d4,#0ea5e9);box-shadow:0 6px 20px rgba(6,182,212,.3)"><span>🤝</span></div>
+            <div class="kpi-info"><div class="kpi-val" id="bal-agent-total">¥—</div><div class="kpi-label">代理总余额</div></div>
+            <div class="kpi-bg-glow" style="background:var(--g-cyan)"></div>
+          </div>
+          <div class="kpi-card kpi-emerald">
+            <div class="kpi-orb" style="background:linear-gradient(135deg,#10b981,#059669);box-shadow:0 6px 20px rgba(16,185,129,.3)"><span>👤</span></div>
+            <div class="kpi-info"><div class="kpi-val" id="bal-user-total">¥—</div><div class="kpi-label">普通用户总余额</div></div>
+            <div class="kpi-bg-glow" style="background:var(--g-emerald)"></div>
+          </div>
+          <div class="kpi-card kpi-amber">
+            <div class="kpi-orb" style="background:linear-gradient(135deg,#f59e0b,#f97316);box-shadow:0 6px 20px rgba(245,158,11,.3)"><span>👥</span></div>
+            <div class="kpi-info"><div class="kpi-val" id="bal-member-count">—</div><div class="kpi-label">持有余额用户数</div></div>
+            <div class="kpi-bg-glow" style="background:var(--g-amber)"></div>
+          </div>
+        </div>
+
+        <!-- 可视化图表区 -->
+        <div style="display:grid;grid-template-columns:1fr 340px;gap:16px;margin-bottom:20px;">
+          <div class="glass-card" style="padding:20px 20px 12px;">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+              <div style="font-size:15px;font-weight:700;color:var(--text)">余额分布 Top 10</div>
+              <span style="font-size:12px;color:var(--text-3)">按余额排序</span>
+            </div>
+            <div id="chart-bal-top10" style="height:200px;"></div>
+          </div>
+          <div class="glass-card" style="padding:20px 20px 12px;">
+            <div style="font-size:15px;font-weight:700;color:var(--text);margin-bottom:12px;">用户类型余额占比</div>
+            <div id="chart-bal-pie" style="height:200px;"></div>
+          </div>
+        </div>
+
+        <!-- 搜索/过滤栏 -->
+        <div class="glass-card filter-bar" style="margin-bottom:12px;">
+          <input id="bal-kw" class="input-field" placeholder="搜索用户名 / 代理编号…" style="width:200px;" onkeydown="if(event.key==='Enter')balanceSearch()">
+          <select id="bal-type" class="select-field">
+            <option value="">全部类型</option>
+            <option value="代理">代理</option>
+            <option value="普通用户">普通用户</option>
+          </select>
+          <select id="bal-sort" class="select-field">
+            <option value="desc">余额从高到低</option>
+            <option value="asc">余额从低到高</option>
+          </select>
+          <button class="btn btn-primary" onclick="balanceSearch()">🔍 搜索</button>
+          <button class="btn btn-ghost" onclick="balanceReset()">重置</button>
+        </div>
+
+        <!-- 数据表格 -->
+        <div class="glass-card">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>用户名</th><th>类型</th><th>代理编号</th>
+                <th>当前余额</th><th>状态</th><th>最近更新</th><th>操作</th>
+              </tr>
+            </thead>
+            <tbody id="bal-tbody">
+              <tr><td colspan="7" style="text-align:center;padding:40px;color:var(--text-3);">加载中…</td></tr>
+            </tbody>
+          </table>
+          <div class="table-footer">
+            <span class="table-total" id="bal-total-count">共 0 条</span>
+            <div class="pagination" id="bal-pagination"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══════════════════════ PAGE: API USERS ══════════════════════ -->
+      <div class="page" id="page-api-users">
+        <div class="page-header">
+          <div><h1 class="page-title">API 用户</h1><p class="page-sub">管理 API 对接账户及密钥</p></div>
+          <div class="page-header-actions"><button class="btn btn-primary" onclick="showModal('modal-add-api-user')">+ 新增API账户</button></div>
+        </div>
+        <div class="glass-card">
+          <table class="data-table">
+            <thead><tr><th>用户编号</th><th>用户名</th><th>AppKey</th><th>余额</th><th>今日调用</th><th>成功率</th><th>IP白名单</th><th>状态</th><th>操作</th></tr></thead>
+            <tbody>
+              <tr><td class="mono">U001</td><td>api_user_001</td><td class="mono text-muted">ak_8f2e...3c9d</td><td class="num">¥5,200</td><td>1,280次</td><td>98.9%</td><td>192.168.1.1</td><td><span class="badge badge-success">正常</span></td><td><button class="btn-link">详情</button><button class="btn-link">重置Key</button></td></tr>
+              <tr><td class="mono">U002</td><td>api_user_002</td><td class="mono text-muted">ak_7a1b...4f8e</td><td class="num">¥980</td><td>389次</td><td>97.4%</td><td>10.0.0.1</td><td><span class="badge badge-success">正常</span></td><td><button class="btn-link">详情</button><button class="btn-link">重置Key</button></td></tr>
+              <tr><td class="mono">U003</td><td>api_test_003</td><td class="mono text-muted">ak_3c8d...9a2f</td><td class="num">¥100</td><td>52次</td><td>94.2%</td><td>—</td><td><span class="badge badge-warning">测试</span></td><td><button class="btn-link">详情</button><button class="btn-link text-danger">禁用</button></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ══════════════════════ PAGE: API LOGS ══════════════════════ -->
+      <div class="page" id="page-api-logs">
+        <div class="page-header">
+          <div><h1 class="page-title">API 调用日志</h1><p class="page-sub">记录所有 API 请求及响应详情</p></div>
+        </div>
+        <div class="glass-card filter-bar">
+          <input type="text" class="input-field" placeholder="搜索用户编号、接口名..." style="width:220px">
+          <select class="select-field"><option>全部接口</option><option>下单</option><option>查单</option><option>商品列表</option><option>账户信息</option><option>异步回调</option></select>
+          <select class="select-field"><option>全部状态</option><option>成功</option><option>失败</option></select>
+          <button class="btn btn-primary">🔍 搜索</button>
+        </div>
+        <div class="glass-card">
+          <table class="data-table">
+            <thead><tr><th>日志ID</th><th>用户</th><th>接口</th><th>请求IP</th><th>响应码</th><th>耗时</th><th>时间</th><th>操作</th></tr></thead>
+            <tbody>
+              <tr><td class="mono">LOG001</td><td>U001</td><td><span class="badge badge-indigo">下单</span></td><td>192.168.1.1</td><td class="text-success">200</td><td>321ms</td><td>09:12:03</td><td><button class="btn-link">详情</button></td></tr>
+              <tr><td class="mono">LOG002</td><td>U001</td><td><span class="badge badge-cyan">查单</span></td><td>192.168.1.1</td><td class="text-success">200</td><td>89ms</td><td>09:12:05</td><td><button class="btn-link">详情</button></td></tr>
+              <tr><td class="mono">LOG003</td><td>U002</td><td><span class="badge badge-emerald">商品列表</span></td><td>10.0.0.1</td><td class="text-success">200</td><td>156ms</td><td>09:15:22</td><td><button class="btn-link">详情</button></td></tr>
+              <tr><td class="mono">LOG004</td><td>U003</td><td><span class="badge badge-orange">下单</span></td><td>—</td><td class="text-danger">400</td><td>12ms</td><td>09:20:11</td><td><button class="btn-link">详情</button></td></tr>
+            </tbody>
+          </table>
+          <div class="table-footer"><span class="table-total">共 48,920 条记录</span><div class="pagination"><button class="page-btn active">1</button><button class="page-btn">2</button><button class="page-btn">›</button></div></div>
+        </div>
+      </div>
+
+      <!-- ══════════════════════ PAGE: API DOCS ══════════════════════ -->
+      <div class="page" id="page-api-docs">
+        <div class="page-header">
+          <div><h1 class="page-title">API 文档</h1><p class="page-sub">充易达开放 API 接口文档</p></div>
+          <div class="page-header-actions"><a href="https://apifox.com/apidoc/shared-1806326b-07cc-4191-bd02-a9c3f1105049" target="_blank" class="btn btn-primary">📖 完整文档</a></div>
+        </div>
+        <div class="api-doc-wrap">
+          <div class="api-info-card glass-card">
+            <h3>接口说明</h3>
+            <p>所有接口均使用 <strong>POST</strong> 请求，Content-Type 为 <code>application/json</code>。</p>
+            <p>请求有效期为 <strong>5分钟</strong>，需携带签名参数。</p>
+            <div class="api-base-url">
+              <span class="label">Base URL</span>
+              <code>https://api.chongyida.com/v1</code>
+            </div>
+          </div>
+          <div class="api-endpoints">
+            <div class="glass-card api-endpoint-card">
+              <div class="endpoint-header"><span class="method post">POST</span><span class="endpoint-path">/order/create</span><span class="endpoint-desc">下单</span></div>
+              <div class="endpoint-body"><p>创建充值订单。必传参数：<code>userNo</code>（用户编号）、<code>productId</code>（产品ID）、<code>account</code>（充值账号）、<code>timestamp</code>、<code>sign</code>。</p></div>
+            </div>
+            <div class="glass-card api-endpoint-card">
+              <div class="endpoint-header"><span class="method post">POST</span><span class="endpoint-path">/order/query</span><span class="endpoint-desc">查单</span></div>
+              <div class="endpoint-body"><p>查询订单状态。必传参数：<code>userNo</code>、<code>orderNo</code>（订单号）、<code>timestamp</code>、<code>sign</code>。</p></div>
+            </div>
+            <div class="glass-card api-endpoint-card">
+              <div class="endpoint-header"><span class="method post">POST</span><span class="endpoint-path">/product/list</span><span class="endpoint-desc">商品列表</span></div>
+              <div class="endpoint-body"><p>获取可购买商品列表。必传参数：<code>userNo</code>、<code>timestamp</code>、<code>sign</code>。</p></div>
+            </div>
+            <div class="glass-card api-endpoint-card">
+              <div class="endpoint-header"><span class="method post">POST</span><span class="endpoint-path">/account/info</span><span class="endpoint-desc">账户信息</span></div>
+              <div class="endpoint-body"><p>获取账户余额等信息。必传参数：<code>userNo</code>、<code>timestamp</code>、<code>sign</code>。</p></div>
+            </div>
+            <div class="glass-card api-endpoint-card">
+              <div class="endpoint-header"><span class="method post">POST</span><span class="endpoint-path">/sign/generate</span><span class="endpoint-desc">签名生成</span></div>
+              <div class="endpoint-body"><p>测试签名生成。签名算法：MD5(userNo + timestamp + AppSecret)。</p></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══════════════════════ PAGE: FINANCE OVERVIEW ══════════════════════ -->
+      <div class="page" id="page-finance-overview">
+        <div class="page-header">
+          <div><h1 class="page-title">财务概览</h1><p class="page-sub">平台整体财务数据汇总</p></div>
+          <div class="page-header-actions">
+            <button class="btn btn-ghost" onclick="financeLoadOverview()">🔄 刷新</button>
+          </div>
+        </div>
+        <div class="kpi-grid">
+          <div class="kpi-card kpi-indigo"><div class="kpi-orb"><span>💹</span></div><div class="kpi-info"><div class="kpi-val" id="fin-monthly">¥—</div><div class="kpi-label">当月总流水</div><div class="kpi-trend up" id="fin-monthly-trend">统计中…</div></div><div class="kpi-bg-glow"></div></div>
+          <div class="kpi-card kpi-emerald"><div class="kpi-orb"><span>💰</span></div><div class="kpi-info"><div class="kpi-val" id="fin-today">¥—</div><div class="kpi-label">今日流水</div><div class="kpi-trend up" id="fin-today-trend">统计中…</div></div><div class="kpi-bg-glow"></div></div>
+          <div class="kpi-card kpi-amber"><div class="kpi-orb"><span>📋</span></div><div class="kpi-info"><div class="kpi-val" id="fin-orders">—</div><div class="kpi-label">当日订单</div><div class="kpi-trend" id="fin-orders-trend">今日已受理</div></div><div class="kpi-bg-glow"></div></div>
+          <div class="kpi-card kpi-cyan"><div class="kpi-orb"><span>💳</span></div><div class="kpi-info"><div class="kpi-val" id="fin-agent-bal">¥—</div><div class="kpi-label">代理总余额</div><div class="kpi-trend" id="fin-agent-trend">全部代理</div></div><div class="kpi-bg-glow"></div></div>
+        </div>
+        <div class="chart-grid">
+          <div class="glass-card chart-card chart-large">
+            <div class="card-header"><h3 class="card-title">当日营业走势</h3><span style="font-size:12px;color:var(--text-3);">单位：元（按小时）</span></div>
+            <div id="chart-finance" style="height:260px;"></div>
+          </div>
+          <div class="glass-card chart-card">
+            <div class="card-header"><h3 class="card-title">供应商余额占比</h3></div>
+            <div id="chart-supplier-cost" style="height:260px;"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══════════════════════ PAGE: RECHARGE APPLY ══════════════════════ -->
+      <div class="page" id="page-recharge-apply">
+        <div class="page-header">
+          <div><h1 class="page-title">充值申请</h1><p class="page-sub">审核代理的余额充值申请</p></div>
+          <div class="page-header-actions">
+            <button class="btn btn-primary" onclick="rcApplyOpenAdd()">+ 新建申请</button>
+          </div>
+        </div>
+        <!-- 统计条 -->
+        <div class="order-stats-bar" id="rc-stats-bar">
+          <div class="ostat-item active" data-status="" onclick="rcApplyFilter(this,'')"><div class="ostat-num" id="rc-stat-all">—</div><div class="ostat-label">全部</div></div>
+          <div class="ostat-item" data-status="pending" onclick="rcApplyFilter(this,'pending')"><div class="ostat-num text-warning" id="rc-stat-pending">—</div><div class="ostat-label">待审核</div></div>
+          <div class="ostat-item" data-status="approved" onclick="rcApplyFilter(this,'approved')"><div class="ostat-num text-success" id="rc-stat-approved">—</div><div class="ostat-label">已通过</div></div>
+          <div class="ostat-item" data-status="rejected" onclick="rcApplyFilter(this,'rejected')"><div class="ostat-num text-danger" id="rc-stat-rejected">—</div><div class="ostat-label">已拒绝</div></div>
+        </div>
+        <!-- 搜索栏 -->
+        <div class="glass-card filter-bar">
+          <input id="rc-keyword" type="text" class="input-field" placeholder="搜索编号、代理名称…" style="width:220px"
+            onkeydown="if(event.key==='Enter')rcApplySearch()">
+          <button class="btn btn-primary" onclick="rcApplySearch()">🔍 搜索</button>
+          <button class="btn btn-ghost" onclick="rcApplyReset()">重置</button>
+        </div>
+        <!-- 表格 -->
+        <div class="glass-card" style="overflow:hidden;">
+          <div style="overflow-x:auto;">
+            <table class="data-table">
+              <thead><tr>
+                <th style="min-width:140px">申请编号</th>
+                <th style="min-width:110px">代理名称</th>
+                <th style="min-width:90px">充值金额</th>
+                <th style="min-width:90px">支付方式</th>
+                <th style="min-width:80px">凭证</th>
+                <th style="min-width:140px">申请时间</th>
+                <th style="min-width:70px">状态</th>
+                <th style="min-width:150px">操作</th>
+              </tr></thead>
+              <tbody id="rc-tbody">
+                <tr><td colspan="8" style="text-align:center;padding:40px;color:var(--text-3);">加载中…</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="table-footer"><span class="table-total" id="rc-total">共 0 条</span></div>
+        </div>
+      </div>
+
+      <!-- ══════════════════════ PAGE: WITHDRAW APPLY ══════════════════════ -->
+      <div class="page" id="page-withdraw-apply">
+        <div class="page-header">
+          <div><h1 class="page-title">提现申请</h1><p class="page-sub">审核代理的余额提现申请</p></div>
+          <div class="page-header-actions">
+            <button class="btn btn-ghost" onclick="navigateTo('payment-methods')">⚙️ 收款方式</button>
+            <button class="btn btn-primary" onclick="wdApplyOpenAdd()">+ 新建申请</button>
+          </div>
+        </div>
+        <!-- 统计条 -->
+        <div class="order-stats-bar">
+          <div class="ostat-item active" data-status="" onclick="wdApplyFilter(this,'')"><div class="ostat-num" id="wd-stat-all">—</div><div class="ostat-label">全部</div></div>
+          <div class="ostat-item" data-status="pending" onclick="wdApplyFilter(this,'pending')"><div class="ostat-num text-warning" id="wd-stat-pending">—</div><div class="ostat-label">待处理</div></div>
+          <div class="ostat-item" data-status="approved" onclick="wdApplyFilter(this,'approved')"><div class="ostat-num text-success" id="wd-stat-approved">—</div><div class="ostat-label">已打款</div></div>
+          <div class="ostat-item" data-status="rejected" onclick="wdApplyFilter(this,'rejected')"><div class="ostat-num text-danger" id="wd-stat-rejected">—</div><div class="ostat-label">已拒绝</div></div>
+        </div>
+        <!-- 搜索栏 -->
+        <div class="glass-card filter-bar">
+          <input id="wd-keyword" type="text" class="input-field" placeholder="搜索编号、代理名称…" style="width:220px"
+            onkeydown="if(event.key==='Enter')wdApplySearch()">
+          <button class="btn btn-primary" onclick="wdApplySearch()">🔍 搜索</button>
+          <button class="btn btn-ghost" onclick="wdApplyReset()">重置</button>
+        </div>
+        <!-- 表格 -->
+        <div class="glass-card" style="overflow:hidden;">
+          <div style="overflow-x:auto;">
+            <table class="data-table">
+              <thead><tr>
+                <th style="min-width:140px">申请编号</th>
+                <th style="min-width:110px">代理名称</th>
+                <th style="min-width:90px">提现金额</th>
+                <th style="min-width:80px">方式</th>
+                <th style="min-width:170px">收款账户</th>
+                <th style="min-width:140px">申请时间</th>
+                <th style="min-width:70px">状态</th>
+                <th style="min-width:150px">操作</th>
+              </tr></thead>
+              <tbody id="wd-tbody">
+                <tr><td colspan="8" style="text-align:center;padding:40px;color:var(--text-3);">加载中…</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="table-footer"><span class="table-total" id="wd-total">共 0 条</span></div>
+        </div>
+      </div>
+
+      <!-- ══════════════════════ PAGE: PAYMENT METHODS ══════════════════════ -->
+      <div class="page" id="page-payment-methods">
+        <div class="page-header">
+          <div><h1 class="page-title">收款方式</h1><p class="page-sub">管理平台收款账号（微信 / 支付宝 / 银行卡），供代理充值时参考</p></div>
+          <div class="page-header-actions">
+            <button class="btn btn-primary" onclick="pmOpenAdd()">+ 新增收款方式</button>
+          </div>
+        </div>
+        <!-- 卡片列表 -->
+        <div id="pm-card-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:16px;"></div>
+        <!-- 空状态 -->
+        <div id="pm-empty" style="display:none;text-align:center;padding:60px 20px;color:var(--text-3);">
+          <div style="font-size:48px;margin-bottom:12px;">💳</div>
+          <div>暂无收款方式，点击右上角新增</div>
+        </div>
+      </div>
+
+      <!-- ══════════════════════ PAGE: USERS ══════════════════════ -->
+      <div class="page" id="page-users">
+        <div class="page-header">
+          <div><h1 class="page-title">用户管理</h1><p class="page-sub">管理系统注册用户，支持查看、编辑、余额调整、停用操作</p></div>
+          <div class="page-header-actions">
+            <button class="btn btn-primary" onclick="memberOpenAdd()">+ 新增用户</button>
+          </div>
+        </div>
+
+        <!-- 统计条 -->
+        <div class="order-stats-bar" id="member-stats-bar">
+          <div class="ostat-item active" data-status="" onclick="memberFilterStatus(this,'')"><div class="ostat-num" id="mstat-all">—</div><div class="ostat-label">全部</div></div>
+          <div class="ostat-item" data-status="1" onclick="memberFilterStatus(this,'1')"><div class="ostat-num text-success" id="mstat-normal">—</div><div class="ostat-label">正常</div></div>
+          <div class="ostat-item" data-status="0" onclick="memberFilterStatus(this,'0')"><div class="ostat-num text-danger" id="mstat-disabled">—</div><div class="ostat-label">停用</div></div>
+        </div>
+
+        <!-- 搜索栏 -->
+        <div class="glass-card filter-bar">
+          <input id="member-keyword" type="text" class="input-field" placeholder="搜索编号、用户名、邮箱、姓名..." style="width:260px"
+            onkeydown="if(event.key==='Enter')memberSearch()">
+          <select id="member-type-filter" class="select-field" onchange="memberSearch()">
+            <option value="">全部类型</option>
+            <option value="普通用户">普通用户</option>
+            <option value="VIP用户">VIP用户</option>
+            <option value="代理用户">代理用户</option>
+          </select>
+          <button class="btn btn-primary" onclick="memberSearch()">🔍 搜索</button>
+          <button class="btn btn-ghost" onclick="memberReset()">重置</button>
+        </div>
+
+        <!-- 表格 -->
+        <div class="glass-card" style="overflow:hidden;">
+          <div style="overflow-x:auto;">
+            <table class="data-table" id="member-table">
+              <thead>
+                <tr>
+                  <th style="min-width:60px">编号</th>
+                  <th style="min-width:60px">头像</th>
+                  <th style="min-width:110px">用户名</th>
+                  <th style="min-width:160px">邮箱</th>
+                  <th style="min-width:80px">姓名</th>
+                  <th style="min-width:90px">用户类型</th>
+                  <th style="min-width:90px">分享人</th>
+                  <th style="min-width:70px">是否匿名</th>
+                  <th style="min-width:100px">余额</th>
+                  <th style="min-width:70px">状态</th>
+                  <th style="min-width:140px">注册时间</th>
+                  <th style="min-width:130px">操作</th>
+                </tr>
+              </thead>
+              <tbody id="member-tbody">
+                <tr><td colspan="12" style="text-align:center;padding:40px;color:var(--text-3);">加载中…</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="table-footer">
+            <span class="table-total" id="member-total">共 0 条</span>
+            <div class="pagination" id="member-pagination"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══════════════════════ PAGE: SYS-ACCOUNTS ══════════════════════ -->
+      <div class="page" id="page-sys-accounts">
+        <div class="page-header">
+          <div><h1 class="page-title">管理员账号</h1><p class="page-sub">管理后台系统的管理员账号、角色与登录权限</p></div>
+          <div class="page-header-actions">
+            <button class="btn btn-primary" onclick="sysAccOpenAdd()">+ 新增管理员</button>
+          </div>
+        </div>
+
+        <!-- KPI 统计 -->
+        <div class="kpi-grid" style="grid-template-columns:repeat(auto-fill,minmax(160px,1fr));margin-bottom:16px;" id="sysacc-kpi-grid"></div>
+
+        <!-- 搜索栏 -->
+        <div class="glass-card filter-bar">
+          <input id="sysacc-keyword" type="text" class="input-field" placeholder="搜索账号、昵称…" style="width:220px"
+            onkeydown="if(event.key==='Enter')sysAccSearch()">
+          <select id="sysacc-role-filter" class="select-field" onchange="sysAccSearch()">
+            <option value="">全部角色</option>
+            <option value="admin">超级管理员</option>
+            <option value="operator">运营</option>
+            <option value="finance">财务</option>
+            <option value="support">客服</option>
+          </select>
+          <button class="btn btn-primary" onclick="sysAccSearch()">🔍 搜索</button>
+          <button class="btn btn-ghost" onclick="sysAccReset()">重置</button>
+        </div>
+
+        <!-- 表格 -->
+        <div class="glass-card" style="overflow:hidden;">
+          <table class="data-table" id="sysacc-table">
+            <thead>
+              <tr>
+                <th style="min-width:60px">ID</th>
+                <th style="min-width:110px">登录账号</th>
+                <th style="min-width:100px">昵称</th>
+                <th style="min-width:90px">角色</th>
+                <th style="min-width:150px">邮箱</th>
+                <th style="min-width:120px">手机</th>
+                <th style="min-width:70px">状态</th>
+                <th style="min-width:140px">最后登录</th>
+                <th style="min-width:130px">操作</th>
+              </tr>
+            </thead>
+            <tbody id="sysacc-tbody">
+              <tr><td colspan="9" style="text-align:center;padding:40px;color:var(--text-3);">加载中…</td></tr>
+            </tbody>
+          </table>
+          <div class="table-footer">
+            <span class="table-total" id="sysacc-total">共 0 条</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══════════════════════ PAGE: ROLES ══════════════════════ -->
+      <div class="page" id="page-roles">
+        <div class="page-header">
+          <div><h1 class="page-title">角色管理</h1><p class="page-sub">配置系统角色与权限，精确控制各岗位可操作范围</p></div>
+          <div class="page-header-actions"><button class="btn btn-primary" onclick="roleOpenAdd()">+ 新增角色</button></div>
+        </div>
+
+        <!-- 角色卡片区 -->
+        <div class="card-grid" id="role-card-grid" style="grid-template-columns:repeat(auto-fill,minmax(300px,1fr));">
+          <div style="grid-column:1/-1;text-align:center;padding:60px;color:var(--text-3);">加载中…</div>
+        </div>
+      </div>
+
+      <!-- ══════════════════════ PAGE: PERMISSIONS ══════════════════════ -->
+      <div class="page" id="page-permissions">
+        <div class="page-header">
+          <div><h1 class="page-title">权限管理</h1><p class="page-sub">系统全部权限节点，按模块分组展示</p></div>
+        </div>
+        <!-- 统计 KPI -->
+        <div class="kpi-grid" id="perm-kpi-grid" style="grid-template-columns:repeat(auto-fill,minmax(160px,1fr));margin-bottom:16px;"></div>
+        <!-- 分组展示区 -->
+        <div id="perm-group-list" style="display:flex;flex-direction:column;gap:14px;">
+          <div style="text-align:center;padding:60px;color:var(--text-3);">加载中…</div>
+        </div>
+      </div>
+
+      <!-- ══════════════════════ PAGE: PROFILE ══════════════════════ -->
+      <div class="page" id="page-profile">
+        <div class="page-header">
+          <div><h1 class="page-title">个人中心</h1><p class="page-sub">管理您的账号信息与登录密码</p></div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;max-width:900px;">
+
+          <!-- 账号信息卡 -->
+          <div class="glass-card">
+            <h3 class="form-section-title">账号信息</h3>
+            <div class="form-grid">
+              <div class="form-group">
+                <label class="form-label">登录账号</label>
+                <input id="profile-username" class="input-field" placeholder="登录用户名">
+                <span style="font-size:11.5px;color:var(--text-3);margin-top:4px;display:block;">修改后需重新登录</span>
+              </div>
+              <div class="form-group">
+                <label class="form-label">显示昵称</label>
+                <input id="profile-nickname" class="input-field" placeholder="显示名称">
+              </div>
+              <div class="form-group">
+                <label class="form-label">绑定邮箱</label>
+                <input id="profile-email" class="input-field" type="email" placeholder="your@email.com">
+              </div>
+              <div class="form-group">
+                <label class="form-label">手机号</label>
+                <input id="profile-phone" class="input-field" placeholder="138xxxx8888">
+              </div>
+            </div>
+            <div id="profile-msg" style="margin:0 20px 10px;font-size:13px;display:none;padding:8px 12px;border-radius:8px;"></div>
+            <button class="btn btn-primary" style="margin:0 20px 18px;" onclick="profileSave()">💾 保存账号信息</button>
+          </div>
+
+          <!-- 修改密码卡 -->
+          <div class="glass-card">
+            <h3 class="form-section-title">修改密码</h3>
+            <div style="padding:14px 20px;display:flex;flex-direction:column;gap:14px;">
+              <div class="form-group">
+                <label class="form-label">当前密码</label>
+                <div style="position:relative;">
+                  <input id="pwd-old" class="input-field" type="password" placeholder="请输入当前密码" style="padding-right:40px;">
+                  <span onclick="togglePwd('pwd-old',this)" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);cursor:pointer;font-size:16px;color:var(--text-3);">👁</span>
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="form-label">新密码</label>
+                <div style="position:relative;">
+                  <input id="pwd-new" class="input-field" type="password" placeholder="6-32位，字母+数字" style="padding-right:40px;" oninput="checkPwdStrength(this.value)">
+                  <span onclick="togglePwd('pwd-new',this)" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);cursor:pointer;font-size:16px;color:var(--text-3);">👁</span>
+                </div>
+                <!-- 密码强度条 -->
+                <div id="pwd-strength-wrap" style="margin-top:8px;display:none;">
+                  <div style="display:flex;gap:4px;margin-bottom:4px;">
+                    <div id="ps1" style="flex:1;height:4px;border-radius:2px;background:#e2e8f0;transition:background .3s;"></div>
+                    <div id="ps2" style="flex:1;height:4px;border-radius:2px;background:#e2e8f0;transition:background .3s;"></div>
+                    <div id="ps3" style="flex:1;height:4px;border-radius:2px;background:#e2e8f0;transition:background .3s;"></div>
+                  </div>
+                  <div id="pwd-strength-label" style="font-size:11.5px;color:var(--text-3);"></div>
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="form-label">确认新密码</label>
+                <input id="pwd-confirm" class="input-field" type="password" placeholder="再次输入新密码">
+              </div>
+            </div>
+            <div id="pwd-msg" style="margin:0 20px 10px;font-size:13px;display:none;padding:8px 12px;border-radius:8px;"></div>
+            <button class="btn btn-primary" style="margin:0 20px 18px;" onclick="passwordSave()">🔒 修改密码</button>
+          </div>
+
+          <!-- 当前登录信息（只读） -->
+          <div class="glass-card" style="grid-column:span 2;">
+            <h3 class="form-section-title">当前登录信息</h3>
+            <div style="padding:14px 20px;display:flex;gap:40px;flex-wrap:wrap;">
+              <div><div style="font-size:11.5px;color:var(--text-3);margin-bottom:4px;">登录账号</div><div id="info-username" style="font-size:14px;font-weight:700;color:var(--text);">—</div></div>
+              <div><div style="font-size:11.5px;color:var(--text-3);margin-bottom:4px;">账号角色</div><div id="info-role" style="font-size:14px;font-weight:700;color:var(--text);">—</div></div>
+              <div><div style="font-size:11.5px;color:var(--text-3);margin-bottom:4px;">上次登录</div><div id="info-last-login" style="font-size:14px;font-weight:700;color:var(--text);">—</div></div>
+              <div style="margin-left:auto;">
+                <button class="btn btn-ghost" onclick="doLogout()" style="color:#e11d48;border-color:rgba(244,63,94,.3);">🚪 退出登录</button>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- ══════════════════════ PAGE: SETTINGS ══════════════════════ -->
+      <div class="page" id="page-settings">
+        <div class="page-header">
+          <div><h1 class="page-title">系统设置</h1><p class="page-sub">配置平台基本信息及运营参数</p></div>
+        </div>
+        <div class="settings-layout">
+          <div class="settings-tabs">
+            <button class="settings-tab active" data-tab="basic">🏠 基本信息</button>
+            <button class="settings-tab" data-tab="brand">🎨 品牌外观</button>
+            <button class="settings-tab" data-tab="recharge">⚡ 充值配置</button>
+            <button class="settings-tab" data-tab="notify">🔔 通知设置</button>
+            <button class="settings-tab" data-tab="security">🔒 安全设置</button>
+            <button class="settings-tab" data-tab="sms">📱 短信配置</button>
+            <button class="settings-tab" data-tab="about">ℹ️ 关于系统</button>
+          </div>
+          <div class="settings-content">
+            <div class="settings-panel active" id="tab-basic">
+              <div class="glass-card">
+                <h3 class="form-section-title">平台基本信息</h3>
+                <div class="form-grid">
+                  <div class="form-group"><label class="form-label">平台名称</label><input class="input-field" value="充易达"></div>
+                  <div class="form-group"><label class="form-label">平台域名</label><input class="input-field" value="chongyida.com"></div>
+                  <div class="form-group"><label class="form-label">客服微信</label><input class="input-field" value="15186817850"></div>
+                  <div class="form-group"><label class="form-label">联系邮箱</label><input class="input-field" value="1840354092@qq.com"></div>
+                  <div class="form-group form-full"><label class="form-label">平台简介</label><textarea class="input-field textarea-field">充易达是一款高效、便捷的自动充值系统，无缝对接大猿人平台。</textarea></div>
+                </div>
+                <button class="btn btn-primary">保存设置</button>
+              </div>
+            </div>
+            <!-- ══ 品牌外观 ══ -->
+            <div class="settings-panel" id="tab-brand">
+
+              <!-- Logo 上传 -->
+              <div class="glass-card" style="margin-bottom:14px;">
+                <h3 class="form-section-title">Logo 设置</h3>
+                <div style="padding:18px 20px;display:flex;align-items:center;gap:24px;">
+                  <!-- 当前 Logo 预览 -->
+                  <div id="brand-logo-preview" style="width:80px;height:80px;border-radius:50%;background:linear-gradient(135deg,#6366f1,#8b5cf6);display:flex;align-items:center;justify-content:center;font-size:34px;flex-shrink:0;box-shadow:0 8px 24px rgba(99,102,241,0.35);position:relative;">
+                    <span id="brand-logo-emoji">⚡</span>
+                    <div style="position:absolute;top:10px;left:13px;width:28%;height:28%;background:rgba(255,255,255,0.45);border-radius:50%;filter:blur(3px);"></div>
+                  </div>
+                  <div style="flex:1;">
+                    <div style="font-size:13.5px;font-weight:700;color:var(--text);margin-bottom:6px;">品牌 Logo</div>
+                    <div style="font-size:12.5px;color:var(--text-3);margin-bottom:14px;line-height:1.6;">支持上传 PNG / SVG 图片（建议 200×200px 及以上），或直接输入 Emoji 图标作为 Logo。上传后登录页和侧边栏将同步更新。</div>
+                    <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;">
+                      <!-- 上传图片 -->
+                      <label class="btn btn-primary" style="cursor:pointer;display:inline-flex;align-items:center;gap:6px;">
+                        📤 上传图片
+                        <input type="file" accept="image/*" style="display:none;" onchange="brandUploadLogo(this)">
+                      </label>
+                      <!-- 或输入 Emoji -->
+                      <div style="display:flex;align-items:center;gap:8px;">
+                        <span style="font-size:12.5px;color:var(--text-3);">或输入 Emoji：</span>
+                        <input id="brand-logo-emoji-input" class="input-field" style="width:72px;text-align:center;font-size:20px;" maxlength="2" placeholder="⚡" value="⚡" oninput="brandPreviewEmoji(this.value)">
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- 文字信息配置 -->
+              <div class="glass-card" style="margin-bottom:14px;">
+                <h3 class="form-section-title">登录页文字配置</h3>
+                <div class="form-grid">
+                  <div class="form-group">
+                    <label class="form-label">系统名称</label>
+                    <input id="brand-name" class="input-field" value="充易达" placeholder="您的系统名称" oninput="brandPreview()">
+                    <span style="font-size:11.5px;color:var(--text-3);margin-top:4px;display:block;">显示在登录页左侧大标题及浏览器标签页</span>
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label">系统副标题 / Slogan</label>
+                    <input id="brand-tagline" class="input-field" value="高效自动充值系统&#10;专业的代理商管理平台" placeholder="一行或两行描述" oninput="brandPreview()">
+                    <span style="font-size:11.5px;color:var(--text-3);margin-top:4px;display:block;">换行请用 \n，显示在系统名称下方</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- 底部版权与声明 -->
+              <div class="glass-card" style="margin-bottom:14px;">
+                <h3 class="form-section-title">底部版权与声明</h3>
+                <div class="form-grid">
+                  <div class="form-group form-full">
+                    <label class="form-label">底部版权文字</label>
+                    <input id="brand-copyright" class="input-field" value="© 2024 充易达 · 保留所有权利" placeholder="© 2024 您的公司名称 · 保留所有权利" oninput="brandPreview()">
+                    <span style="font-size:11.5px;color:var(--text-3);margin-top:4px;display:block;">显示在登录页左下角</span>
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label">服务条款链接文字</label>
+                    <input id="brand-terms-text" class="input-field" value="《服务条款》" placeholder="《服务条款》" oninput="brandPreview()">
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label">服务条款链接地址</label>
+                    <input id="brand-terms-url" class="input-field" value="#" placeholder="https://example.com/terms">
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label">隐私政策链接文字</label>
+                    <input id="brand-privacy-text" class="input-field" value="《隐私政策》" placeholder="《隐私政策》" oninput="brandPreview()">
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label">隐私政策链接地址</label>
+                    <input id="brand-privacy-url" class="input-field" value="#" placeholder="https://example.com/privacy">
+                  </div>
+                  <div class="form-group form-full">
+                    <label class="form-label">底部附加声明（可选）</label>
+                    <textarea id="brand-disclaimer" class="input-field textarea-field" placeholder="如：增值电信业务经营许可证 B2-2024XXXX / ICP备XXXXXXXX号" oninput="brandPreview()"></textarea>
+                    <span style="font-size:11.5px;color:var(--text-3);margin-top:4px;display:block;">可填写 ICP 备案号、经营许可证等合规信息，显示在登录页底部声明区域</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- 实时预览 -->
+              <div class="glass-card" style="margin-bottom:14px;">
+                <h3 class="form-section-title">实时预览</h3>
+                <div style="padding:16px 20px;">
+                  <div id="brand-live-preview" style="background:linear-gradient(135deg,#6366f1,#8b5cf6);border-radius:16px;padding:24px 28px;color:#fff;max-width:340px;">
+                    <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px;">
+                      <div id="prev-logo" style="width:48px;height:48px;border-radius:50%;background:rgba(255,255,255,0.2);display:flex;align-items:center;justify-content:center;font-size:22px;border:2px solid rgba(255,255,255,0.3);">⚡</div>
+                      <div>
+                        <div id="prev-name" style="font-size:18px;font-weight:800;letter-spacing:.5px;">充易达</div>
+                        <div id="prev-tagline" style="font-size:12px;opacity:.75;margin-top:2px;">高效自动充值系统</div>
+                      </div>
+                    </div>
+                    <div id="prev-copyright" style="font-size:11.5px;opacity:.55;border-top:1px solid rgba(255,255,255,0.15);padding-top:10px;">© 2024 充易达 · 保留所有权利</div>
+                    <div id="prev-footer" style="font-size:11px;opacity:.5;margin-top:4px;">登录即代表您同意 《服务条款》 和 《隐私政策》</div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- 保存按钮 -->
+              <div style="display:flex;gap:10px;padding:0 4px 4px;">
+                <button class="btn btn-primary" onclick="brandSave()">💾 保存品牌配置</button>
+                <button class="btn btn-ghost" onclick="brandReset()">↺ 恢复默认</button>
+                <a href="login.html" target="_blank" class="btn btn-ghost" style="text-decoration:none;">👁 预览登录页</a>
+              </div>
+
+            </div>
+            <!-- ══ /品牌外观 ══ -->
+
+            <div class="settings-panel" id="tab-recharge">
+              <div class="glass-card">
+                <h3 class="form-section-title">充值参数配置</h3>
+                <div class="form-grid">
+                  <div class="form-group"><label class="form-label">默认超时时间</label><input class="input-field" value="30" type="number"><span class="input-suffix">秒</span></div>
+                  <div class="form-group"><label class="form-label">最大重试次数</label><input class="input-field" value="3" type="number"></div>
+                  <div class="form-group"><label class="form-label">单笔最大金额</label><input class="input-field" value="1000" type="number"><span class="input-suffix">元</span></div>
+                  <div class="form-group"><label class="form-label">日充值上限</label><input class="input-field" value="100000" type="number"><span class="input-suffix">元</span></div>
+                </div>
+                <button class="btn btn-primary">保存设置</button>
+              </div>
+            </div>
+            <div class="settings-panel" id="tab-notify">
+              <div class="glass-card">
+                <h3 class="form-section-title">余额预警通知</h3>
+                <div class="form-grid">
+                  <div class="form-group"><label class="form-label">预警阈值</label><input class="input-field" value="500" type="number"><span class="input-suffix">元</span></div>
+                  <div class="form-group"><label class="form-label">通知方式</label>
+                    <div class="checkbox-group">
+                      <label><input type="checkbox" checked> 站内通知</label>
+                      <label><input type="checkbox" checked> 短信通知</label>
+                      <label><input type="checkbox"> 邮件通知</label>
+                    </div>
+                  </div>
+                </div>
+                <button class="btn btn-primary">保存设置</button>
+              </div>
+            </div>
+            <div class="settings-panel" id="tab-security">
+              <div class="glass-card">
+                <h3 class="form-section-title">安全配置</h3>
+                <div class="form-grid">
+                  <div class="form-group"><label class="form-label">API 签名方式</label><select class="select-field"><option>MD5</option><option>SHA256</option></select></div>
+                  <div class="form-group"><label class="form-label">Token 有效期</label><input class="input-field" value="24" type="number"><span class="input-suffix">小时</span></div>
+                  <div class="form-group form-full"><label class="form-label">IP 白名单</label><textarea class="input-field textarea-field" placeholder="每行一个IP地址"></textarea></div>
+                </div>
+                <button class="btn btn-primary">保存设置</button>
+              </div>
+            </div>
+            <div class="settings-panel" id="tab-sms">
+              <div class="glass-card">
+                <h3 class="form-section-title">短信服务配置</h3>
+                <div class="form-grid">
+                  <div class="form-group"><label class="form-label">短信服务商</label><select class="select-field"><option>阿里云SMS</option><option>腾讯云SMS</option></select></div>
+                  <div class="form-group"><label class="form-label">AccessKey ID</label><input class="input-field" placeholder="请输入AccessKey ID"></div>
+                  <div class="form-group"><label class="form-label">AccessKey Secret</label><input type="password" class="input-field" placeholder="请输入AccessKey Secret"></div>
+                  <div class="form-group"><label class="form-label">短信签名</label><input class="input-field" value="充易达"></div>
+                </div>
+                <button class="btn btn-primary">保存并测试</button>
+              </div>
+            </div>
+            <div class="settings-panel" id="tab-about">
+              <div class="glass-card about-card">
+                <div class="about-logo"><div class="logo-orb"><span class="logo-icon">⚡</span><div class="logo-glow"></div></div></div>
+                <h2 class="about-name">充易达</h2>
+                <p class="about-tagline">一站式 · 智能化 · 可扩展</p>
+                <div class="about-info">
+                  <div class="about-row"><span class="about-key">系统版本</span><span class="about-val">v2.5.0</span></div>
+                  <div class="about-row"><span class="about-key">开源协议</span><span class="about-val">MIT License</span></div>
+                  <div class="about-row"><span class="about-key">项目地址</span><a class="about-val link" href="https://gitee.com/Z568_568/chongyida" target="_blank">gitee.com/Z568_568/chongyida</a></div>
+                  <div class="about-row"><span class="about-key">联系作者</span><span class="about-val">15186817850 (微信)</span></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /page-wrap -->
+  </main>
+</div><!-- /app-layout -->
+
+<!-- ═══════════════════════════════════════ MODALS ═══════════════════ -->
+<!-- 新增/编辑产品 -->
+<div class="modal-overlay" id="modal-prod">
+  <div class="modal glass-card" style="max-width:680px;">
+    <div class="modal-header">
+      <h3 id="modal-prod-title">新增产品</h3>
+      <button class="modal-close" onclick="hideModal('modal-prod')">✕</button>
+    </div>
+    <div class="modal-body" style="max-height:72vh;overflow-y:auto;padding-right:4px;">
+      <input type="hidden" id="prod-edit-id">
+
+      <!-- ① 基本信息 -->
+      <div class="form-section-title">基本信息</div>
+      <div class="form-grid">
+        <div class="form-group form-full">
+          <label class="form-label">产品名称 *</label>
+          <input id="prod-f-name" class="input-field" placeholder="如：中国移动话费100元">
+        </div>
+        <div class="form-group">
+          <label class="form-label">产品分类 *</label>
+          <select id="prod-f-cat" class="select-field"><option value="">请选择分类</option></select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">排序</label>
+          <input id="prod-f-sort" class="input-field" type="number" placeholder="99" value="99">
+        </div>
+        <div class="form-group">
+          <label class="form-label">商品状态</label>
+          <select id="prod-f-status" class="select-field">
+            <option value="1">上架</option>
+            <option value="0">下架</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- ② 运营商 -->
+      <div class="form-section-title" style="margin-top:16px;">
+        运营商
+        <span style="font-size:11px;font-weight:400;color:var(--text-3);margin-left:8px;">话费类目必选</span>
+      </div>
+      <div style="display:flex;gap:20px;padding:10px 0 4px;">
+        <label class="check-item"><input type="checkbox" id="op-mobile" value="中国移动"><span>中国移动</span></label>
+        <label class="check-item"><input type="checkbox" id="op-telecom" value="中国电信"><span>中国电信</span></label>
+        <label class="check-item"><input type="checkbox" id="op-unicom" value="中国联通"><span>中国联通</span></label>
+      </div>
+
+      <!-- ③ 供应商 & 充值方式 -->
+      <div class="form-section-title" style="margin-top:16px;">供应商 / 充值方式</div>
+      <div class="form-grid">
+        <div class="form-group">
+          <label class="form-label">供应商</label>
+          <select id="prod-f-sup" class="select-field" onchange="prodSupChange()">
+            <option value="">请选择</option>
+            <option value="-1">直冲商品（无供应商）</option>
+          </select>
+        </div>
+        <!-- 仅选供应商时显示 -->
+        <div class="form-group" id="prod-row-sup-item-id">
+          <label class="form-label">供应商商品ID</label>
+          <input id="prod-f-sup-item-id" class="input-field" placeholder="填写供应商侧的商品编号">
+        </div>
+        <div class="form-group" id="prod-row-charge-mode">
+          <label class="form-label">充值方式</label>
+          <select id="prod-f-charge-mode" class="select-field">
+            <option value="supplier">供应商充值</option>
+            <option value="direct">直冲</option>
+          </select>
+        </div>
+        <!-- 仅选供应商时显示 -->
+        <div class="form-group" id="prod-row-sync-price">
+          <label class="form-label">同步价格</label>
+          <select id="prod-f-sync-price" class="select-field">
+            <option value="0">不同步</option>
+            <option value="1">开启同步</option>
+          </select>
+        </div>
+        <div class="form-group" id="prod-row-sync-status">
+          <label class="form-label">同步上下架</label>
+          <select id="prod-f-sync-status" class="select-field">
+            <option value="0">不同步</option>
+            <option value="1">开启同步</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- ④ 价格 -->
+      <div class="form-section-title" style="margin-top:16px;">价格</div>
+      <div class="form-grid">
+        <div class="form-group">
+          <label class="form-label">面值 (元) *</label>
+          <input id="prod-f-face" class="input-field" type="number" step="0.01" placeholder="100">
+        </div>
+        <div class="form-group">
+          <label class="form-label">成本价 (元)</label>
+          <input id="prod-f-cost" class="input-field" type="number" step="0.01" placeholder="98.00">
+        </div>
+        <div class="form-group">
+          <label class="form-label">代理价 (元)</label>
+          <input id="prod-f-agent" class="input-field" type="number" step="0.01" placeholder="98.50">
+        </div>
+        <div class="form-group">
+          <label class="form-label">零售价 (元)</label>
+          <input id="prod-f-retail" class="input-field" type="number" step="0.01" placeholder="99.00">
+        </div>
+      </div>
+
+      <!-- ⑤ 下单限制 -->
+      <div class="form-section-title" style="margin-top:16px;">下单限制</div>
+      <div class="form-grid">
+        <div class="form-group">
+          <label class="form-label">
+            每日限单
+            <span class="form-hint">0 = 不限制</span>
+          </label>
+          <input id="prod-f-daily-limit" class="input-field" type="number" min="0" placeholder="0" value="0">
+        </div>
+        <div class="form-group">
+          <label class="form-label">
+            每月限单
+            <span class="form-hint">0 = 不限制</span>
+          </label>
+          <input id="prod-f-monthly-limit" class="input-field" type="number" min="0" placeholder="0" value="0">
+        </div>
+        <div class="form-group">
+          <label class="form-label">充值中能否下单</label>
+          <select id="prod-f-allow-progress" class="select-field">
+            <option value="1">允许</option>
+            <option value="0">不允许</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">
+            延迟提交 (小时)
+            <span class="form-hint">0 = 立即提交</span>
+          </label>
+          <input id="prod-f-delay" class="input-field" type="number" min="0" step="0.5" placeholder="0" value="0">
+          <div style="font-size:11px;color:var(--text-3);margin-top:4px;">新订单等待 n 小时后才开始提交</div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="hideModal('modal-prod')">取消</button>
+      <button class="btn btn-primary" onclick="prodSubmit()">确认保存</button>
+    </div>
+  </div>
+</div>
+
+<!-- 新增/编辑分类 -->
+<div class="modal-overlay" id="modal-cat">
+  <div class="modal glass-card" style="max-width:460px;">
+    <div class="modal-header"><h3 id="modal-cat-title">新增分类</h3><button class="modal-close" onclick="hideModal('modal-cat')">✕</button></div>
+    <div class="modal-body">
+      <input type="hidden" id="cat-edit-id">
+      <div class="form-grid">
+        <div class="form-group form-full"><label class="form-label">分类名称 *</label><input id="cat-f-name" class="input-field" placeholder="如：话费充值"></div>
+        <div class="form-group"><label class="form-label">上级类目</label>
+          <select id="cat-f-parent" class="select-field">
+            <option value="0">无（主类目）</option>
+          </select>
+        </div>
+        <div class="form-group"><label class="form-label">排序</label><input id="cat-f-sort" class="input-field" type="number" placeholder="99" value="99"></div>
+        <div class="form-group form-full">
+          <label class="form-label" style="display:flex;align-items:center;gap:6px;">
+            下单提示
+            <span style="font-size:11px;color:var(--text-3);font-weight:400;">（用户下单时展示的注意事项）</span>
+          </label>
+          <textarea id="cat-f-order-tip" class="input-field" rows="3"
+            placeholder="如：请填写正确的手机号码，充值后不支持退款；高峰期请等待3-5分钟…"
+            style="resize:vertical;min-height:72px;line-height:1.6;"></textarea>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="hideModal('modal-cat')">取消</button>
+      <button class="btn btn-primary" onclick="catSubmit()">确认保存</button>
+    </div>
+  </div>
+</div>
+
+<!-- 新增供应商 -->
+<div class="modal-overlay" id="modal-supplier">
+  <div class="modal glass-card" style="max-width:420px;">
+    <div class="modal-header"><h3>新增供应商</h3><button class="modal-close" onclick="hideModal('modal-supplier')">✕</button></div>
+    <div class="modal-body">
+      <div class="form-grid">
+        <div class="form-group form-full"><label class="form-label">供应商名称 *</label><input id="sup-f-name" class="input-field" placeholder="如：大猿人"></div>
+        <div class="form-group"><label class="form-label">联系人</label><input id="sup-f-contact" class="input-field" placeholder="联系人姓名"></div>
+        <div class="form-group"><label class="form-label">联系电话</label><input id="sup-f-phone" class="input-field" placeholder="手机号"></div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="hideModal('modal-supplier')">取消</button>
+      <button class="btn btn-primary" onclick="supplierSubmit()">确认添加</button>
+    </div>
+  </div>
+</div>
+
+<!-- 供应商接口配置弹窗 -->
+<div class="modal-overlay" id="modal-sup-api">
+  <div class="modal glass-card" style="max-width:620px;">
+    <div class="modal-header">
+      <div>
+        <h3 id="sup-api-title">接口配置</h3>
+        <p style="font-size:12px;color:var(--text-3);margin:2px 0 0;" id="sup-api-sub">大猿人充值平台对接</p>
+      </div>
+      <button class="modal-close" onclick="hideModal('modal-sup-api')">✕</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="sup-api-id">
+
+      <!-- 接口类型选择 -->
+      <div class="form-section-title" style="margin-bottom:12px;">接口类型</div>
+      <div style="display:flex;gap:10px;margin-bottom:20px;flex-wrap:wrap;">
+        <label class="api-type-card selected" data-type="dayuanren" onclick="supApiTypeSelect(this,'dayuanren')">
+          <div class="api-type-icon" style="background:linear-gradient(135deg,#6366f1,#8b5cf6);">🦍</div>
+          <div class="api-type-name">大猿人</div>
+          <div class="api-type-desc">大猿人充值平台</div>
+        </label>
+        <label class="api-type-card" data-type="custom" onclick="supApiTypeSelect(this,'custom')">
+          <div class="api-type-icon" style="background:linear-gradient(135deg,#06b6d4,#0ea5e9);">🔌</div>
+          <div class="api-type-name">自定义</div>
+          <div class="api-type-desc">自定义 API 接口</div>
+        </label>
+      </div>
+
+      <!-- 基础配置 -->
+      <div class="form-section-title">基础配置</div>
+      <div class="form-grid" style="margin-top:12px;">
+        <div class="form-group form-full">
+          <label class="form-label">API 域名 <span style="color:#ef4444;">*</span></label>
+          <input id="sup-api-domain" class="input-field" placeholder="http://你的域名（不含路径，如 http://api.dayuanren.com）">
+          <div class="form-hint">大猿人系统分配的接口域名，不含末尾斜杠</div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">商户 ID (userid) <span style="color:#ef4444;">*</span></label>
+          <input id="sup-api-userid" class="input-field" placeholder="如：10001">
+        </div>
+        <div class="form-group">
+          <label class="form-label">API 密钥 (key) <span style="color:#ef4444;">*</span></label>
+          <div style="position:relative;">
+            <input id="sup-api-key" class="input-field" type="password" placeholder="32位密钥" style="padding-right:40px;">
+            <button onclick="supApiToggleKey()" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:var(--text-3);font-size:16px;" title="显示/隐藏">👁</button>
+          </div>
+          <div class="form-hint">从大猿人代理后台获取，请妥善保管</div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">回调地址 (notify_url)</label>
+          <input id="sup-api-notify" class="input-field" placeholder="http://你的域名/api/callback/dayuanren">
+          <div class="form-hint">充值结果异步回调地址，留空则不启用回调</div>
+        </div>
+      </div>
+
+      <!-- 连接测试区 -->
+      <div class="form-section-title" style="margin-top:8px;">连接测试</div>
+      <div style="display:flex;align-items:center;gap:12px;margin-top:12px;padding:16px;background:rgba(99,102,241,.05);border-radius:14px;border:1px solid rgba(99,102,241,.1);">
+        <button class="btn btn-ghost" onclick="supApiTestConnect()" id="sup-api-test-btn">
+          🔌 测试连接
+        </button>
+        <div id="sup-api-test-result" style="font-size:13px;color:var(--text-3);">点击测试按钮验证接口配置是否正确</div>
+      </div>
+
+      <!-- 同步产品区 -->
+      <div class="form-section-title" style="margin-top:16px;">产品同步</div>
+      <div style="margin-top:12px;padding:16px;background:rgba(6,182,212,.05);border-radius:14px;border:1px solid rgba(6,182,212,.1);">
+        <div style="display:flex;gap:10px;margin-bottom:10px;flex-wrap:wrap;">
+          <input id="sup-sync-type" class="input-field" placeholder="产品类型 ID（可选，留空拉取全部）" style="flex:1;min-width:160px;">
+          <input id="sup-sync-cate" class="input-field" placeholder="分类 ID（可选）" style="flex:1;min-width:130px;">
+          <button class="btn btn-ghost" onclick="supApiSyncProducts()" id="sup-sync-btn">📦 同步产品</button>
+        </div>
+        <div id="sup-sync-result" style="font-size:13px;color:var(--text-3);">保存配置并测试连接通过后，可同步供应商产品列表</div>
+        <!-- 产品预览表格 -->
+        <div id="sup-sync-table-wrap" style="display:none;margin-top:12px;max-height:320px;overflow-y:auto;">
+          <table class="data-table" style="font-size:12px;">
+            <thead><tr><th>产品ID</th><th>产品名称</th><th>分类</th><th>运营商</th><th>价格</th><th>原价</th><th>充值方式</th><th>标签</th></tr></thead>
+            <tbody id="sup-sync-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- 启用开关 -->
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-top:16px;padding:14px 16px;background:rgba(16,185,129,.05);border-radius:14px;border:1px solid rgba(16,185,129,.1);">
+        <div>
+          <div style="font-size:14px;font-weight:600;color:var(--text);">启用接口</div>
+          <div style="font-size:12px;color:var(--text-3);">关闭后该供应商不参与自动充值路由</div>
+        </div>
+        <label class="toggle-switch">
+          <input type="checkbox" id="sup-api-enabled" checked>
+          <span class="toggle-slider"></span>
+        </label>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="hideModal('modal-sup-api')">取消</button>
+      <button class="btn btn-primary" onclick="supApiSave()">💾 保存配置</button>
+    </div>
+  </div>
+</div>
+
+<!-- 新增/编辑直冲产品 -->
+<div class="modal-overlay" id="modal-dp">
+  <div class="modal glass-card" style="max-width:460px;">
+    <div class="modal-header"><h3 id="modal-dp-title">新增直冲产品</h3><button class="modal-close" onclick="hideModal('modal-dp')">✕</button></div>
+    <div class="modal-body">
+      <input type="hidden" id="dp-edit-id">
+      <div class="form-grid">
+        <div class="form-group form-full"><label class="form-label">产品名称 *</label><input id="dp-f-name" class="input-field" placeholder="如：爱奇艺月度会员"></div>
+        <div class="form-group"><label class="form-label">充值类型</label><input id="dp-f-type" class="input-field" placeholder="账号直充" value="账号直充"></div>
+        <div class="form-group"><label class="form-label">面值 (元) *</label><input id="dp-f-face" class="input-field" type="number" step="0.01" placeholder="25"></div>
+        <div class="form-group"><label class="form-label">直冲价 (元)</label><input id="dp-f-price" class="input-field" type="number" step="0.01" placeholder="18.00"></div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="hideModal('modal-dp')">取消</button>
+      <button class="btn btn-primary" onclick="dpSubmit()">确认保存</button>
+    </div>
+  </div>
+</div>
+
+
+
+<!-- 新增代理 -->
+<div class="modal-overlay" id="modal-add-agent">
+  <div class="modal glass-card">
+    <div class="modal-header"><h3>新增代理</h3><button class="modal-close" onclick="hideModal('modal-add-agent')">✕</button></div>
+    <div class="modal-body">
+      <div class="form-grid">
+        <div class="form-group"><label class="form-label">代理名称</label><input class="input-field" placeholder="代理商名称"></div>
+        <div class="form-group"><label class="form-label">联系电话</label><input class="input-field" placeholder="手机号"></div>
+        <div class="form-group"><label class="form-label">登录账号</label><input class="input-field" placeholder="登录名"></div>
+        <div class="form-group"><label class="form-label">初始密码</label><input class="input-field" type="password" placeholder="登录密码"></div>
+        <div class="form-group"><label class="form-label">代理级别</label><select class="select-field"><option>一级代理</option><option>二级代理</option><option>三级代理</option></select></div>
+        <div class="form-group"><label class="form-label">初始充值余额</label><input class="input-field" type="number" placeholder="0"></div>
+      </div>
+    </div>
+    <div class="modal-footer"><button class="btn btn-ghost" onclick="hideModal('modal-add-agent')">取消</button><button class="btn btn-primary">确认添加</button></div>
+  </div>
+</div>
+
+<!-- 新增API用户 -->
+<div class="modal-overlay" id="modal-add-api-user">
+  <div class="modal glass-card">
+    <div class="modal-header"><h3>新增 API 用户</h3><button class="modal-close" onclick="hideModal('modal-add-api-user')">✕</button></div>
+    <div class="modal-body">
+      <div class="form-grid">
+        <div class="form-group"><label class="form-label">用户名</label><input class="input-field" placeholder="api_username"></div>
+        <div class="form-group"><label class="form-label">初始余额</label><input class="input-field" type="number" placeholder="0"></div>
+        <div class="form-group form-full"><label class="form-label">IP 白名单</label><textarea class="input-field textarea-field" placeholder="每行一个IP，为空则不限制"></textarea></div>
+      </div>
+    </div>
+    <div class="modal-footer"><button class="btn btn-ghost" onclick="hideModal('modal-add-api-user')">取消</button><button class="btn btn-primary">创建并生成密钥</button></div>
+  </div>
+</div>
+
+
+<!-- 新增 / 编辑 会员/代理用户 -->
+<div class="modal-overlay" id="modal-member-edit">
+  <div class="modal glass-card" style="max-width:660px;width:95vw;">
+    <div class="modal-header">
+      <h3 id="member-modal-title">新增用户</h3>
+      <button class="modal-close" onclick="hideModal('modal-member-edit')">✕</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="member-edit-id">
+      <div class="form-grid">
+
+        <!-- 头像预览 + 上传 -->
+        <div class="form-group form-full" style="display:flex;align-items:center;gap:20px;">
+          <div id="member-avatar-preview" style="width:72px;height:72px;border-radius:50%;background:linear-gradient(135deg,#6366f1,#8b5cf6);display:flex;align-items:center;justify-content:center;font-size:28px;font-weight:700;color:#fff;flex-shrink:0;box-shadow:0 4px 16px rgba(99,102,241,0.3);overflow:hidden;position:relative;">
+            <span id="member-avatar-letter">U</span>
+          </div>
+          <div style="flex:1;">
+            <div style="font-size:13px;font-weight:600;color:var(--text);margin-bottom:6px;">用户头像</div>
+            <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+              <label class="btn btn-ghost btn-sm" style="cursor:pointer;">
+                📤 上传头像
+                <input type="file" accept="image/*" style="display:none;" onchange="memberAvatarUpload(this)">
+              </label>
+              <input id="member-edit-avatar" class="input-field" style="flex:1;min-width:120px;" placeholder="或粘贴图片 URL" oninput="memberAvatarUrlPreview(this.value)">
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">用户名 <span style="color:#e11d48">*</span></label>
+          <input id="member-edit-username" class="input-field" placeholder="登录用户名">
+        </div>
+        <div class="form-group">
+          <label class="form-label">邮箱</label>
+          <input id="member-edit-email" class="input-field" type="email" placeholder="user@example.com">
+        </div>
+        <div class="form-group">
+          <label class="form-label">登录密码</label>
+          <div style="position:relative;">
+            <input id="member-edit-password" class="input-field" type="password" placeholder="留空则不修改密码" style="padding-right:40px;">
+            <span onclick="togglePwd('member-edit-password',this)" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);cursor:pointer;font-size:16px;color:var(--text-3);">👁</span>
+          </div>
+          <span style="font-size:11.5px;color:var(--text-3);margin-top:4px;display:block;">新增时必填（≥6位），编辑时留空表示不修改</span>
+        </div>
+        <div class="form-group">
+          <label class="form-label">真实姓名</label>
+          <input id="member-edit-realname" class="input-field" placeholder="真实姓名（可选）">
+        </div>
+        <div class="form-group">
+          <label class="form-label">手机号码</label>
+          <input id="member-edit-phone" class="input-field" type="tel" placeholder="联系手机号">
+        </div>
+        <div class="form-group">
+          <label class="form-label">用户类型</label>
+          <select id="member-edit-type" class="select-field" onchange="memberTypeChange(this.value)">
+            <option value="普通用户">普通用户</option>
+            <option value="代理">代理</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">账号状态</label>
+          <select id="member-edit-status" class="select-field">
+            <option value="1">正常</option>
+            <option value="0">停用</option>
+          </select>
+        </div>
+
+        <!-- ── 代理专属区域 ── -->
+        <div class="form-group form-full" id="agent-fields-wrap" style="display:none;">
+          <div style="background:linear-gradient(135deg,rgba(99,102,241,0.06),rgba(139,92,246,0.04));border:1px solid rgba(99,102,241,0.15);border-radius:14px;padding:16px 18px;">
+            <div style="font-size:13px;font-weight:600;color:#6366f1;margin-bottom:12px;">🤝 代理信息</div>
+            <div class="form-grid" style="margin:0;">
+              <div class="form-group">
+                <label class="form-label">代理编号</label>
+                <input id="member-edit-agent-no" class="input-field" placeholder="如 AG001（留空自动生成）">
+              </div>
+              <div class="form-group">
+                <label class="form-label">代理级别</label>
+                <select id="member-edit-level" class="select-field">
+                  <option value="">-- 请选择级别 --</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label class="form-label">上级代理</label>
+                <select id="member-edit-parent" class="select-field">
+                  <option value="">无（顶级代理）</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label class="form-label">返佣比例 (%)</label>
+                <input id="member-edit-commission" class="input-field" type="number" min="0" max="100" step="0.1" placeholder="如 5（代表5%）">
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">分享人（邀请人用户名）</label>
+          <input id="member-edit-referrer" class="input-field" placeholder="邀请注册的用户名（可选）">
+        </div>
+        <div class="form-group form-full">
+          <label class="form-label" style="display:flex;align-items:center;gap:8px;cursor:pointer;">
+            <input type="checkbox" id="member-edit-anonymous" style="width:16px;height:16px;accent-color:#6366f1;">
+            <span>是否匿名用户</span>
+          </label>
+        </div>
+
+      </div>
+    </div>
+    <div id="member-edit-msg" style="margin:0 20px 10px;font-size:13px;display:none;padding:8px 12px;border-radius:8px;"></div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="hideModal('modal-member-edit')">取消</button>
+      <button class="btn btn-primary" onclick="memberSave()">💾 保存</button>
+    </div>
+  </div>
+</div>
+
+<!-- 余额调整弹窗 -->
+<div class="modal-overlay" id="modal-balance-adjust">
+  <div class="modal glass-card" style="max-width:480px;width:95vw;">
+    <div class="modal-header">
+      <h3 id="balance-modal-title">余额调整</h3>
+      <button class="modal-close" onclick="hideModal('modal-balance-adjust')">✕</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="balance-member-id">
+
+      <!-- 当前余额卡片 -->
+      <div style="background:linear-gradient(135deg,#6366f1,#8b5cf6);border-radius:16px;padding:20px 24px;margin-bottom:20px;color:#fff;position:relative;overflow:hidden;">
+        <div style="font-size:12px;opacity:.8;margin-bottom:4px;">当前余额</div>
+        <div style="font-size:32px;font-weight:700;" id="balance-current-display">¥0.00</div>
+        <div style="font-size:13px;opacity:.75;margin-top:4px;" id="balance-username-display">—</div>
+        <div style="position:absolute;right:-20px;top:-20px;width:100px;height:100px;border-radius:50%;background:rgba(255,255,255,.1);"></div>
+      </div>
+
+      <!-- 操作类型 -->
+      <div style="display:flex;gap:10px;margin-bottom:16px;">
+        <button id="balance-btn-add" onclick="balanceSelectType('add')"
+          style="flex:1;padding:10px;border-radius:12px;border:2px solid #6366f1;background:linear-gradient(135deg,#6366f1,#8b5cf6);color:#fff;font-size:14px;font-weight:600;cursor:pointer;transition:all .2s;">
+          ＋ 增加余额
+        </button>
+        <button id="balance-btn-sub" onclick="balanceSelectType('sub')"
+          style="flex:1;padding:10px;border-radius:12px;border:2px solid #e5e7eb;background:#fff;color:var(--text);font-size:14px;font-weight:600;cursor:pointer;transition:all .2s;">
+          － 扣减余额
+        </button>
+      </div>
+      <input type="hidden" id="balance-type" value="add">
+
+      <div class="form-grid">
+        <div class="form-group form-full">
+          <label class="form-label">调整金额 <span style="color:#e11d48">*</span></label>
+          <div style="position:relative;">
+            <span style="position:absolute;left:14px;top:50%;transform:translateY(-50%);font-weight:700;color:var(--text-3);font-size:16px;">¥</span>
+            <input id="balance-amount" class="input-field" type="number" min="0.01" step="0.01" placeholder="0.00"
+              style="padding-left:32px;font-size:20px;font-weight:700;"
+              oninput="balancePreviewResult()">
+          </div>
+        </div>
+        <div class="form-group form-full">
+          <label class="form-label">备注</label>
+          <input id="balance-remark" class="input-field" placeholder="操作备注（可选）">
+        </div>
+        <div class="form-group form-full" id="balance-result-preview" style="display:none;">
+          <div style="background:rgba(99,102,241,.07);border-radius:12px;padding:12px 16px;font-size:13px;color:var(--text-2);">
+            调整后余额：<strong id="balance-after-val" style="font-size:16px;color:#6366f1;">¥0.00</strong>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div id="balance-msg" style="margin:0 20px 10px;font-size:13px;display:none;padding:8px 12px;border-radius:8px;"></div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="hideModal('modal-balance-adjust')">取消</button>
+      <button class="btn btn-primary" id="balance-submit-btn" onclick="balanceSubmit()">确认调整</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ 充值申请：新建弹窗 ══ -->
+<div class="modal-overlay" id="modal-rc-add">
+  <div class="modal glass-card" style="max-width:500px;width:95vw;">
+    <div class="modal-header">
+      <h3>新建充值申请</h3>
+      <button class="modal-close" onclick="hideModal('modal-rc-add')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-grid">
+        <div class="form-group">
+          <label class="form-label">代理 <span style="color:#e11d48">*</span></label>
+          <select id="rc-add-agent" class="select-field">
+            <option value="">— 选择代理 —</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">充值金额（元）<span style="color:#e11d48">*</span></label>
+          <input id="rc-add-amount" class="input-field" type="number" min="1" placeholder="请输入金额">
+        </div>
+        <div class="form-group">
+          <label class="form-label">支付方式</label>
+          <select id="rc-add-paytype" class="select-field">
+            <option value="微信支付">微信支付</option>
+            <option value="支付宝">支付宝</option>
+            <option value="银行转账">银行转账</option>
+            <option value="其他">其他</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">备注</label>
+          <input id="rc-add-remark" class="input-field" placeholder="可选备注">
+        </div>
+        <div class="form-group" style="grid-column:1/-1;">
+          <label class="form-label">上传转账凭证</label>
+          <div id="rc-add-voucher-wrap" style="border:2px dashed rgba(99,102,241,.3);border-radius:12px;padding:20px;text-align:center;cursor:pointer;transition:all .2s;position:relative;"
+               onclick="document.getElementById('rc-add-voucher-input').click()"
+               ondragover="event.preventDefault();this.style.borderColor='#6366f1'"
+               ondragleave="this.style.borderColor='rgba(99,102,241,.3)'"
+               ondrop="rcAddVoucherDrop(event)">
+            <input type="file" id="rc-add-voucher-input" accept="image/*" style="display:none" onchange="rcAddVoucherPreview(this)">
+            <div id="rc-add-voucher-hint" style="color:var(--text-3);font-size:13px;">
+              <div style="font-size:28px;margin-bottom:6px;">📎</div>
+              <div>点击或拖拽上传图片（jpg/png/gif/webp）</div>
+              <div style="font-size:11px;margin-top:4px;color:var(--text-4);">测试阶段：上传任意图片即可查看凭证功能</div>
+            </div>
+            <img id="rc-add-voucher-img" src="" alt="凭证预览"
+              style="display:none;max-width:100%;max-height:200px;border-radius:8px;margin-top:8px;">
+            <button id="rc-add-voucher-clear" onclick="event.stopPropagation();rcAddVoucherClear()"
+              style="display:none;position:absolute;top:8px;right:8px;background:rgba(244,63,94,.1);border:none;color:#e11d48;border-radius:6px;padding:2px 8px;cursor:pointer;font-size:12px;">✕ 清除</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div id="rc-add-msg" style="margin:0 20px 10px;font-size:13px;display:none;padding:8px 12px;border-radius:8px;"></div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="hideModal('modal-rc-add')">取消</button>
+      <button class="btn btn-primary" onclick="rcApplySave()">提交申请</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ 充值申请：审核弹窗 ══ -->
+<div class="modal-overlay" id="modal-rc-review">
+  <div class="modal glass-card" style="max-width:440px;width:95vw;">
+    <div class="modal-header">
+      <h3 id="rc-review-title">审核充值申请</h3>
+      <button class="modal-close" onclick="hideModal('modal-rc-review')">✕</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="rc-review-id">
+      <input type="hidden" id="rc-review-action">
+      <div style="background:rgba(99,102,241,.06);border-radius:12px;padding:14px 16px;margin-bottom:14px;" id="rc-review-info"></div>
+      <div class="form-group">
+        <label class="form-label">备注说明（可选）</label>
+        <input id="rc-review-note" class="input-field" placeholder="审核备注">
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="hideModal('modal-rc-review')">取消</button>
+      <button class="btn btn-primary" id="rc-review-confirm-btn" onclick="rcApplyReviewConfirm()">确认</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ 凭证查看弹窗 ══ -->
+<div class="modal-overlay" id="modal-voucher-view">
+  <div class="modal glass-card" style="max-width:560px;width:95vw;">
+    <div class="modal-header">
+      <h3>查看凭证</h3>
+      <button class="modal-close" onclick="hideModal('modal-voucher-view')">✕</button>
+    </div>
+    <div class="modal-body" style="text-align:center;">
+      <div id="voucher-view-content"></div>
+    </div>
+    <!-- 上传新凭证 -->
+    <div style="padding:0 20px 16px;">
+      <div style="font-size:12px;color:var(--text-3);margin-bottom:8px;">重新上传凭证</div>
+      <input type="file" id="voucher-reupload-input" accept="image/*" onchange="voucherReupload(this)" style="font-size:13px;">
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="hideModal('modal-voucher-view')">关闭</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ 提现申请：新建弹窗 ══ -->
+<div class="modal-overlay" id="modal-wd-add">
+  <div class="modal glass-card" style="max-width:500px;width:95vw;">
+    <div class="modal-header">
+      <h3>新建提现申请</h3>
+      <button class="modal-close" onclick="hideModal('modal-wd-add')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-grid">
+        <div class="form-group">
+          <label class="form-label">代理 <span style="color:#e11d48">*</span></label>
+          <select id="wd-add-agent" class="select-field">
+            <option value="">— 选择代理 —</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">提现金额（元）<span style="color:#e11d48">*</span></label>
+          <input id="wd-add-amount" class="input-field" type="number" min="1" placeholder="请输入提现金额">
+        </div>
+        <div class="form-group">
+          <label class="form-label">收款方式 <span style="color:#e11d48">*</span></label>
+          <select id="wd-add-paytype" class="select-field">
+            <option value="支付宝">支付宝</option>
+            <option value="微信">微信</option>
+            <option value="银行卡">银行卡</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">收款账号 <span style="color:#e11d48">*</span></label>
+          <input id="wd-add-account" class="input-field" placeholder="支付宝账号 / 微信号 / 银行卡号">
+        </div>
+        <div class="form-group">
+          <label class="form-label">收款人姓名</label>
+          <input id="wd-add-accname" class="input-field" placeholder="户主姓名">
+        </div>
+        <div class="form-group">
+          <label class="form-label">备注</label>
+          <input id="wd-add-remark" class="input-field" placeholder="可选备注">
+        </div>
+      </div>
+    </div>
+    <div id="wd-add-msg" style="margin:0 20px 10px;font-size:13px;display:none;padding:8px 12px;border-radius:8px;"></div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="hideModal('modal-wd-add')">取消</button>
+      <button class="btn btn-primary" onclick="wdApplySave()">提交申请</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ 提现申请：处理弹窗 ══ -->
+<div class="modal-overlay" id="modal-wd-handle">
+  <div class="modal glass-card" style="max-width:440px;width:95vw;">
+    <div class="modal-header">
+      <h3 id="wd-handle-title">处理提现申请</h3>
+      <button class="modal-close" onclick="hideModal('modal-wd-handle')">✕</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="wd-handle-id">
+      <input type="hidden" id="wd-handle-action">
+      <div style="background:rgba(99,102,241,.06);border-radius:12px;padding:14px 16px;margin-bottom:14px;" id="wd-handle-info"></div>
+      <div class="form-group">
+        <label class="form-label">处理备注（可选）</label>
+        <input id="wd-handle-note" class="input-field" placeholder="处理备注">
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="hideModal('modal-wd-handle')">取消</button>
+      <button class="btn btn-primary" id="wd-handle-confirm-btn" onclick="wdApplyHandleConfirm()">确认</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ 收款方式：新增/编辑弹窗 ══ -->
+<div class="modal-overlay" id="modal-pm-edit">
+  <div class="modal glass-card" style="max-width:500px;width:95vw;">
+    <div class="modal-header">
+      <h3 id="pm-modal-title">新增收款方式</h3>
+      <button class="modal-close" onclick="hideModal('modal-pm-edit')">✕</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="pm-edit-id">
+      <div class="form-grid">
+        <div class="form-group">
+          <label class="form-label">收款类型 <span style="color:#e11d48">*</span></label>
+          <select id="pm-edit-type" class="select-field" onchange="pmTypeChange(this.value)">
+            <option value="wechat">微信</option>
+            <option value="alipay">支付宝</option>
+            <option value="bank">银行卡</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">显示名称</label>
+          <input id="pm-edit-name" class="input-field" placeholder="如：公司微信收款">
+        </div>
+        <div class="form-group" style="grid-column:1/-1;">
+          <label class="form-label" id="pm-account-label">收款账号 <span style="color:#e11d48">*</span></label>
+          <input id="pm-edit-account" class="input-field" placeholder="账号/手机号/卡号">
+        </div>
+        <div class="form-group">
+          <label class="form-label">收款人/户主</label>
+          <input id="pm-edit-accname" class="input-field" placeholder="姓名或公司名">
+        </div>
+        <div class="form-group">
+          <label class="form-label">备注（如：开户行）</label>
+          <input id="pm-edit-remark" class="input-field" placeholder="可选备注">
+        </div>
+        <div class="form-group">
+          <label class="form-label">排序（数字越小越靠前）</label>
+          <input id="pm-edit-sort" class="input-field" type="number" value="99">
+        </div>
+        <div class="form-group">
+          <label class="form-label">状态</label>
+          <select id="pm-edit-status" class="select-field">
+            <option value="1">启用</option>
+            <option value="0">禁用</option>
+          </select>
+        </div>
+        <div class="form-group" style="grid-column:1/-1;">
+          <label class="form-label">收款二维码（可选）</label>
+          <div id="pm-qr-wrap" style="border:2px dashed rgba(99,102,241,.3);border-radius:12px;padding:16px;text-align:center;cursor:pointer;"
+               onclick="document.getElementById('pm-qr-input').click()">
+            <input type="file" id="pm-qr-input" accept="image/*" style="display:none" onchange="pmQrPreview(this)">
+            <div id="pm-qr-hint" style="color:var(--text-3);font-size:13px;">
+              <div style="font-size:24px;margin-bottom:4px;">🖼️</div>
+              <div>点击上传二维码图片</div>
+            </div>
+            <img id="pm-qr-img" src="" alt="" style="display:none;max-width:160px;max-height:160px;border-radius:8px;margin-top:8px;">
+          </div>
+        </div>
+      </div>
+    </div>
+    <div id="pm-edit-msg" style="margin:0 20px 10px;font-size:13px;display:none;padding:8px 12px;border-radius:8px;"></div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="hideModal('modal-pm-edit')">取消</button>
+      <button class="btn btn-primary" onclick="pmSave()">💾 保存</button>
+    </div>
+  </div>
+</div>
+
+<!-- 新增 / 编辑 管理员账号 -->
+<div class="modal-overlay" id="modal-sysacc-edit">
+  <div class="modal glass-card" style="max-width:560px;width:95vw;">
+    <div class="modal-header">
+      <h3 id="sysacc-modal-title">新增管理员</h3>
+      <button class="modal-close" onclick="hideModal('modal-sysacc-edit')">✕</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="sysacc-edit-id">
+      <div class="form-grid">
+        <div class="form-group">
+          <label class="form-label">登录账号 <span style="color:#e11d48">*</span></label>
+          <input id="sysacc-edit-username" class="input-field" placeholder="登录用户名（字母+数字）">
+        </div>
+        <div class="form-group">
+          <label class="form-label">显示昵称</label>
+          <input id="sysacc-edit-nickname" class="input-field" placeholder="姓名或昵称">
+        </div>
+        <div class="form-group">
+          <label class="form-label">登录密码</label>
+          <div style="position:relative;">
+            <input id="sysacc-edit-password" class="input-field" type="password"
+              placeholder="留空则不修改密码" style="padding-right:40px;">
+            <span onclick="togglePwd('sysacc-edit-password',this)"
+              style="position:absolute;right:12px;top:50%;transform:translateY(-50%);cursor:pointer;font-size:16px;color:var(--text-3);">👁</span>
+          </div>
+          <span style="font-size:11.5px;color:var(--text-3);margin-top:4px;display:block;">新增时必填（≥6位），编辑时留空不修改</span>
+        </div>
+        <div class="form-group">
+          <label class="form-label">系统角色 <span style="color:#e11d48">*</span></label>
+          <select id="sysacc-edit-role" class="select-field">
+            <option value="admin">超级管理员（admin）</option>
+            <option value="operator" selected>运营（operator）</option>
+            <option value="finance">财务（finance）</option>
+            <option value="support">客服（support）</option>
+          </select>
+          <span style="font-size:11.5px;color:var(--text-3);margin-top:4px;display:block;">仅超级管理员具有完整后台权限</span>
+        </div>
+        <div class="form-group">
+          <label class="form-label">绑定邮箱</label>
+          <input id="sysacc-edit-email" class="input-field" type="email" placeholder="your@email.com">
+        </div>
+        <div class="form-group">
+          <label class="form-label">手机号</label>
+          <input id="sysacc-edit-phone" class="input-field" placeholder="138xxxx8888">
+        </div>
+        <div class="form-group">
+          <label class="form-label">账号状态</label>
+          <select id="sysacc-edit-status" class="select-field">
+            <option value="1">正常</option>
+            <option value="0">禁用</option>
+          </select>
+        </div>
+      </div>
+    </div>
+    <div id="sysacc-edit-msg" style="margin:0 20px 10px;font-size:13px;display:none;padding:8px 12px;border-radius:8px;"></div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="hideModal('modal-sysacc-edit')">取消</button>
+      <button class="btn btn-primary" onclick="sysAccSave()">💾 保存</button>
+    </div>
+  </div>
+</div>
+
+<!-- 角色编辑 / 权限配置弹窗 -->
+<div class="modal-overlay" id="modal-role-edit">
+  <div class="modal glass-card" style="max-width:680px;width:96vw;">
+    <div class="modal-header">
+      <h3 id="role-modal-title">新增角色</h3>
+      <button class="modal-close" onclick="hideModal('modal-role-edit')">✕</button>
+    </div>
+    <div class="modal-body" style="max-height:70vh;overflow-y:auto;">
+      <input type="hidden" id="role-edit-id">
+      <div class="form-grid" style="margin-bottom:20px;">
+        <div class="form-group">
+          <label class="form-label">角色名称 <span style="color:#e11d48">*</span></label>
+          <input id="role-edit-name" class="input-field" placeholder="如：运营、财务、客服">
+        </div>
+        <div class="form-group">
+          <label class="form-label">角色描述</label>
+          <input id="role-edit-desc" class="input-field" placeholder="简述该角色的职责范围">
+        </div>
+      </div>
+
+      <!-- 权限勾选区 -->
+      <div style="font-size:13px;font-weight:600;color:var(--text-2);margin-bottom:12px;display:flex;align-items:center;justify-content:space-between;">
+        <span>权限配置</span>
+        <div style="display:flex;gap:8px;">
+          <button class="btn btn-ghost btn-sm" onclick="roleCheckAll(true)">全选</button>
+          <button class="btn btn-ghost btn-sm" onclick="roleCheckAll(false)">全不选</button>
+        </div>
+      </div>
+      <div id="role-perm-groups" style="display:flex;flex-direction:column;gap:14px;">
+        <!-- 动态渲染 -->
+      </div>
+    </div>
+    <div id="role-edit-msg" style="margin:0 20px 10px;font-size:13px;display:none;padding:8px 12px;border-radius:8px;"></div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="hideModal('modal-role-edit')">取消</button>
+      <button class="btn btn-primary" onclick="roleSave()">💾 保存角色</button>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══ 批量加价弹窗 ══ -->
+<div class="modal-overlay" id="modal-batch-markup">
+  <div class="modal glass-card" style="max-width:480px;width:95vw;">
+    <div class="modal-header">
+      <h3>📊 批量加价设置</h3>
+      <button class="modal-close" onclick="hideModal('modal-batch-markup')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div style="background:linear-gradient(135deg,rgba(99,102,241,0.06),rgba(139,92,246,0.04));border:1px solid rgba(99,102,241,0.12);border-radius:12px;padding:14px 16px;margin-bottom:16px;font-size:13px;color:var(--text-2);">
+        💡 批量加价会以<strong>官方价</strong>为基准，按比例计算新代理价，不影响官方价本身。
+      </div>
+      <div class="form-grid">
+        <div class="form-group form-full">
+          <label class="form-label">应用范围</label>
+          <select id="markup-scope" class="select-field" onchange="markupScopeChange()">
+            <option value="all">全部代理</option>
+            <option value="selected">仅当前选中代理</option>
+          </select>
+        </div>
+        <div class="form-group form-full" id="markup-agent-wrap" style="display:none;">
+          <label class="form-label">选择代理（多选）</label>
+          <div id="markup-agent-list" style="max-height:160px;overflow-y:auto;border:1px solid var(--border);border-radius:10px;padding:8px 12px;display:flex;flex-direction:column;gap:6px;background:rgba(255,255,255,0.6);"></div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">调整方向</label>
+          <select id="markup-direction" class="select-field">
+            <option value="up">上调（加价）</option>
+            <option value="down">下调（降价）</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">调整幅度 (%)</label>
+          <input id="markup-percent" class="input-field" type="number" min="0.1" max="100" step="0.1" placeholder="如输入 5 表示 5%">
+        </div>
+      </div>
+      <div id="markup-preview" style="margin-top:8px;padding:10px 14px;background:rgba(99,102,241,0.06);border-radius:10px;font-size:13px;color:var(--text-2);display:none;"></div>
+    </div>
+    <div id="markup-msg" style="margin:0 20px 10px;font-size:13px;display:none;padding:8px 12px;border-radius:8px;"></div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="hideModal('modal-batch-markup')">取消</button>
+      <button class="btn btn-primary" onclick="markupSubmit()">确认执行</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ 代理级别 新增/编辑 弹窗 ══ -->
+<div class="modal-overlay" id="modal-level-edit">
+  <div class="modal glass-card" style="max-width:440px;width:95vw;">
+    <div class="modal-header">
+      <h3 id="level-modal-title">新增级别</h3>
+      <button class="modal-close" onclick="hideModal('modal-level-edit')">✕</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="level-edit-id">
+      <div class="form-grid">
+        <div class="form-group form-full">
+          <label class="form-label">级别名称 <span style="color:#e11d48">*</span></label>
+          <input id="level-edit-name" class="input-field" placeholder="如：一级代理">
+        </div>
+        <div class="form-group form-full">
+          <label class="form-label">级别描述</label>
+          <input id="level-edit-desc" class="input-field" placeholder="该级别的说明">
+        </div>
+        <div class="form-group">
+          <label class="form-label">标签颜色</label>
+          <select id="level-edit-color" class="select-field">
+            <option value="indigo">靛紫（Indigo）</option>
+            <option value="cyan">青色（Cyan）</option>
+            <option value="emerald">翠绿（Emerald）</option>
+            <option value="amber">琥珀（Amber）</option>
+            <option value="violet">紫色（Violet）</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">排序（数字越小越靠前）</label>
+          <input id="level-edit-sort" class="input-field" type="number" min="1" placeholder="1">
+        </div>
+      </div>
+    </div>
+    <div id="level-edit-msg" style="margin:0 20px 10px;font-size:13px;display:none;padding:8px 12px;border-radius:8px;"></div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="hideModal('modal-level-edit')">取消</button>
+      <button class="btn btn-primary" onclick="agentLevelSave()">💾 保存</button>
+    </div>
+  </div>
+</div>
+
+<script src="charts.js"></script>
+</body>
+</html>

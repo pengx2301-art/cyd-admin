@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>充易达 · 管理后台</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --g-indigo:  linear-gradient(135deg, #6366f1, #8b5cf6);
+      --g-cyan:    linear-gradient(135deg, #06b6d4, #0ea5e9);
+      --g-emerald: linear-gradient(135deg, #10b981, #059669);
+      --glow-indigo: 0 8px 32px rgba(99,102,241,0.35);
+      --ease: cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    body {
+      min-height: 100vh;
+      background: #f4f6fb;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Microsoft YaHei', sans-serif;
+      overflow: hidden;
+      position: relative;
+    }
+
+    /* ── 背景装饰 ── */
+    .bg-layer {
+      position: fixed; inset: 0; z-index: 0;
+      background: linear-gradient(145deg, #eef0ff 0%, #f4f6fb 40%, #e8f8f5 100%);
+    }
+    .bg-orb {
+      position: absolute; border-radius: 50%;
+      filter: blur(80px); opacity: 0.55;
+      animation: float 8s ease-in-out infinite alternate;
+    }
+    .bg-orb-1 { width: 500px; height: 500px; background: radial-gradient(circle, rgba(99,102,241,0.25), transparent); top: -100px; left: -100px; }
+    .bg-orb-2 { width: 400px; height: 400px; background: radial-gradient(circle, rgba(6,182,212,0.2), transparent); bottom: -80px; right: -80px; animation-delay: -3s; }
+    .bg-orb-3 { width: 300px; height: 300px; background: radial-gradient(circle, rgba(139,92,246,0.18), transparent); top: 50%; left: 60%; animation-delay: -5s; }
+    @keyframes float { from { transform: translateY(0) scale(1); } to { transform: translateY(-30px) scale(1.05); } }
+
+    /* ── 卡片 ── */
+    .login-wrap {
+      position: relative; z-index: 1;
+      display: flex;
+      width: 920px;
+      min-height: 540px;
+      background: rgba(255,255,255,0.75);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(255,255,255,0.6);
+      border-radius: 28px;
+      box-shadow: 0 24px 80px rgba(99,102,241,0.12), 0 2px 8px rgba(0,0,0,0.06);
+      overflow: hidden;
+      animation: cardIn .5s var(--ease) both;
+    }
+    @keyframes cardIn { from { opacity:0; transform: translateY(24px) scale(.97); } to { opacity:1; transform: none; } }
+
+    /* ── 左侧品牌区 ── */
+    .login-brand {
+      width: 380px;
+      flex-shrink: 0;
+      background: var(--g-indigo);
+      padding: 52px 40px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: relative;
+      overflow: hidden;
+    }
+    .brand-deco-1 { position:absolute; width:220px; height:220px; border-radius:50%; background:rgba(255,255,255,0.08); top:-60px; right:-60px; }
+    .brand-deco-2 { position:absolute; width:150px; height:150px; border-radius:50%; background:rgba(255,255,255,0.06); bottom:40px; left:-40px; }
+    .brand-deco-3 { position:absolute; width:80px;  height:80px;  border-radius:50%; background:rgba(255,255,255,0.10); bottom:180px; right:30px; }
+
+    .brand-top { position: relative; z-index: 1; }
+    .brand-logo {
+      width: 64px; height: 64px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.2);
+      border: 2px solid rgba(255,255,255,0.35);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 28px;
+      margin-bottom: 24px;
+      position: relative;
+    }
+    .brand-logo::before {
+      content: '';
+      position: absolute; top: 8px; left: 10px;
+      width: 30%; height: 30%;
+      background: rgba(255,255,255,0.5);
+      border-radius: 50%; filter: blur(4px);
+    }
+    .brand-name {
+      font-size: 26px; font-weight: 800;
+      color: #fff; letter-spacing: 1px;
+      margin-bottom: 10px;
+    }
+    .brand-tagline {
+      font-size: 13.5px; color: rgba(255,255,255,0.75);
+      line-height: 1.7;
+    }
+
+    .brand-features { position: relative; z-index: 1; display: flex; flex-direction: column; gap: 14px; }
+    .brand-feat {
+      display: flex; align-items: center; gap: 12px;
+      background: rgba(255,255,255,0.1);
+      border: 1px solid rgba(255,255,255,0.18);
+      border-radius: 14px;
+      padding: 12px 16px;
+    }
+    .feat-icon { font-size: 20px; }
+    .feat-text { font-size: 13px; color: rgba(255,255,255,0.9); font-weight: 500; }
+    .feat-sub  { font-size: 11.5px; color: rgba(255,255,255,0.6); margin-top: 1px; }
+
+    .brand-bottom { position: relative; z-index: 1; }
+    .brand-copy { font-size: 12px; color: rgba(255,255,255,0.5); line-height: 1.6; }
+
+    /* ── 右侧表单区 ── */
+    .login-form-wrap {
+      flex: 1;
+      padding: 52px 48px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+    .form-title { font-size: 22px; font-weight: 800; color: #1e1b4b; margin-bottom: 6px; }
+    .form-subtitle { font-size: 13.5px; color: #64748b; margin-bottom: 36px; }
+
+    /* ── 系统切换 Tab ── */
+    .role-tabs {
+      display: flex;
+      background: rgba(99,102,241,0.07);
+      border-radius: 12px;
+      padding: 4px;
+      margin-bottom: 28px;
+    }
+    .role-tab {
+      flex: 1; padding: 9px 0;
+      border: none; background: none; cursor: pointer;
+      font-size: 13px; font-weight: 600; color: #64748b;
+      border-radius: 9px;
+      transition: all .2s var(--ease);
+    }
+    .role-tab.active {
+      background: #fff;
+      color: #6366f1;
+      box-shadow: 0 2px 8px rgba(99,102,241,0.15);
+    }
+
+    /* ── 表单项 ── */
+    .form-group { margin-bottom: 18px; }
+    .form-label {
+      display: block; font-size: 13px; font-weight: 600;
+      color: #374151; margin-bottom: 7px;
+    }
+    .input-wrap { position: relative; }
+    .input-icon {
+      position: absolute; left: 14px; top: 50%;
+      transform: translateY(-50%);
+      font-size: 16px; color: #94a3b8;
+      pointer-events: none;
+    }
+    .form-input {
+      width: 100%; padding: 12px 14px 12px 42px;
+      border: 1.5px solid #e2e8f0;
+      border-radius: 12px;
+      background: rgba(248,250,252,0.8);
+      font-size: 14px; color: #1e1b4b;
+      outline: none;
+      transition: all .2s var(--ease);
+    }
+    .form-input:focus {
+      border-color: #6366f1;
+      background: #fff;
+      box-shadow: 0 0 0 4px rgba(99,102,241,0.1);
+    }
+    .form-input::placeholder { color: #94a3b8; }
+
+    .form-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; }
+    .remember { display: flex; align-items: center; gap: 7px; font-size: 13px; color: #475569; cursor: pointer; }
+    .remember input[type=checkbox] { accent-color: #6366f1; width: 15px; height: 15px; cursor: pointer; }
+    .forgot { font-size: 13px; color: #6366f1; text-decoration: none; font-weight: 600; }
+    .forgot:hover { opacity: .7; }
+
+    /* ── 登录按钮 ── */
+    .btn-login {
+      width: 100%; padding: 14px;
+      background: var(--g-indigo);
+      border: none; border-radius: 14px;
+      color: #fff; font-size: 15px; font-weight: 700;
+      cursor: pointer; letter-spacing: .5px;
+      box-shadow: var(--glow-indigo);
+      transition: all .25s var(--ease);
+      position: relative; overflow: hidden;
+    }
+    .btn-login::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: rgba(255,255,255,0);
+      transition: background .2s;
+    }
+    .btn-login:hover { transform: translateY(-2px); box-shadow: 0 12px 40px rgba(99,102,241,0.45); }
+    .btn-login:hover::before { background: rgba(255,255,255,0.06); }
+    .btn-login:active { transform: translateY(0); }
+
+    /* ── 底部提示 ── */
+    .form-footer {
+      margin-top: 24px; text-align: center;
+      font-size: 12.5px; color: #94a3b8; line-height: 1.7;
+    }
+    .form-footer a { color: #6366f1; text-decoration: none; font-weight: 600; }
+    .form-footer a:hover { opacity: .7; }
+
+    /* ── 验证码行 ── */
+    .captcha-row { display: flex; gap: 10px; }
+    .captcha-row .input-wrap { flex: 1; }
+    .captcha-img {
+      width: 110px; height: 46px;
+      border-radius: 12px; border: 1.5px solid #e2e8f0;
+      background: linear-gradient(135deg, #6366f1, #8b5cf6);
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; flex-shrink: 0; overflow: hidden;
+      font-size: 20px; font-weight: 800;
+      color: #fff; letter-spacing: 4px;
+      user-select: none;
+      text-shadow: 1px 1px 4px rgba(0,0,0,0.3);
+    }
+
+    /* ── 响应式 ── */
+    @media (max-width: 800px) {
+      .login-brand { display: none; }
+      .login-wrap { width: 100%; max-width: 440px; min-height: auto; }
+      .login-form-wrap { padding: 40px 32px; }
+    }
+    @media (max-width: 460px) {
+      .login-form-wrap { padding: 32px 22px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- 背景 -->
+  <div class="bg-layer">
+    <div class="bg-orb bg-orb-1"></div>
+    <div class="bg-orb bg-orb-2"></div>
+    <div class="bg-orb bg-orb-3"></div>
+  </div>
+
+  <!-- 主卡片 -->
+  <div class="login-wrap">
+
+    <!-- 左侧品牌区 ① -->
+    <div class="login-brand">
+      <div class="brand-deco-1"></div>
+      <div class="brand-deco-2"></div>
+      <div class="brand-deco-3"></div>
+
+      <div class="brand-top">
+        <!-- ② 品牌 Logo -->
+        <div class="brand-logo"><span id="dyn-logo">⚡</span></div>
+        <!-- ③ 系统名称 -->
+        <div class="brand-name" id="dyn-name">充易达</div>
+        <!-- ④ 系统副标题 -->
+        <div class="brand-tagline" id="dyn-tagline">高效自动充值系统<br>专业的代理商管理平台</div>
+      </div>
+
+      <div class="brand-features">
+        <!-- ⑤ 特性列表 -->
+        <div class="brand-feat">
+          <div class="feat-icon">🔋</div>
+          <div><div class="feat-text">多供应商自动对接</div><div class="feat-sub">大猿人 / 蜜蜂 / 直冲</div></div>
+        </div>
+        <div class="brand-feat">
+          <div class="feat-icon">📊</div>
+          <div><div class="feat-text">多级代理体系</div><div class="feat-sub">灵活定价 · 实时结算</div></div>
+        </div>
+        <div class="brand-feat">
+          <div class="feat-icon">🔌</div>
+          <div><div class="feat-text">开放 API 接入</div><div class="feat-sub">签名鉴权 · 稳定高效</div></div>
+        </div>
+      </div>
+
+      <div class="brand-bottom">
+        <!-- ⑥ 底部版权 -->
+        <div class="brand-copy">
+          <span id="dyn-copyright">© 2024 充易达 · 保留所有权利</span><br>
+          v2.5.0 · 技术支持：chongyida.com
+        </div>
+      </div>
+    </div>
+
+    <!-- 右侧表单区 -->
+    <div class="login-form-wrap">
+      <!-- ⑦ 欢迎语 -->
+      <div class="form-title">欢迎回来 👋</div>
+      <div class="form-subtitle">请登录您的管理账号</div>
+
+      <!-- ⑧ 角色切换 Tab -->
+      <div class="role-tabs">
+        <button class="role-tab active" onclick="switchTab(this,'admin')">总后台</button>
+        <button class="role-tab" onclick="switchTab(this,'agent')">代理后台</button>
+      </div>
+
+      <form onsubmit="return false;">
+        <!-- ⑨ 账号输入框 -->
+        <div class="form-group">
+          <label class="form-label">账号</label>
+          <div class="input-wrap">
+            <span class="input-icon">👤</span>
+            <input class="form-input" type="text" placeholder="请输入账号 / 手机号" autocomplete="username">
+          </div>
+        </div>
+
+        <!-- ⑩ 密码输入框 -->
+        <div class="form-group">
+          <label class="form-label">密码</label>
+          <div class="input-wrap">
+            <span class="input-icon">🔒</span>
+            <input class="form-input" type="password" placeholder="请输入密码" autocomplete="current-password">
+          </div>
+        </div>
+
+        <!-- ⑪ 验证码 -->
+        <div class="form-group">
+          <label class="form-label">验证码</label>
+          <div class="captcha-row">
+            <div class="input-wrap">
+              <span class="input-icon">🛡️</span>
+              <input class="form-input" type="text" placeholder="请输入验证码" maxlength="4">
+            </div>
+            <div class="captcha-img" id="captchaBox" onclick="refreshCaptcha()">A7K2</div>
+          </div>
+        </div>
+
+        <!-- ⑫ 记住我 / 忘记密码 -->
+        <div class="form-row">
+          <label class="remember">
+            <input type="checkbox" checked> 记住我
+          </label>
+          <!-- ⑬ 忘记密码链接 -->
+          <a href="#" class="forgot">忘记密码？</a>
+        </div>
+
+        <!-- ⑭ 登录按钮文字 -->
+        <button class="btn-login" onclick="doLogin()">立即登录</button>
+      </form>
+
+      <!-- ⑮ 底部声明 -->
+      <div class="form-footer">
+        登录即代表您同意
+        <a id="dyn-terms" href="#">《服务条款》</a> 和
+        <a id="dyn-privacy" href="#">《隐私政策》</a><br>
+        遇到问题？请联系 <a href="#">系统管理员</a>
+        <div id="dyn-disclaimer" style="margin-top:6px;font-size:11.5px;color:#94a3b8;display:none;"></div>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    /* ── 品牌配置读取 ───────────────────────────────────────── */
+    const BRAND_KEY = 'cyd_brand_config';
+    const BRAND_DEFAULTS = {
+      logoType:    'emoji',
+      logoEmoji:   '⚡',
+      logoImage:   '',
+      name:        '充易达',
+      tagline:     '高效自动充值系统\n专业的代理商管理平台',
+      copyright:   '© 2024 充易达 · 保留所有权利',
+      termsText:   '《服务条款》',
+      termsUrl:    '#',
+      privacyText: '《隐私政策》',
+      privacyUrl:  '#',
+      disclaimer:  '',
+    };
+
+    function getBrandConfig() {
+      try {
+        const saved = JSON.parse(localStorage.getItem(BRAND_KEY) || '{}');
+        return Object.assign({}, BRAND_DEFAULTS, saved);
+      } catch { return { ...BRAND_DEFAULTS }; }
+    }
+
+    function applyBrand() {
+      const cfg = getBrandConfig();
+
+      // ① Logo
+      const logoEl = document.getElementById('dyn-logo');
+      if (logoEl) {
+        if (cfg.logoType === 'image' && cfg.logoImage) {
+          logoEl.innerHTML = `<img src="${cfg.logoImage}" style="width:48px;height:48px;border-radius:50%;object-fit:cover;">`;
+        } else {
+          logoEl.textContent = cfg.logoEmoji || '⚡';
+        }
+      }
+
+      // ③ 系统名称
+      const nameEl = document.getElementById('dyn-name');
+      if (nameEl) nameEl.textContent = cfg.name;
+
+      // ④ 副标题
+      const taglineEl = document.getElementById('dyn-tagline');
+      if (taglineEl) taglineEl.innerHTML = (cfg.tagline || '').replace(/\\n|\n/g, '<br>');
+
+      // ⑥ 底部版权
+      const copyEl = document.getElementById('dyn-copyright');
+      if (copyEl) copyEl.textContent = cfg.copyright;
+
+      // ⑬ 服务条款 & 隐私政策链接
+      const termsEl = document.getElementById('dyn-terms');
+      if (termsEl) { termsEl.textContent = cfg.termsText; termsEl.href = cfg.termsUrl || '#'; }
+      const privEl = document.getElementById('dyn-privacy');
+      if (privEl)  { privEl.textContent  = cfg.privacyText; privEl.href = cfg.privacyUrl || '#'; }
+
+      // ⑮ 底部附加声明
+      const disclaimerEl = document.getElementById('dyn-disclaimer');
+      if (disclaimerEl) {
+        if (cfg.disclaimer) {
+          disclaimerEl.textContent = cfg.disclaimer;
+          disclaimerEl.style.display = 'block';
+        } else {
+          disclaimerEl.style.display = 'none';
+        }
+      }
+
+      // 浏览器标签页标题
+      document.title = (cfg.name || '充易达') + ' · 管理后台';
+    }
+
+    /* ── 验证码 ─────────────────────────────────────────────── */
+    const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+    function refreshCaptcha() {
+      let code = '';
+      for (let i = 0; i < 4; i++) code += chars[Math.floor(Math.random() * chars.length)];
+      document.getElementById('captchaBox').textContent = code;
+    }
+
+    /* ── Tab 切换 ───────────────────────────────────────────── */
+    function switchTab(el, role) {
+      document.querySelectorAll('.role-tab').forEach(t => t.classList.remove('active'));
+      el.classList.add('active');
+      document.querySelector('.form-subtitle').textContent =
+        role === 'admin' ? '请登录您的管理账号' : '请登录您的代理账号';
+    }
+
+    /* ── 错误提示 ──────────────────────────────────────────── */
+    function showError(msg) {
+      let el = document.getElementById('login-error');
+      if (!el) {
+        el = document.createElement('div');
+        el.id = 'login-error';
+        el.style.cssText = `
+          background:rgba(244,63,94,0.09); border:1px solid rgba(244,63,94,0.25);
+          color:#e11d48; border-radius:10px; padding:10px 14px;
+          font-size:13px; font-weight:600; margin-bottom:16px;
+          display:flex; align-items:center; gap:8px;
+          animation:fadeInUp .25s ease both;
+        `;
+        const form = document.querySelector('form');
+        form.insertBefore(el, form.firstChild);
+      }
+      el.innerHTML = `⚠️ ${msg}`;
+      el.style.display = 'flex';
+    }
+    function clearError() {
+      const el = document.getElementById('login-error');
+      if (el) el.style.display = 'none';
+    }
+
+    /* ── 登录 — 接入真实 API ─────────────────────────────── */
+    async function doLogin() {
+      clearError();
+      const username = document.querySelector('input[autocomplete="username"]').value.trim();
+      const password = document.querySelector('input[autocomplete="current-password"]').value;
+      const captchaInput = document.querySelector('input[maxlength="4"]').value.trim().toUpperCase();
+      const captchaCode  = document.getElementById('captchaBox').textContent.trim().toUpperCase();
+
+      if (!username) return showError('请输入账号');
+      if (!password) return showError('请输入密码');
+      if (captchaInput !== captchaCode) {
+        refreshCaptcha();
+        return showError('验证码错误，已刷新');
+      }
+
+      const btn = document.querySelector('.btn-login');
+      btn.textContent = '登录中…';
+      btn.disabled = true;
+      btn.style.opacity = '.75';
+
+      try {
+        const res  = await fetch('/api/auth/login', {
+          method:  'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body:    JSON.stringify({ username, password }),
+        });
+        const data = await res.json();
+
+        if (data.code === 0) {
+          // 保存 token 和用户信息
+          localStorage.setItem('cyd_token', data.data.token);
+          localStorage.setItem('cyd_user',  JSON.stringify(data.data.user));
+          btn.textContent = '✓ 登录成功，跳转中…';
+          btn.style.opacity = '1';
+          btn.style.background = 'linear-gradient(135deg,#10b981,#059669)';
+          setTimeout(() => { window.location.href = 'index.html'; }, 800);
+        } else {
+          refreshCaptcha();
+          showError(data.msg || '登录失败');
+          btn.textContent = '立即登录';
+          btn.disabled = false;
+          btn.style.opacity = '1';
+        }
+      } catch (e) {
+        showError('网络异常，请检查服务是否启动');
+        btn.textContent = '立即登录';
+        btn.disabled = false;
+        btn.style.opacity = '1';
+      }
+    }
+
+    /* ── 回车触发登录 ─────────────────────────────────────── */
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Enter') doLogin();
+    });
+
+    /* ── 页面加载完毕后应用品牌配置 ────────────────────────── */
+    document.addEventListener('DOMContentLoaded', applyBrand);
+  </script>
+</body>
+</html>

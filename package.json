@@ -1,0 +1,21 @@
+{
+  "name": "20260315203305",
+  "version": "1.0.0",
+  "main": "db.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "@cloudbase/framework-plugin-node": "^1.9.7",
+    "@cloudbase/framework-plugin-website": "^1.9.7",
+    "lowdb": "^1.0.0"
+  },
+  "devDependencies": {
+    "iconv-lite": "^0.7.2"
+  }
+}

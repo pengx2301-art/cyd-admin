@@ -1,0 +1,41 @@
+{
+  "envId": "longxia-2gdgbb5782e17db6",
+  "version": "2.0",
+  "$schema": "https://framework-1258016615.tcloudbaseapp.com/schema/latest.json",
+  "framework": {
+    "name": "cyd-admin",
+    "plugins": {
+      "client": {
+        "use": "@cloudbase/framework-plugin-website",
+        "inputs": {
+          "buildCommand": "echo 'No build needed'",
+          "outputPath": "./dashboard-ui",
+          "cloudPath": "/",
+          "ignore": [
+            ".git",
+            ".gitignore",
+            "node_modules"
+          ]
+        }
+      },
+      "server": {
+        "use": "@cloudbase/framework-plugin-node",
+        "inputs": {
+          "entry": "server.js",
+          "name": "cyd-server",
+          "path": "./",
+          "envVariables": {
+            "PORT": "8080"
+          },
+          "ignore": [
+            ".git",
+            ".gitignore",
+            "node_modules",
+            "dashboard-ui",
+            "data"
+          ]
+        }
+      }
+    }
+  }
+}

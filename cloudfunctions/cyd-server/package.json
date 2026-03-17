@@ -1,0 +1,15 @@
+{
+  "name": "cyd-server",
+  "version": "1.0.0",
+  "description": "充易达管理系统 - CloudBase 云函数",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "lowdb": "^1.0.0"
+  },
+  "engines": {
+    "node": ">=12.0.0"
+  }
+}
