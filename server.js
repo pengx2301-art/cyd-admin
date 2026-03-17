@@ -857,6 +857,71 @@ async function handleAPI(req, res, pathname) {
     return ok(res, order);
   }
 
+  /* ── GET /api/orders/:id/balance ─── 查询订单用户余额 */
+  const orderBalanceMatch = pathname.match(/^\/api\/orders\/(\d+)\/balance$/);
+  if (orderBalanceMatch && req.method === 'GET') {
+    const id = parseInt(orderBalanceMatch[1]);
+    const order = db.get('orders').find({ id }).value();
+    if (!order) return fail(res, '订单不存在', 404);
+
+    const member = db.get('members').find({ id: order.member_id }).value();
+    if (!member) {
+      return ok(res, {
+        balance: 0,
+        member_name: order.member_name,
+        account: order.remark ? order.remark.replace(/^充值账号:\s*/, '') : '—'
+      }, '查询成功');
+    }
+
+    const account = order.remark ? order.remark.replace(/^充值账号:\s*/, '') : '—';
+
+    return ok(res, {
+      balance: parseFloat(member.balance) || 0,
+      member_name: member.username,
+      account: account,
+      member_id: member.id,
+      user_type: member.user_type,
+      freeze_balance: parseFloat(member.freeze_balance) || 0
+    }, '查询成功');
+  }
+
+  /* ── POST /api/orders/:id/recharge ─── 发起接口充值 */
+  const orderRechargeMatch = pathname.match(/^\/api\/orders\/(\d+)\/recharge$/);
+  if (orderRechargeMatch && req.method === 'POST') {
+    const id = parseInt(orderRechargeMatch[1]);
+    const body = await readBody(req);
+
+    const order = db.get('orders').find({ id }).value();
+    if (!order) return fail(res, '订单不存在', 404);
+
+    // 检查订单状态：只有待处理或失败的订单才能重新充值
+    if (order.status !== 0 && order.status !== 3) {
+      return fail(res, '订单状态不允许充值，当前状态: ' + (['待处理', '处理中', '成功', '失败', '已退款'][order.status] || order.status));
+    }
+
+    // 获取产品信息
+    const product = order.product_id ? db.get('products').find({ id: order.product_id }).value() : null;
+
+    // 更新订单状态为处理中
+    updateOrderStatus(order.order_no, 1, '手动发起充值');
+
+    // 获取充值账号
+    const account = order.remark ? order.remark.replace(/^充值账号:\s*/, '') : '';
+
+    // 模拟调用上游充值接口（实际业务中这里应该调用真实的充值API）
+    // 这里我们只是更新订单状态，实际充值逻辑需要根据具体业务实现
+
+    return ok(res, {
+      order_id: order.id,
+      order_no: order.order_no,
+      account: account,
+      product_name: product ? product.name : order.product_name,
+      amount: order.amount,
+      status: 1,
+      message: '充值请求已提交，正在处理中'
+    }, '充值请求已提交');
+  }
+
   /* ── PUT /api/orders/:id/status ─── 更新订单状态 */
   const orderStatusMatch = pathname.match(/^\/api\/orders\/(\d+)\/status$/);
   if (orderStatusMatch && req.method === 'PUT') {

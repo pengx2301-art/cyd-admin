@@ -4142,8 +4142,110 @@ function ordersReset() {
   ordersLoad();
 }
 
-function ordersExport() {
-  showToast('导出功能开发中', 'info');
+async function ordersExport() {
+  try {
+    showToast('正在导出订单数据...', 'info');
+
+    // 获取当前过滤条件下的所有订单数据
+    const keyword = document.getElementById('order-keyword')?.value || '';
+    const status = document.getElementById('order-status')?.value || '';
+    const type = document.getElementById('order-type')?.value || '';
+    const dateStart = document.getElementById('order-date-start')?.value || '';
+    const dateEnd = document.getElementById('order-date-end')?.value || '';
+
+    // 构建查询参数
+    let params = [];
+    if (keyword) params.push(`keyword=${encodeURIComponent(keyword)}`);
+    if (status) params.push(`status=${status}`);
+    if (type) params.push(`order_type=${type}`);
+    if (dateStart) params.push(`date_start=${dateStart}`);
+    if (dateEnd) params.push(`date_end=${dateEnd}`);
+
+    // 设置导出所有数据（不分页）
+    params.push('limit=10000');
+    params.push('page=1');
+
+    const url = '/api/orders' + (params.length ? '?' + params.join('&') : '');
+    const response = await fetch(url, {
+      headers: {
+        'Authorization': 'Bearer ' + getToken(),
+        'Content-Type': 'application/json'
+      }
+    });
+
+    const data = await response.json();
+
+    if (!data || data.code !== 0) {
+      showToast('导出失败: ' + (data.msg || '未知错误'), 'error');
+      return;
+    }
+
+    const orders = data.data.list || [];
+
+    if (orders.length === 0) {
+      showToast('当前条件下没有订单数据可导出', 'warning');
+      return;
+    }
+
+    // 构建CSV内容
+    const headers = [
+      '订单号', '客户', '面额', '套餐', '充值账号', '余额',
+      '状态', '耗时', '回调时间', '创建时间', 'API', '接口充值',
+      '备注', '标签'
+    ];
+
+    const statusMap = { 0: '待处理', 1: '处理中', 2: '成功', 3: '失败', 4: '已退款' };
+
+    const rows = orders.map(o => {
+      const account = o.remark ? o.remark.replace(/^充值账号:\s*/, '') : '—';
+      const created = o.created_at || '—';
+      const callbackTime = o.callback_at || '—';
+      const elapsed = o.elapsed || '—';
+
+      return [
+        o.order_no || '—',
+        o.member_name || '—',
+        Number(o.amount || 0).toFixed(2),
+        o.product_name || '—',
+        account,
+        '', // 余额需要单独查询，这里留空
+        statusMap[o.status] || o.status,
+        elapsed,
+        callbackTime,
+        created,
+        o.api_source || '—',
+        o.interface_recharge ? '是' : '否',
+        o.remark || '—',
+        o.tags || '—'
+      ].map(field => `"${String(field).replace(/"/g, '""')}"`).join(',');
+    });
+
+    const csvContent = '\uFEFF' + [headers.join(','), ...rows].join('\n');
+
+    // 创建下载链接
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const downloadUrl = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+
+    const fileName = `订单导出_${new Date().toISOString().slice(0, 10)}.csv`;
+
+    link.href = downloadUrl;
+    link.download = fileName;
+    link.style.display = 'none';
+
+    document.body.appendChild(link);
+    link.click();
+
+    // 清理
+    document.body.removeChild(link);
+    URL.revokeObjectURL(downloadUrl);
+
+    showToast(`已成功导出 ${orders.length} 条订单`, 'success');
+
+  } catch (error) {
+    console.error('导出订单错误:', error);
+    showToast('导出订单时发生错误', 'error');
+  }
 }
 
 /* ═══════════════════════════════════════════════════════════════
@@ -4276,20 +4378,25 @@ function ordersRenderTable() {
         break;
     }
 
-    return `<tr>
+    return `<tr data-order-id="${o.id}">
       <td><input type="checkbox" class="order-checkbox" data-id="${o.id}" onchange="ordersUpdateBatchActions()"></td>
       <td class="mono">${escHtml(o.order_no || '')}</td>
       <td>${escHtml(o.member_name || '—')}</td>
       <td class="num">¥${Number(o.amount || 0).toFixed(2)}</td>
       <td>${escHtml(o.product_name || '—')}</td>
       <td class="mono">${escHtml(account)}</td>
-      <td><button class="btn-link text-info" onclick="orderQueryBalance(${o.id})">查询</button></td>
+      <td class="balance-cell"><button class="btn-link text-info" onclick="orderQueryBalance(${o.id})">查询</button></td>
       <td><span class="badge ${sBadge}">${sLabel}</span></td>
       <td>${elapsed}</td>
       <td>${callbackTime}</td>
       <td>${created}</td>
       <td>${o.api_source || '—'}</td>
-      <td>${o.interface_recharge ? '是' : '否'}</td>
+      <td>
+        ${o.interface_recharge
+          ? `<button class="btn btn-sm btn-primary" onclick="orderInterfaceRecharge(${o.id})" title="发起充值请求">充值</button>`
+          : '<span class="text-muted">—</span>'
+        }
+      </td>
       <td style="max-width:200px;overflow:hidden;text-overflow:ellipsis;">${escHtml(o.remark || '—')}</td>
       <td>${o.tags || '—'}</td>
       <td>
@@ -4395,8 +4502,89 @@ function ordersBatchUpdate(newStatus) {
   });
 }
 
-function orderQueryBalance(orderId) {
-  showToast('余额查询功能开发中', 'info');
+async function orderQueryBalance(orderId) {
+  try {
+    // 显示加载中
+    showToast('正在查询余额...', 'info');
+
+    // 调用后端API查询余额
+    const data = await apiRequest('GET', `/api/orders/${orderId}/balance`);
+
+    if (!data || data.code !== 0) {
+      showToast('查询余额失败', 'error');
+      return;
+    }
+
+    const result = data.data;
+    const balanceInfo = `余额: ¥${parseFloat(result.balance || 0).toFixed(2)}`;
+
+    // 在余额列显示查询结果
+    const balanceCell = document.querySelector(`tr[data-order-id="${orderId}"] .balance-cell`);
+    if (balanceCell) {
+      balanceCell.innerHTML = `<span class="badge bg-success-light text-success">${balanceInfo}</span>`;
+      balanceCell.dataset.balance = result.balance;
+      balanceCell.dataset.fetched = 'true';
+    }
+
+    // 显示详细提示
+    let detailMsg = `用户: ${result.member_name}\n${balanceInfo}`;
+    if (result.freeze_balance > 0) {
+      detailMsg += `\n冻结余额: ¥${parseFloat(result.freeze_balance).toFixed(2)}`;
+    }
+    if (result.account && result.account !== '—') {
+      detailMsg += `\n充值账号: ${result.account}`;
+    }
+
+    showToast('查询成功', 'success');
+
+    // 可选：弹出详情弹窗显示更详细的信息
+    if (window.confirm(`${detailMsg}\n\n点击"确定"关闭，点击"取消"查看更多信息`)) {
+      // 用户点击确定
+    } else {
+      // 可以在这里打开一个详情弹窗
+      alert(`账号详情：\n\n用户名：${result.member_name}\n用户ID：${result.member_id}\n用户类型：${result.user_type}\n当前余额：¥${parseFloat(result.balance || 0).toFixed(2)}\n冻结余额：¥${parseFloat(result.freeze_balance || 0).toFixed(2)}\n充值账号：${result.account}\n\n查询时间：${new Date().toLocaleString()}`);
+    }
+
+  } catch (error) {
+    console.error('余额查询错误:', error);
+    showToast('查询余额时发生错误', 'error');
+  }
+}
+
+/* ──────────────── 订单：接口充值 ──────────────── */
+async function orderInterfaceRecharge(orderId) {
+  try {
+    // 显示加载中
+    showToast('正在发起充值请求...', 'info');
+
+    // 调用后端API发起充值
+    const data = await apiRequest('POST', `/api/orders/${orderId}/recharge`, {
+      // 可以传递额外的参数，比如优先级、备注等
+      manual: true
+    });
+
+    if (!data || data.code !== 0) {
+      showToast('发起充值失败: ' + (data.msg || '未知错误'), 'error');
+      return;
+    }
+
+    const result = data.data;
+    showToast(`充值请求已提交：${result.order_no}`, 'success');
+
+    // 刷新订单列表
+    ordersLoad();
+
+    // 可选：弹出充值详情
+    const detailMsg = `订单号：${result.order_no}\n充值账号：${result.account}\n产品：${result.product_name}\n面值：¥${result.amount}\n状态：处理中\n\n充值请求已提交，请稍后查看状态。`;
+
+    if (confirm(`${detailMsg}\n\n点击"确定"关闭，点击"取消"返回订单列表`)) {
+      // 用户点击确定
+    }
+
+  } catch (error) {
+    console.error('接口充值错误:', error);
+    showToast('发起充值时发生错误', 'error');
+  }
 }
 
 /* ═══════════════════════════════════════════════════════════════
