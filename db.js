@@ -42,9 +42,9 @@ function nextId(collection) {
   return Math.max(...items.map(i => i.id || 0)) + 1;
 }
 
-/** 当前时间字符串 */
+/** 当前时间字符串（ISO 8601 格式） */
 function now() {
-  return new Date().toLocaleString('zh-CN', { hour12: false });
+  return new Date().toISOString().replace('T', ' ').slice(0, 19);
 }
 
 /* ═══════════════════════════════════════════════════════
@@ -72,6 +72,7 @@ db.defaults({
   roles:             [],          // 角色表
   login_logs:        [],
   balance_logs:      [],          // 余额变动流水
+  orders:            [],          // 订单表（充值订单、消费订单）
   brand:             DEFAULT_BRAND,
   _permissions_meta: [],
   recharge_applies:  [],          // 充值申请
@@ -86,6 +87,7 @@ db.defaults({
   products:          [],          // 产品列表
   direct_products:   [],          // 直冲产品
   daily_revenue:     [],          // 当日营业额（按时段）
+  operation_logs:    [],          // 操作日志（安全审计）
 }).write();
 
 /* ═══════════════════════════════════════════════════════
@@ -340,6 +342,161 @@ if (db.get('daily_revenue').value().length === 0) {
 console.log('[DB] 数据库就绪，文件：' + DB_PATH);
 
 /* ═══════════════════════════════════════════════════════
+   订单管理函数
+   ═══════════════════════════════════════════════════════ */
+
+/**
+ * 创建订单
+ * @param {Object} orderData 订单数据
+ * @param {string} orderData.order_no 订单号
+ * @param {number} orderData.member_id 用户ID
+ * @param {string} orderData.order_type 订单类型: 'recharge'(充值) | 'consume'(消费)
+ * @param {number} orderData.amount 金额
+ * @param {number} orderData.product_id 产品ID(消费订单)
+ * @param {number} orderData.status 状态: 0=待处理 1=处理中 2=成功 3=失败
+ * @param {string} orderData.remark 备注
+ * @returns {Object} 创建的订单对象
+ */
+function createOrder(orderData) {
+  const order = {
+    id: nextId('orders'),
+    order_no: orderData.order_no || 'ORD' + Date.now() + Math.floor(Math.random() * 1000),
+    member_id: orderData.member_id,
+    member_name: orderData.member_name || '',
+    order_type: orderData.order_type || 'consume',  // 'recharge' | 'consume'
+    amount: parseFloat(orderData.amount) || 0,
+    product_id: orderData.product_id || null,
+    product_name: orderData.product_name || '',
+    status: orderData.status !== undefined ? orderData.status : 0,  // 0=待处理 1=处理中 2=成功 3=失败
+    remark: orderData.remark || '',
+    created_at: now(),
+    updated_at: now()
+  };
+
+  db.get('orders').push(order).write();
+  return order;
+}
+
+/**
+ * 更新订单状态
+ * @param {string} orderNo 订单号
+ * @param {number} status 新状态
+ * @param {string} remark 备注
+ * @returns {boolean} 是否更新成功
+ */
+function updateOrderStatus(orderNo, status, remark = '') {
+  const order = db.get('orders').find({ order_no: orderNo }).value();
+  if (!order) return false;
+
+  db.get('orders').find({ order_no: orderNo }).assign({
+    status,
+    remark,
+    updated_at: now()
+  }).write();
+
+  return true;
+}
+
+/**
+ * 添加余额变动日志
+ * @param {Object} logData 日志数据
+ */
+function addBalanceLog(logData) {
+  const log = {
+    id: nextId('balance_logs'),
+    member_id: logData.member_id,
+    member_name: logData.member_name || '',
+    change_type: logData.change_type,  // 'recharge'(充值) | 'consume'(消费) | 'withdraw'(提现)
+    amount: parseFloat(logData.amount) || 0,
+    balance_before: parseFloat(logData.balance_before) || 0,
+    balance_after: parseFloat(logData.balance_after) || 0,
+    remark: logData.remark || '',
+    created_at: now()
+  };
+
+  db.get('balance_logs').push(log).write();
+}
+
+/**
+ * 添加操作日志(安全审计)
+ * @param {Object} logData 日志数据
+ */
+function addOperationLog(logData) {
+  const log = {
+    id: nextId('operation_logs'),
+    user_id: logData.user_id,
+    username: logData.username || '',
+    action: logData.action,  // 操作类型: 'login', 'create_order', 'update_balance', etc.
+    target_type: logData.target_type || '',  // 目标类型: 'order', 'member', etc.
+    target_id: logData.target_id || null,
+    detail: logData.detail || '',
+    ip: logData.ip || '',
+    user_agent: logData.user_agent || '',
+    created_at: now()
+  };
+
+  db.get('operation_logs').push(log).write();
+}
+
+/**
+ * 更新用户余额（带事务处理）
+ * @param {number} memberId 用户ID
+ * @param {number} amount 变动金额（正数为增加，负数为减少）
+ * @param {string} changeType 变动类型: 'recharge' | 'consume' | 'withdraw' | 'refund'
+ * @param {string} remark 备注
+ * @returns {Object} {success, message, newBalance}
+ */
+function updateMemberBalance(memberId, amount, changeType, remark = '') {
+  // 1. 读取用户当前余额
+  const member = db.get('members').find({ id: memberId }).value();
+  if (!member) {
+    return { success: false, message: '用户不存在' };
+  }
+
+  const balanceBefore = parseFloat(member.balance) || 0;
+  const balanceAfter = balanceBefore + parseFloat(amount);
+
+  // 2. 验证余额是否足够
+  if (balanceAfter < 0) {
+    return { success: false, message: '用户余额不足' };
+  }
+
+  // 3. 更新用户余额（原子操作）
+  db.get('members').find({ id: memberId })
+    .assign({ balance: Math.round(balanceAfter * 100) / 100, updated_at: now() })
+    .write();
+
+  // 4. 记录余额变动日志
+  addBalanceLog({
+    member_id: memberId,
+    member_name: member.username,
+    change_type: changeType,
+    amount: amount,
+    balance_before: balanceBefore,
+    balance_after: balanceAfter,
+    remark: remark
+  });
+
+  return {
+    success: true,
+    message: '余额更新成功',
+    newBalance: Math.round(balanceAfter * 100) / 100,
+    oldBalance: balanceBefore
+  };
+}
+
+/* ═══════════════════════════════════════════════════════
    导出
    ═══════════════════════════════════════════════════════ */
-module.exports = { db, hashPassword, verifyPassword, nextId, now };
+module.exports = {
+  db,
+  hashPassword,
+  verifyPassword,
+  nextId,
+  now,
+  createOrder,
+  updateOrderStatus,
+  addBalanceLog,
+  addOperationLog,
+  updateMemberBalance
+};

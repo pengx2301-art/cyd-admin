@@ -8,7 +8,7 @@ const fs     = require('fs');
 const path   = require('path');
 const crypto = require('crypto');
 
-const { db, hashPassword, verifyPassword, nextId, now } = require('./db');
+const { db, hashPassword, verifyPassword, nextId, now, createOrder, updateOrderStatus, addBalanceLog, addOperationLog, updateMemberBalance } = require('./db');
 
 const BASE = path.join(__dirname, 'dashboard-ui');
 const PORT = 8899;
@@ -86,22 +86,85 @@ async function handleAPI(req, res, pathname) {
     const { username, password } = await readBody(req);
     if (!username || !password) return fail(res, '账号和密码不能为空');
 
+    // 检查IP地址
+    if (!ip) {
+      return fail(res, '无法获取IP地址');
+    }
+
+    // 检查最近的失败登录次数（防暴力破解）
+    const recentFailures = db.get('login_logs')
+      .filter(l =>
+        l.username === username &&
+        l.result === 'fail' &&
+        l.created_at > now().slice(0, 11) + '00:00:00'
+      )
+      .value().length;
+
+    if (recentFailures >= 5) {
+      db.get('login_logs').push({
+        id: nextId('login_logs'),
+        username,
+        ip,
+        ua,
+        result: 'fail',
+        reason: '登录失败次数过多，账户已临时锁定',
+        created_at: now()
+      }).write();
+      return fail(res, '登录失败次数过多，请24小时后再试');
+    }
+
     const user = db.get('sys_users').find({ username }).value();
 
     if (!user || user.status !== 1) {
-      db.get('login_logs').push({ id: nextId('login_logs'), username, ip, ua, result: 'fail', reason: user ? '账号已禁用' : '账号不存在', created_at: now() }).write();
+      db.get('login_logs').push({
+        id: nextId('login_logs'),
+        username,
+        ip,
+        ua,
+        result: 'fail',
+        reason: user ? '账号已禁用' : '账号不存在',
+        created_at: now()
+      }).write();
       return fail(res, user ? '账号已被禁用，请联系管理员' : '账号不存在');
     }
 
     if (!verifyPassword(password, user.password, user.salt)) {
-      db.get('login_logs').push({ id: nextId('login_logs'), username, ip, ua, result: 'fail', reason: '密码错误', created_at: now() }).write();
+      db.get('login_logs').push({
+        id: nextId('login_logs'),
+        username,
+        ip,
+        ua,
+        result: 'fail',
+        reason: '密码错误',
+        created_at: now()
+      }).write();
       return fail(res, '密码错误，请重试');
     }
 
-    // 成功
+    // 成功登录
     const token = createSession(user);
     db.get('sys_users').find({ id: user.id }).assign({ last_login: now() }).write();
-    db.get('login_logs').push({ id: nextId('login_logs'), user_id: user.id, username, ip, ua, result: 'success', created_at: now() }).write();
+    db.get('login_logs').push({
+      id: nextId('login_logs'),
+      user_id: user.id,
+      username,
+      ip,
+      ua,
+      result: 'success',
+      created_at: now()
+    }).write();
+
+    // 记录操作日志
+    addOperationLog({
+      user_id: user.id,
+      username: user.username,
+      action: 'login',
+      target_type: 'user',
+      target_id: user.id,
+      detail: `用户登录成功, IP: ${ip}`,
+      ip,
+      user_agent: ua
+    });
 
     return ok(res, {
       token,
@@ -436,40 +499,90 @@ async function handleAPI(req, res, pathname) {
     if (!['add', 'sub'].includes(type))  return fail(res, '类型参数错误');
     if (isNaN(amount) || amount <= 0)    return fail(res, '金额必须大于 0');
     if (amount > 999999)                 return fail(res, '单次调整金额不能超过999999');
+    if (!remark)                          return fail(res, '请填写调整原因');
 
-    const before  = parseFloat(member.balance) || 0;
-    let   after   = type === 'add' ? +(before + amount).toFixed(2) : +(before - amount).toFixed(2);
-    if (after < 0) return fail(res, `余额不足，当前余额 ¥${before.toFixed(2)}`);
+    // 使用带事务的余额更新函数
+    const changeAmount = type === 'add' ? amount : -amount;
+    const changeType = type === 'add' ? 'admin_add' : 'admin_sub';
+    const result = updateMemberBalance(id, changeAmount, changeType, `管理员手动调整: ${remark}`);
 
-    db.get('members').find({ id }).assign({ balance: after, updated_at: now() }).write();
+    if (!result.success) {
+      return fail(res, result.message);
+    }
 
-    // 记录流水
-    const logId = nextId('balance_logs');
-    db.get('balance_logs').push({
-      id:        logId,
-      member_id: id,
-      username:  member.username,
-      type,
-      amount,
-      before,
-      after,
-      remark:    remark || (type === 'add' ? '管理员充值' : '管理员扣款'),
-      operator:  sess.username,
-      created_at: now(),
-    }).write();
+    // 记录操作日志
+    addOperationLog({
+      user_id: sess.userId,
+      username: sess.username,
+      action: 'manual_adjust_balance',
+      target_type: 'member',
+      target_id: id,
+      detail: `手动调整用户 ${member.username} 余额: ${type === 'add' ? '+' : '-'}¥${amount}, 原因: ${remark}`,
+      ip,
+      user_agent: ua
+    });
 
-    return ok(res, { id, balance: after, log_id: logId },
-      type === 'add' ? `已增加 ¥${amount}，余额：¥${after}` : `已扣减 ¥${amount}，余额：¥${after}`);
+    return ok(res, {
+      before: result.oldBalance,
+      after: result.newBalance,
+      change: changeAmount
+    }, '余额调整成功');
   }
 
-  /* ── GET /api/members/:id/balance-logs ─── 余额流水 */
-  const memberBalanceLogsMatch = pathname.match(/^\/api\/members\/(\d+)\/balance-logs$/);
-  if (memberBalanceLogsMatch && req.method === 'GET') {
+  /* ── GET /api/balance-logs ─── 余额变动日志 */
+  if (pathname === '/api/balance-logs' && req.method === 'GET') {
+    const qs    = new URL(req.url, `http://localhost:${PORT}`).searchParams;
+    const page  = parseInt(qs.get('page')) || 1;
+    const limit = parseInt(qs.get('limit')) || 20;
+    const kw    = (qs.get('keyword') || '').trim().toLowerCase();
+
+    let list = db.get('balance_logs').orderBy(['id'], ['desc']).value();
+
+    if (kw) {
+      list = list.filter(l =>
+        (l.username || '').toLowerCase().includes(kw) ||
+        (l.remark || '').toLowerCase().includes(kw)
+      );
+    }
+
+    const total = list.length;
+    const items = list.slice((page - 1) * limit, page * limit);
+
+    return ok(res, { total, page, limit, items });
+  }
+
+  /* ── GET /api/operation-logs ─── 操作日志（安全审计） */
+  if (pathname === '/api/operation-logs' && req.method === 'GET') {
     if (sess.role !== 'admin') return fail(res, '无权限', 403);
-    const id   = parseInt(memberBalanceLogsMatch[1]);
-    const logs = db.get('balance_logs').filter({ member_id: id })
-                   .value().slice(-50).reverse();
-    return ok(res, logs);
+    const qs    = new URL(req.url, `http://localhost:${PORT}`).searchParams;
+    const page  = parseInt(qs.get('page')) || 1;
+    const limit = parseInt(qs.get('limit')) || 20;
+    const kw    = (qs.get('search') || '').trim().toLowerCase();
+    const action = qs.get('action') || '';
+    const date = qs.get('date') || '';
+
+    let list = db.get('operation_logs').orderBy(['id'], ['desc']).value();
+
+    if (kw) {
+      list = list.filter(l =>
+        (l.username || '').toLowerCase().includes(kw) ||
+        (l.action || '').toLowerCase().includes(kw) ||
+        (l.detail || '').toLowerCase().includes(kw)
+      );
+    }
+
+    if (action) {
+      list = list.filter(l => l.action === action);
+    }
+
+    if (date) {
+      list = list.filter(l => (l.created_at || '').startsWith(date.replace(/-/g, ' ').split(' ')[0]));
+    }
+
+    const total = list.length;
+    const items = list.slice((page - 1) * limit, page * limit);
+
+    return ok(res, { total, page, limit, items });
   }
 
   /* ══════════════════════════════════════════════════════
@@ -601,22 +714,282 @@ async function handleAPI(req, res, pathname) {
   }
 
   /* ══════════════════════════════════════════════════════
+     订单管理 /api/orders
+     ══════════════════════════════════════════════════════ */
+  /* ── GET /api/orders ─── 获取订单列表 */
+  if (pathname === '/api/orders' && req.method === 'GET') {
+    const qs     = new URL(req.url, `http://localhost:${PORT}`).searchParams;
+    const status = qs.get('status') !== null ? parseInt(qs.get('status')) : null;
+    const type   = qs.get('type') || '';
+    const page   = parseInt(qs.get('page')) || 1;
+    const limit  = parseInt(qs.get('limit')) || 20;
+    const kw     = (qs.get('keyword') || '').trim().toLowerCase();
+
+    let list = db.get('orders').orderBy(['id'], ['desc']).value();
+
+    if (status !== null) list = list.filter(o => o.status === status);
+    if (type)            list = list.filter(o => o.order_type === type);
+    if (kw)              list = list.filter(o =>
+      (o.order_no || '').toLowerCase().includes(kw) ||
+      (o.member_name || '').toLowerCase().includes(kw) ||
+      (o.product_name || '').toLowerCase().includes(kw)
+    );
+
+    const total   = list.length;
+    const items   = list.slice((page - 1) * limit, page * limit);
+    const pending = db.get('orders').filter({ status: 0 }).value().length;
+    const processing = db.get('orders').filter({ status: 1 }).value().length;
+    const success = db.get('orders').filter({ status: 2 }).value().length;
+    const failed  = db.get('orders').filter({ status: 3 }).value().length;
+    const refunded = db.get('orders').filter({ status: 4 }).value().length;
+
+    return ok(res, { total, pending, processing, success, failed, refunded, page, limit, items });
+  }
+
+  /* ── POST /api/orders ─── 创建订单 */
+  if (pathname === '/api/orders' && req.method === 'POST') {
+    const body = await readBody(req);
+    const { member_id, member_name, order_type, amount, product_id, product_name, remark, account } = body;
+
+    if (!member_id)           return fail(res, '用户ID不能为空');
+    if (!order_type)          return fail(res, '订单类型不能为空');
+    if (!amount || amount <= 0) return fail(res, '金额必须大于0');
+    if (order_type === 'consume' && !product_id) {
+      return fail(res, '消费订单必须指定产品');
+    }
+
+    // 如果是消费订单，获取产品名称
+    let actualProductname = product_name;
+    if (order_type === 'consume' && product_id && !product_name) {
+      const product = db.get('products').find({ id: parseInt(product_id) }).value();
+      if (product) actualProductname = product.name;
+    }
+
+    // 获取用户信息
+    const member = db.get('members').find({ id: parseInt(member_id) }).value();
+    let actualMembername = member_name;
+    if (!member_name && member) {
+      actualMembername = member.username;
+    }
+
+    // 如果是消费订单，创建订单时先扣除余额
+    if (order_type === 'consume') {
+      if (!member) return fail(res, '用户不存在');
+      const balance = parseFloat(member.balance) || 0;
+      if (balance < parseFloat(amount)) {
+        return fail(res, '余额不足');
+      }
+
+      // 扣除余额
+      const balanceAfter = balance - parseFloat(amount);
+      db.get('members').find({ id: parseInt(member_id) })
+        .assign({ balance: Math.round(balanceAfter * 100) / 100 }).write();
+
+      // 记录余额变动日志
+      addBalanceLog({
+        member_id: parseInt(member_id),
+        member_name: actualMembername,
+        change_type: 'consume',
+        amount: amount,
+        balance_before: balance,
+        balance_after: balanceAfter,
+        remark: `消费订单 ${product_name} 待处理`
+      });
+    }
+
+    // 创建订单
+    const order = createOrder({
+      member_id,
+      member_name: actualMembername,
+      order_type,
+      amount,
+      product_id: order_type === 'consume' ? product_id : null,
+      product_name: actualProductname,
+      remark: remark || (account ? `充值账号: ${account}` : '')
+    });
+
+    // 记录操作日志
+    addOperationLog({
+      user_id: sess.userId,
+      username: sess.username,
+      action: 'create_order',
+      target_type: 'order',
+      target_id: order.id,
+      detail: `创建${order_type === 'consume' ? '消费' : '充值'}订单 ${order.order_no}, 金额 ¥${amount}${account ? `, 账号 ${account}` : ''}`,
+      ip,
+      user_agent: ua
+    });
+
+    return ok(res, order, '订单创建成功');
+  }
+
+  /* ── GET /api/orders/:id ─── 获取订单详情 */
+  const orderDetailMatch = pathname.match(/^\/api\/orders\/(\d+)$/);
+  if (orderDetailMatch && req.method === 'GET') {
+    const id = parseInt(orderDetailMatch[1]);
+    const order = db.get('orders').find({ id }).value();
+    if (!order) return fail(res, '订单不存在', 404);
+
+    // 获取用户信息
+    const member = db.get('members').find({ id: order.member_id }).value();
+    if (member) {
+      order.member_info = {
+        id: member.id,
+        username: member.username,
+        balance: member.balance,
+        role: member.role
+      };
+    }
+
+    // 获取产品信息
+    if (order.product_id) {
+      const product = db.get('products').find({ id: order.product_id }).value();
+      if (product) {
+        order.product_info = {
+          id: product.id,
+          name: product.name,
+          cost_price: product.cost_price,
+          price: product.price
+        };
+      }
+    }
+
+    return ok(res, order);
+  }
+
+  /* ── PUT /api/orders/:id/status ─── 更新订单状态 */
+  const orderStatusMatch = pathname.match(/^\/api\/orders\/(\d+)\/status$/);
+  if (orderStatusMatch && req.method === 'PUT') {
+    const id   = parseInt(orderStatusMatch[1]);
+    const body = await readBody(req);
+    const { status, remark, auto_refund } = body;  // 新增 auto_refund 参数
+
+    const order = db.get('orders').find({ id }).value();
+    if (!order) return fail(res, '订单不存在', 404);
+
+    const oldStatus = order.status;
+    if (!updateOrderStatus(order.order_no, status, remark)) {
+      return fail(res, '更新订单状态失败');
+    }
+
+    // 处理订单状态变更时的余额变动
+    const member = db.get('members').find({ id: order.member_id }).value();
+    if (member) {
+      const balanceBefore = parseFloat(member.balance) || 0;
+
+      // 消费订单：根据 auto_refund 参数决定是否退款
+      if (order.order_type === 'consume') {
+        // 退款状态：总是退还余额
+        if (status === 4 && oldStatus !== 4) {
+          const balanceAfter = balanceBefore + parseFloat(order.amount);
+          db.get('members').find({ id: order.member_id })
+            .assign({ balance: Math.round(balanceAfter * 100) / 100 }).write();
+
+          addBalanceLog({
+            member_id: order.member_id,
+            member_name: order.member_name,
+            change_type: 'refund',
+            amount: order.amount,
+            balance_before: balanceBefore,
+            balance_after: balanceAfter,
+            remark: `消费订单 ${order.order_no} 退款`
+          });
+        }
+        // 失败状态：只有 auto_refund=true 时才退款
+        else if (status === 3 && oldStatus !== 3 && auto_refund === true) {
+          const balanceAfter = balanceBefore + parseFloat(order.amount);
+          db.get('members').find({ id: order.member_id })
+            .assign({ balance: Math.round(balanceAfter * 100) / 100 }).write();
+
+          addBalanceLog({
+            member_id: order.member_id,
+            member_name: order.member_name,
+            change_type: 'refund',
+            amount: order.amount,
+            balance_before: balanceBefore,
+            balance_after: balanceAfter,
+            remark: `消费订单 ${order.order_no} 失败（上游回调自动退款）`
+          });
+        }
+        // 失败状态：auto_refund=false 时不退款（管理员手动操作）
+      }
+
+      // 充值订单：成功时增加余额，退款时扣除余额
+      if (order.order_type === 'recharge') {
+        if (status === 2 && oldStatus !== 2) {
+          // 充值成功：增加余额
+          const balanceAfter = balanceBefore + parseFloat(order.amount);
+          db.get('members').find({ id: order.member_id })
+            .assign({ balance: Math.round(balanceAfter * 100) / 100 }).write();
+
+          addBalanceLog({
+            member_id: order.member_id,
+            member_name: order.member_name,
+            change_type: 'recharge',
+            amount: order.amount,
+            balance_before: balanceBefore,
+            balance_after: balanceAfter,
+            remark: '充值订单 ' + order.order_no + ' 成功'
+          });
+        } else if (status === 4 && oldStatus !== 4 && oldStatus === 2) {
+          // 充值退款：扣除余额（因为之前已经加过了）
+          const balanceAfter = balanceBefore - parseFloat(order.amount);
+          db.get('members').find({ id: order.member_id })
+            .assign({ balance: Math.round(balanceAfter * 100) / 100 }).write();
+
+          addBalanceLog({
+            member_id: order.member_id,
+            member_name: order.member_name,
+            change_type: 'refund',
+            amount: order.amount,
+            balance_before: balanceBefore,
+            balance_after: balanceAfter,
+            remark: '充值订单 ' + order.order_no + ' 退款'
+          });
+        }
+        // 充值失败（status=3）不增加余额
+      }
+    }
+
+    // 记录操作日志
+    addOperationLog({
+      user_id: sess.userId,
+      username: sess.username,
+      action: 'update_order_status',
+      target_type: 'order',
+      target_id: order.id,
+      detail: `更新订单 ${order.order_no} 状态: ${oldStatus} -> ${status}`,
+      ip,
+      user_agent: ua
+    });
+
+    return ok(res, {}, '订单状态已更新');
+  }
+
+  /* ══════════════════════════════════════════════════════
      财务概览 /api/finance/overview
      ══════════════════════════════════════════════════════ */
   if (pathname === '/api/finance/overview' && req.method === 'GET') {
     const today = new Date().toISOString().slice(0, 10);
     const month = new Date().toISOString().slice(0, 7);   // "2026-03"
 
-    // 当月总流水：充值申请已通过的金额
-    const monthlyRevenue = db.get('recharge_applies').filter(r => r.status === 'approved' && r.created_at.startsWith(month))
-      .reduce((s, r) => s + (parseFloat(r.amount) || 0), 0);
+    // 从真实的orders表读取财务数据
+    const monthlyRevenue = db.get('orders')
+      .filter(o => o.order_type === 'recharge' && o.status === 2 && o.created_at.startsWith(month))
+      .reduce((s, o) => s + (parseFloat(o.amount) || 0), 0);
 
-    // 今日流水
-    const todayRevenue = db.get('recharge_applies').filter(r => r.status === 'approved' && r.created_at.startsWith(today))
-      .reduce((s, r) => s + (parseFloat(r.amount) || 0), 0);
+    // 今日流水（成功的充值订单）
+    const todayRevenue = db.get('orders')
+      .filter(o => o.order_type === 'recharge' && o.status === 2 && o.created_at.startsWith(today))
+      .reduce((s, o) => s + (parseFloat(o.amount) || 0), 0);
 
-    // 今日订单数（已通过的充值申请）
-    const todayOrders = db.get('recharge_applies').filter(r => r.created_at.startsWith(today)).value().length;
+    // 今日订单数（所有订单）
+    const todayOrders = db.get('orders').filter(o => o.created_at.startsWith(today)).value().length;
+
+    // 今日成功的订单数
+    const todaySuccessOrders = db.get('orders')
+      .filter(o => o.status === 2 && o.created_at.startsWith(today))
+      .value().length;
 
     // 代理总余额（从 members 表取，user_type=代理）
     const agentBalance = db.get('members').filter(m => m.user_type === '代理')
@@ -625,11 +998,18 @@ async function handleAPI(req, res, pathname) {
     const totalBalance = db.get('members')
       .reduce((s, m) => s + (parseFloat(m.balance) || 0), 0);
 
-    // 当日营业走势（按小时）
-    const dailyHours = db.get('daily_revenue').filter(r => r.date === today).value();
+    // 从orders表生成当日营业走势（按小时）
+    const todayOrdersList = db.get('orders')
+      .filter(o => o.status === 2 && o.created_at.startsWith(today))
+      .value();
+
     const hours = Array.from({length: 24}, (_, i) => {
-      const found = dailyHours.find(h => h.hour === i);
-      return { hour: i, revenue: found ? found.revenue : 0, orders: found ? found.orders : 0 };
+      const hourOrders = todayOrdersList.filter(o => {
+        const hour = parseInt(o.created_at.split(' ')[1]?.split(':')[0]) || 0;
+        return hour === i;
+      });
+      const revenue = hourOrders.reduce((s, o) => s + (parseFloat(o.amount) || 0), 0);
+      return { hour: i, revenue: Math.round(revenue * 100) / 100, orders: hourOrders.length };
     });
 
     // 供应商余额占比
@@ -637,10 +1017,30 @@ async function handleAPI(req, res, pathname) {
       name: s.name, balance: parseFloat(s.balance) || 0
     })).value();
 
+    // 计算利润（收入 - 成本）
+    const monthlyOrders = db.get('orders')
+      .filter(o => o.status === 2 && o.created_at.startsWith(month))
+      .value();
+    const monthlyProfit = monthlyOrders.reduce((s, o) => {
+      if (o.order_type === 'recharge') return s + parseFloat(o.amount || 0);
+      if (o.order_type === 'consume') {
+        // 消费订单利润 = 销售价 - 成本价
+        const product = db.get('products').find({ id: o.product_id }).value();
+        if (product) {
+          const cost = parseFloat(product.cost_price) || 0;
+          const price = parseFloat(o.amount) || 0;
+          return s + (price - cost);
+        }
+      }
+      return s;
+    }, 0);
+
     return ok(res, {
       monthlyRevenue: Math.round(monthlyRevenue * 100) / 100,
+      monthlyProfit:  Math.round(monthlyProfit * 100) / 100,
       todayRevenue:   Math.round(todayRevenue * 100) / 100,
       todayOrders,
+      todaySuccessOrders,
       agentBalance:   Math.round(agentBalance * 100) / 100,
       totalBalance:   Math.round(totalBalance * 100) / 100,
       dailyRevenue:   hours,
@@ -699,15 +1099,56 @@ async function handleAPI(req, res, pathname) {
     db.get('recharge_applies').find({ id }).assign({
       status: newStatus, reviewed_at: now(), review_note: note || ''
     }).write();
-    // 通过时给代理加余额
+    // 通过时给用户加余额（从members表）
     if (newStatus === 'approved') {
-      const agent = db.get('agents').find({ id: apply.agent_id }).value();
-      if (agent) {
-        const newBal = (parseFloat(agent.balance) || 0) + parseFloat(apply.amount);
-        db.get('agents').find({ id: apply.agent_id }).assign({ balance: Math.round(newBal * 100) / 100 }).write();
+      const result = updateMemberBalance(
+        apply.agent_id,
+        apply.amount,
+        'recharge',
+        '充值申请 ' + apply.sn + ' 审核通过'
+      );
+
+      if (!result.success) {
+        return fail(res, result.message);
       }
+
+      // 创建充值订单
+      createOrder({
+        member_id: apply.agent_id,
+        member_name: apply.agent_name,
+        order_type: 'recharge',
+        amount: apply.amount,
+        remark: '充值申请审核通过'
+      });
+
+      // 记录操作日志
+      addOperationLog({
+        user_id: sess.userId,
+        username: sess.username,
+        action: 'approve_recharge',
+        target_type: 'recharge_apply',
+        target_id: apply.id,
+        detail: `审核通过充值申请 ${apply.sn}, 金额 ¥${apply.amount}`,
+        ip,
+        user_agent: ua
+      });
     }
-    return ok(res, {}, newStatus === 'approved' ? '已通过，代理余额已增加' : '已拒绝');
+
+    // 记录操作日志（拒绝情况）
+    if (newStatus === 'rejected') {
+      addOperationLog({
+        user_id: sess.userId,
+        username: sess.username,
+        action: 'reject_recharge',
+        target_type: 'recharge_apply',
+        target_id: apply.id,
+        detail: `拒绝充值申请 ${apply.sn}, 原因: ${note || ''}`,
+        ip,
+        user_agent: ua
+      });
+    }
+
+    return ok(res, {}, newStatus === 'approved' ? '已通过，用户余额已增加' : '已拒绝');
   }
 
   /* ── PUT /api/recharge-applies/:id/voucher ─── 上传凭证（base64） */
@@ -747,12 +1188,12 @@ async function handleAPI(req, res, pathname) {
   if (pathname === '/api/withdraw-applies' && req.method === 'POST') {
     const body = await readBody(req);
     const { agent_id, agent_name, amount, pay_type, account, account_name, remark } = body;
-    if (!agent_id)             return fail(res, '代理不能为空');
+    if (!agent_id)             return fail(res, '用户不能为空');
     if (!amount || amount <= 0) return fail(res, '金额必须大于0');
     if (!account)               return fail(res, '收款账号不能为空');
-    // 检查代理余额
-    const agent = db.get('agents').find({ id: parseInt(agent_id) }).value();
-    if (agent && parseFloat(agent.balance) < parseFloat(amount)) return fail(res, '代理余额不足');
+    // 检查用户余额（从members表）
+    const member = db.get('members').find({ id: parseInt(agent_id) }).value();
+    if (member && parseFloat(member.balance) < parseFloat(amount)) return fail(res, '用户余额不足');
     const sn = 'WD' + Date.now();
     const apply = {
       id: nextId('withdraw_applies'), sn,
@@ -779,15 +1220,56 @@ async function handleAPI(req, res, pathname) {
     db.get('withdraw_applies').find({ id }).assign({
       status: newStatus, handled_at: now(), handle_note: note || ''
     }).write();
-    // 通过时扣代理余额
+    // 通过时扣用户余额（从members表）
     if (newStatus === 'approved') {
-      const agent = db.get('agents').find({ id: apply.agent_id }).value();
-      if (agent) {
-        const newBal = Math.max(0, (parseFloat(agent.balance) || 0) - parseFloat(apply.amount));
-        db.get('agents').find({ id: apply.agent_id }).assign({ balance: Math.round(newBal * 100) / 100 }).write();
+      const result = updateMemberBalance(
+        apply.agent_id,
+        -apply.amount,
+        'withdraw',
+        '提现申请 ' + apply.sn + ' 审核通过'
+      );
+
+      if (!result.success) {
+        return fail(res, result.message);
       }
+
+      // 创建提现订单
+      createOrder({
+        member_id: apply.agent_id,
+        member_name: apply.agent_name,
+        order_type: 'consume',
+        amount: apply.amount,
+        remark: '提现申请审核通过'
+      });
+
+      // 记录操作日志
+      addOperationLog({
+        user_id: sess.userId,
+        username: sess.username,
+        action: 'approve_withdraw',
+        target_type: 'withdraw_apply',
+        target_id: apply.id,
+        detail: `审核通过提现申请 ${apply.sn}, 金额 ¥${apply.amount}`,
+        ip,
+        user_agent: ua
+      });
     }
-    return ok(res, {}, newStatus === 'approved' ? '打款成功，代理余额已扣减' : '已拒绝');
+
+    // 记录操作日志（拒绝情况）
+    if (newStatus === 'rejected') {
+      addOperationLog({
+        user_id: sess.userId,
+        username: sess.username,
+        action: 'reject_withdraw',
+        target_type: 'withdraw_apply',
+        target_id: apply.id,
+        detail: `拒绝提现申请 ${apply.sn}, 原因: ${note || ''}`,
+        ip,
+        user_agent: ua
+      });
+    }
+
+    return ok(res, {}, newStatus === 'approved' ? '已通过，用户余额已扣除' : '已拒绝');
   }
 
   /* ══════════════════════════════════════════════════════

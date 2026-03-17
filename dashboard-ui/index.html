@@ -138,6 +138,15 @@
           <span class="nav-icon-wrap nav-red"><i class="icon">👤</i></span>
           <span class="nav-label">管理员账号</span>
         </a>
+        <a class="nav-item" data-page="operation-logs">
+          <span class="nav-icon-wrap nav-indigo"><i class="icon">📋</i></span>
+          <span class="nav-label">操作日志</span>
+        </a>
+        <a class="nav-item" data-page="test-order">
+          <span class="nav-icon-wrap nav-orange"><i class="icon">🧪</i></span>
+          <span class="nav-label">测试下单</span>
+        </a>
+        </a>
         <a class="nav-item" data-page="roles">
           <span class="nav-icon-wrap nav-violet"><i class="icon">🛡️</i></span>
           <span class="nav-label">角色管理</span>
@@ -340,47 +349,144 @@
         <div class="page-header">
           <div><h1 class="page-title">订单管理</h1><p class="page-sub">管理所有充值订单，查看状态及处理异常</p></div>
         </div>
-        <!-- 状态统计条 -->
-        <div class="order-stats-bar">
-          <div class="ostat-item active"><div class="ostat-num">2318</div><div class="ostat-label">全部</div></div>
-          <div class="ostat-item"><div class="ostat-num text-success">2289</div><div class="ostat-label">成功</div></div>
-          <div class="ostat-item"><div class="ostat-num text-warning">12</div><div class="ostat-label">处理中</div></div>
-          <div class="ostat-item"><div class="ostat-num text-danger">17</div><div class="ostat-label">失败</div></div>
-          <div class="ostat-item"><div class="ostat-num text-info">0</div><div class="ostat-label">已退款</div></div>
+        
+        <!-- 统计概览 -->
+        <div class="order-summary-grid">
+          <div class="summary-card summary-total">
+            <div class="summary-icon">📊</div>
+            <div class="summary-content">
+              <div class="summary-label">订单总数</div>
+              <div class="summary-value" id="order-summary-total">0</div>
+            </div>
+          </div>
+          <div class="summary-card summary-amount">
+            <div class="summary-icon">💰</div>
+            <div class="summary-content">
+              <div class="summary-label">总金额</div>
+              <div class="summary-value" id="order-summary-amount">¥0</div>
+            </div>
+          </div>
+          <div class="summary-card summary-success">
+            <div class="summary-icon">✅</div>
+            <div class="summary-content">
+              <div class="summary-label">成功金额</div>
+              <div class="summary-value text-success" id="order-summary-success-amount">¥0</div>
+            </div>
+          </div>
+          <div class="summary-card summary-failed">
+            <div class="summary-icon">❌</div>
+            <div class="summary-content">
+              <div class="summary-label">失败金额</div>
+              <div class="summary-value text-danger" id="order-summary-failed-amount">¥0</div>
+            </div>
+          </div>
         </div>
-        <!-- 搜索筛选 -->
+
+        <!-- 状态筛选标签 -->
+        <div class="order-status-tabs">
+          <button class="status-tab active" data-status="" onclick="ordersFilterStatus(this)">
+            <span class="tab-label">全部</span>
+            <span class="tab-count" id="order-stat-all">0</span>
+          </button>
+          <button class="status-tab" data-status="0" onclick="ordersFilterStatus(this)">
+            <span class="tab-label">待处理</span>
+            <span class="tab-count text-warning" id="order-stat-pending">0</span>
+          </button>
+          <button class="status-tab" data-status="1" onclick="ordersFilterStatus(this)">
+            <span class="tab-label">处理中</span>
+            <span class="tab-count text-info" id="order-stat-processing">0</span>
+          </button>
+          <button class="status-tab" data-status="2" onclick="ordersFilterStatus(this)">
+            <span class="tab-label">成功</span>
+            <span class="tab-count text-success" id="order-stat-success">0</span>
+          </button>
+          <button class="status-tab" data-status="3" onclick="ordersFilterStatus(this)">
+            <span class="tab-label">失败</span>
+            <span class="tab-count text-danger" id="order-stat-failed">0</span>
+          </button>
+          <button class="status-tab" data-status="4" onclick="ordersFilterStatus(this)">
+            <span class="tab-label">已退款</span>
+            <span class="tab-count text-muted" id="order-stat-refunded">0</span>
+          </button>
+        </div>
+
+        <!-- 搜索筛选栏 -->
         <div class="glass-card filter-bar">
-          <input type="text" class="input-field" placeholder="搜索订单号、用户名..." style="width:240px">
-          <select class="select-field"><option>全部状态</option><option>成功</option><option>处理中</option><option>失败</option></select>
-          <select class="select-field"><option>全部产品</option><option>话费充值</option><option>流量充值</option><option>游戏点卡</option><option>视频会员</option></select>
-          <input type="date" class="input-field">
-          <input type="date" class="input-field">
-          <button class="btn btn-primary">🔍 搜索</button>
-          <button class="btn btn-ghost">重置</button>
-          <button class="btn btn-success" style="margin-left:auto">📤 导出</button>
+          <div class="filter-group">
+            <input type="text" id="order-keyword" class="input-field" placeholder="搜索订单号、用户名、充值账号..." style="width:280px" onkeyup="if(event.key==='Enter')ordersSearch()">
+          </div>
+          <div class="filter-group">
+            <select id="order-status" class="select-field">
+              <option value="">全部状态</option>
+              <option value="0">待处理</option>
+              <option value="1">处理中</option>
+              <option value="2">成功</option>
+              <option value="3">失败</option>
+              <option value="4">已退款</option>
+            </select>
+          </div>
+          <div class="filter-group">
+            <select id="order-type" class="select-field">
+              <option value="">全部类型</option>
+              <option value="consume">消费</option>
+              <option value="recharge">充值</option>
+            </select>
+          </div>
+          <div class="filter-group">
+            <input type="date" id="order-date-start" class="input-field">
+          </div>
+          <div class="filter-group">
+            <input type="date" id="order-date-end" class="input-field">
+          </div>
+          <div class="filter-actions">
+            <button class="btn btn-primary" onclick="ordersSearch()">🔍 搜索</button>
+            <button class="btn btn-ghost" onclick="ordersReset()">重置</button>
+            <button class="btn btn-success" onclick="ordersExport()">📤 导出</button>
+          </div>
         </div>
-        <div class="glass-card">
-          <table class="data-table">
-            <thead><tr><th><input type="checkbox"></th><th>订单号</th><th>用户/代理</th><th>产品</th><th>充值账号</th><th>金额</th><th>供应商</th><th>状态</th><th>创建时间</th><th>操作</th></tr></thead>
+
+        <!-- 批量操作栏 -->
+        <div class="batch-actions-bar" id="order-batch-actions" style="display:none;">
+          <span class="batch-info">已选择 <strong id="batch-selected-count">0</strong> 条订单</span>
+          <div class="batch-buttons">
+            <button class="btn btn-sm btn-warning" onclick="ordersBatchUpdate(0)">设为待处理</button>
+            <button class="btn btn-sm btn-info" onclick="ordersBatchUpdate(1)">设为处理中</button>
+            <button class="btn btn-sm btn-success" onclick="ordersBatchUpdate(2)">批量充值成功</button>
+            <button class="btn btn-sm btn-danger" onclick="ordersBatchUpdate(3)">批量失败</button>
+            <button class="btn btn-sm btn-secondary" onclick="ordersBatchUpdate(4)">批量退款</button>
+            <button class="btn btn-sm btn-ghost" onclick="ordersClearSelection()">取消选择</button>
+          </div>
+        </div>
+
+        <!-- 订单表格 -->
+        <div class="glass-card table-container">
+          <table class="data-table" style="min-width:2000px;">
+            <thead>
+              <tr>
+                <th style="width:40px;"><input type="checkbox" id="order-select-all" onclick="ordersSelectAll(this)"></th>
+                <th style="width:140px;">订单号</th>
+                <th style="width:120px;">客户</th>
+                <th style="width:100px;">面额</th>
+                <th style="width:120px;">套餐</th>
+                <th style="width:150px;">充值账号</th>
+                <th style="width:80px;">余额查询</th>
+                <th style="width:80px;">状态</th>
+                <th style="width:100px;">耗时</th>
+                <th style="width:160px;">回调时间</th>
+                <th style="width:160px;">创建时间</th>
+                <th style="width:80px;">API</th>
+                <th style="width:80px;">接口充值</th>
+                <th style="width:200px;">备注</th>
+                <th style="width:100px;">标签</th>
+                <th style="width:180px;">操作</th>
+              </tr>
+            </thead>
             <tbody id="orders-tbody">
-              <tr><td><input type="checkbox"></td><td class="mono">#ORD20260315001</td><td>深圳充值王</td><td>话费充值 100元</td><td>13800138000</td><td class="num">¥98.00</td><td>大猿人</td><td><span class="badge badge-success">成功</span></td><td>03-15 09:12</td><td><button class="btn-link">详情</button><button class="btn-link text-warning">重试</button></td></tr>
-              <tr><td><input type="checkbox"></td><td class="mono">#ORD20260315002</td><td>北京极速充</td><td>游戏点卡 50元</td><td>user_88291</td><td class="num">¥48.50</td><td>直冲</td><td><span class="badge badge-success">成功</span></td><td>03-15 09:18</td><td><button class="btn-link">详情</button></td></tr>
-              <tr><td><input type="checkbox"></td><td class="mono">#ORD20260315003</td><td>API用户001</td><td>流量充值 5GB</td><td>13900139000</td><td class="num">¥25.00</td><td>大猿人</td><td><span class="badge badge-warning">处理中</span></td><td>03-15 09:35</td><td><button class="btn-link">详情</button><button class="btn-link text-danger">查单</button></td></tr>
-              <tr><td><input type="checkbox"></td><td class="mono">#ORD20260315004</td><td>上海优惠充</td><td>话费充值 50元</td><td>15900159000</td><td class="num">¥49.00</td><td>蜜蜂</td><td><span class="badge badge-success">成功</span></td><td>03-15 09:40</td><td><button class="btn-link">详情</button></td></tr>
-              <tr><td><input type="checkbox"></td><td class="mono">#ORD20260315005</td><td>广州代理商</td><td>视频会员月卡</td><td>wechat_user</td><td class="num">¥18.00</td><td>直冲</td><td><span class="badge badge-danger">失败</span></td><td>03-15 09:55</td><td><button class="btn-link">详情</button><button class="btn-link text-warning">退款</button></td></tr>
             </tbody>
           </table>
           <div class="table-footer">
-            <span class="table-total">共 2318 条记录</span>
-            <div class="pagination">
-              <button class="page-btn">‹</button>
-              <button class="page-btn active">1</button>
-              <button class="page-btn">2</button>
-              <button class="page-btn">3</button>
-              <span>...</span>
-              <button class="page-btn">232</button>
-              <button class="page-btn">›</button>
-            </div>
+            <span class="table-total" id="orders-total-info">共 0 条记录</span>
+            <div class="pagination" id="orders-pagination"></div>
           </div>
         </div>
       </div>
@@ -1194,6 +1300,66 @@
         </div>
       </div>
 
+      <!-- ══════════════════════ PAGE: OPERATION LOGS ══════════════════════ -->
+      <div class="page" id="page-operation-logs">
+        <div class="page-header">
+          <div><h1 class="page-title">操作日志</h1><p class="page-sub">管理员和用户的操作记录</p></div>
+          <div class="page-header-actions">
+            <button class="btn btn-ghost" onclick="operationLogsLoad()">🔄 刷新</button>
+          </div>
+        </div>
+        <div class="glass-card filter-bar">
+          <input type="text" id="oplog-search" class="input-field" placeholder="搜索用户名、操作类型..." style="width:220px">
+          <select id="oplog-action" class="select-field" onchange="operationLogsLoad()">
+            <option value="">全部操作类型</option>
+            <option value="login">登录</option>
+            <option value="create_order">创建订单</option>
+            <option value="manual_adjust_balance">余额调整</option>
+            <option value="approve_recharge">审批充值</option>
+            <option value="approve_withdraw">审批提现</option>
+          </select>
+          <input type="date" id="oplog-date" class="input-field" style="width:150px" onchange="operationLogsLoad()">
+          <button class="btn btn-primary" onclick="operationLogsLoad()">🔍 搜索</button>
+        </div>
+        <div class="glass-card">
+          <table class="data-table">
+            <thead><tr><th>ID</th><th>用户</th><th>操作类型</th><th>目标</th><th>详情</th><th>IP</th><th>时间</th></tr></thead>
+            <tbody id="oplog-tbody">
+              <tr><td colspan="7" style="text-align:center;padding:40px;color:var(--text-3);">加载中…</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ══════════════════════ PAGE: TEST ORDER ══════════════════════ -->
+      <div class="page" id="page-test-order">
+        <div class="page-header">
+          <div><h1 class="page-title">测试下单</h1><p class="page-sub">创建测试订单用于调试</p></div>
+        </div>
+        <div class="glass-card" style="max-width:600px;margin:0 auto;">
+          <div class="form-grid">
+            <div class="form-group form-full">
+              <label class="form-label">选择产品 <span style="color:#e11d48">*</span></label>
+              <select id="test-product" class="select-field">
+                <option value="">— 请选择产品 —</option>
+              </select>
+            </div>
+            <div class="form-group form-full">
+              <label class="form-label">充值账号 <span style="color:#e11d48">*</span></label>
+              <input id="test-account" class="input-field" type="text" placeholder="请输入手机号或账号">
+            </div>
+            <div class="form-group form-full">
+              <label class="form-label">备注</label>
+              <input id="test-remark" class="input-field" type="text" placeholder="测试订单备注">
+            </div>
+          </div>
+          <div style="margin-top:20px;text-align:center;">
+            <button class="btn btn-primary" onclick="submitTestOrder()" style="padding:12px 40px;font-size:16px;">🛒 创建测试订单</button>
+          </div>
+        </div>
+        <div id="test-result" style="margin-top:20px;display:none;"></div>
+      </div>
+
       <!-- ══════════════════════ PAGE: SETTINGS ══════════════════════ -->
       <div class="page" id="page-settings">
         <div class="page-header">
@@ -1931,6 +2097,66 @@
     <div class="modal-footer">
       <button class="btn btn-ghost" onclick="hideModal('modal-balance-adjust')">取消</button>
       <button class="btn btn-primary" id="balance-submit-btn" onclick="balanceSubmit()">确认调整</button>
+    </div>
+  </div>
+</div>
+
+<!-- 订单详情弹窗 -->
+<div class="modal-overlay" id="modal-order-detail">
+  <div class="modal glass-card" style="max-width:600px;width:95vw;">
+    <div class="modal-header">
+      <h3>订单详情</h3>
+      <button class="modal-close" onclick="hideModal('modal-order-detail')">✕</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="order-detail-id">
+
+      <!-- 订单基本信息 -->
+      <div style="background:linear-gradient(135deg,#f59e0b,#d97706);border-radius:16px;padding:20px 24px;margin-bottom:20px;color:#fff;position:relative;overflow:hidden;">
+        <div style="font-size:12px;opacity:.8;margin-bottom:4px;">订单号</div>
+        <div style="font-size:20px;font-weight:700;" id="order-detail-no">—</div>
+        <div style="font-size:24px;font-weight:700;margin-top:8px;" id="order-detail-amount">¥0.00</div>
+        <div style="position:absolute;right:-20px;top:-20px;width:100px;height:100px;border-radius:50%;background:rgba(255,255,255,.1);"></div>
+      </div>
+
+      <div class="form-grid">
+        <div class="form-group form-full">
+          <label class="form-label">用户</label>
+          <div id="order-detail-member" style="padding:8px 12px;background:var(--bg-1);border-radius:8px;">—</div>
+        </div>
+        <div class="form-group form-full">
+          <label class="form-label">产品</label>
+          <div id="order-detail-product" style="padding:8px 12px;background:var(--bg-1);border-radius:8px;">—</div>
+        </div>
+        <div class="form-group form-full">
+          <label class="form-label">充值账号</label>
+          <div id="order-detail-account" style="padding:8px 12px;background:var(--bg-1);border-radius:8px;font-family:monospace;">—</div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">订单类型</label>
+          <div id="order-detail-type" style="padding:8px 12px;background:var(--bg-1);border-radius:8px;">—</div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">状态</label>
+          <div id="order-detail-status" style="padding:8px 12px;background:var(--bg-1);border-radius:8px;">—</div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">创建时间</label>
+          <div id="order-detail-created" style="padding:8px 12px;background:var(--bg-1);border-radius:8px;">—</div>
+        </div>
+        <div class="form-group form-full">
+          <label class="form-label">备注</label>
+          <textarea id="order-detail-remark" class="input-field" rows="3" placeholder="订单备注..."></textarea>
+        </div>
+      </div>
+
+      <!-- 操作按钮区域 -->
+      <div id="order-detail-actions" style="margin-top:20px;padding-top:20px;border-top:1px solid var(--border);">
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="hideModal('modal-order-detail')">关闭</button>
+      <button class="btn btn-primary" id="order-detail-save-btn" onclick="orderDetailSaveRemark()">保存备注</button>
     </div>
   </div>
 </div>

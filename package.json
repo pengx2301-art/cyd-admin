@@ -13,6 +13,9 @@
   "dependencies": {
     "@cloudbase/framework-plugin-node": "^1.9.7",
     "@cloudbase/framework-plugin-website": "^1.9.7",
+    "body-parser": "^2.2.2",
+    "cors": "^2.8.6",
+    "express": "^5.2.1",
     "lowdb": "^1.0.0"
   },
   "devDependencies": {
