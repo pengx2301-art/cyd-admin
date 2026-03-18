@@ -58,7 +58,19 @@ const json = (res, code, data) => {
   res.end(JSON.stringify(data));
 };
 const ok   = (res, data = {}, msg = 'ok') => json(res, 200, { code: 0, msg, data });
-const fail = (res, msg = '操作失败', code = 400) => json(res, code, { code: -1, msg, data: null });
+
+// 增强错误处理 - 支持错误代码和上下文信息 (P0 优化)
+const fail = (res, msg = '操作失败', httpCode = 400, errorData = {}) => {
+  const response = {
+    code: -1,
+    msg,
+    data: null,
+    ...(errorData.errorCode && { errorCode: errorData.errorCode }),
+    ...(errorData.context && { context: errorData.context }),
+    timestamp: new Date().toISOString()
+  };
+  json(res, httpCode, response);
+};
 
 /* ── 读取 Body ──────────────────────────────────────────────── */
 function readBody(req) {
@@ -69,10 +81,193 @@ function readBody(req) {
   });
 }
 
+/* ── 请求验证中间件 (P0 优化) ──────────────────────────────── */
+const validate = (data, schema) => {
+  const errors = [];
+  Object.entries(schema).forEach(([key, rules]) => {
+    const value = data[key];
+    if (rules.required && (value === undefined || value === null || value === '')) {
+      errors.push(`${key} 不能为空`);
+    }
+    if (value !== undefined && value !== null && rules.type && typeof value !== rules.type) {
+      errors.push(`${key} 类型错误，期望 ${rules.type}，实际 ${typeof value}`);
+    }
+    
+    // 对于字符串，检查长度；对于数字，直接比较值
+    if (value !== undefined && value !== null && rules.min !== undefined) {
+      const checkValue = typeof value === 'string' ? value.length : value;
+      if (checkValue < rules.min) {
+        errors.push(`${key} 最小值: ${rules.min}`);
+      }
+    }
+    if (value !== undefined && value !== null && rules.max !== undefined) {
+      const checkValue = typeof value === 'string' ? value.length : value;
+      if (checkValue > rules.max) {
+        errors.push(`${key} 最大值: ${rules.max}`);
+      }
+    }
+    
+    if (value !== undefined && value !== null && rules.pattern && !rules.pattern.test(value)) {
+      errors.push(`${key} 格式错误: ${rules.patternMsg || ''}`);
+    }
+  });
+  return errors;
+};
+
+/* ── 缓存管理器 (P0 优化) ────────────────────────────────── */
+class CacheManager {
+  constructor(ttl = 5 * 60 * 1000) {
+    this.cache = new Map();
+    this.ttl = ttl;
+    this.hits = 0;
+    this.misses = 0;
+  }
+
+  get(key) {
+    const item = this.cache.get(key);
+    if (!item) {
+      this.misses++;
+      return null;
+    }
+    if (Date.now() > item.expires) {
+      this.cache.delete(key);
+      this.misses++;
+      return null;
+    }
+    this.hits++;
+    return item.value;
+  }
+
+  set(key, value) {
+    this.cache.set(key, {
+      value,
+      expires: Date.now() + this.ttl
+    });
+  }
+
+  clear() {
+    this.cache.clear();
+  }
+
+  stats() {
+    const total = this.hits + this.misses;
+    const hitRate = total === 0 ? 0 : ((this.hits / total) * 100).toFixed(2);
+    return { hits: this.hits, misses: this.misses, total, hitRate: `${hitRate}%`, size: this.cache.size };
+  }
+
+  invalidate(pattern) {
+    for (const key of this.cache.keys()) {
+      if (key.includes(pattern)) this.cache.delete(key);
+    }
+  }
+}
+
+const apiCache = new CacheManager();
+
+/* ── 速率限制器 (P1 优化) ────────────────────────────────── */
+class RateLimiter {
+  constructor(maxRequests = 100, windowMs = 60 * 1000) {
+    this.maxRequests = maxRequests;  // 最大请求数
+    this.windowMs = windowMs;         // 时间窗口（毫秒）
+    this.requests = new Map();        // IP -> 请求时间戳数组
+  }
+
+  isAllowed(ip) {
+    const now = Date.now();
+    if (!this.requests.has(ip)) {
+      this.requests.set(ip, []);
+    }
+
+    let timestamps = this.requests.get(ip);
+    // 清除窗口外的请求
+    timestamps = timestamps.filter(t => now - t < this.windowMs);
+
+    if (timestamps.length >= this.maxRequests) {
+      return false; // 超过限制
+    }
+
+    timestamps.push(now);
+    this.requests.set(ip, timestamps);
+    return true;
+  }
+
+  getStatus(ip) {
+    const now = Date.now();
+    let timestamps = this.requests.get(ip) || [];
+    timestamps = timestamps.filter(t => now - t < this.windowMs);
+    return {
+      requests: timestamps.length,
+      limit: this.maxRequests,
+      remaining: Math.max(0, this.maxRequests - timestamps.length)
+    };
+  }
+}
+
+const rateLimiter = new RateLimiter(300, 60 * 1000); // 每分钟 300 个请求
+
+/* ── 请求日志记录器 (P1 优化) ────────────────────────────── */
+class RequestLogger {
+  constructor() {
+    this.logs = [];
+    this.maxLogs = 1000;
+  }
+
+  log(method, path, status, duration, ip, userId = null) {
+    this.logs.push({
+      timestamp: new Date().toISOString(),
+      method,
+      path,
+      status,
+      duration: `${duration}ms`,
+      ip,
+      userId,
+      ua: ''
+    });
+
+    // 保持日志大小在合理范围内
+    if (this.logs.length > this.maxLogs) {
+      this.logs.shift();
+    }
+  }
+
+  getRecentLogs(limit = 50) {
+    return this.logs.slice(-limit).reverse();
+  }
+
+  getStats() {
+    const total = this.logs.length;
+    const statusGroups = {};
+    let totalDuration = 0;
+
+    this.logs.forEach(log => {
+      const status = log.status;
+      statusGroups[status] = (statusGroups[status] || 0) + 1;
+      
+      // 解析并累加时长
+      const duration = parseInt(log.duration);
+      totalDuration += duration;
+    });
+
+    return {
+      total,
+      avgDuration: total > 0 ? Math.round(totalDuration / total) : 0,
+      statusDistribution: statusGroups
+    };
+  }
+
+  clear() {
+    this.logs = [];
+  }
+}
+
+const requestLogger = new RequestLogger();
+
 /* ══════════════════════════════════════════════════════════════
    API 路由
    ══════════════════════════════════════════════════════════════ */
 async function handleAPI(req, res, pathname) {
+  const requestStart = Date.now();
+  
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
   res.setHeader('Access-Control-Allow-Methods', 'GET,POST,PUT,DELETE,OPTIONS');
@@ -81,10 +276,36 @@ async function handleAPI(req, res, pathname) {
   const ip = req.socket.remoteAddress || '';
   const ua = req.headers['user-agent'] || '';
 
+  // P1 优化: 速率限制检查 (P1 Optimization: Rate limiting)
+  if (!rateLimiter.isAllowed(ip)) {
+    const duration = Date.now() - requestStart;
+    requestLogger.log(req.method, pathname, 429, duration, ip);
+    return fail(res, '请求过于频繁，请稍后再试', 429, {
+      errorCode: 'RATE_LIMIT_EXCEEDED',
+      context: { 
+        remaining: rateLimiter.getStatus(ip).remaining,
+        retryAfter: 60
+      }
+    });
+  }
+
   /* ── POST /api/auth/login ─── */
   if (pathname === '/api/auth/login' && req.method === 'POST') {
-    const { username, password } = await readBody(req);
-    if (!username || !password) return fail(res, '账号和密码不能为空');
+    const body = await readBody(req);
+    
+    // P0 优化: 应用请求验证 (P0 Optimization: Apply request validation)
+    const validationErrors = validate(body, {
+      username: { required: true, type: 'string', min: 3, max: 20 },
+      password: { required: true, type: 'string', min: 6, max: 50 }
+    });
+    if (validationErrors.length > 0) {
+      return fail(res, '请求参数验证失败', 400, {
+        errorCode: 'VALIDATION_ERROR',
+        context: { errors: validationErrors }
+      });
+    }
+    
+    const { username, password } = body;
 
     // 检查IP地址
     if (!ip) {
@@ -347,6 +568,11 @@ async function handleAPI(req, res, pathname) {
     const page      = Math.max(1, parseInt(qs.get('page')  || '1'));
     const size      = Math.min(50, Math.max(1, parseInt(qs.get('size') || '20')));
 
+    // P0 优化: 缓存查询结果
+    const memberCacheKey = `members:kw=${keyword}:status=${status}:type=${user_type}:level=${level_id}:page=${page}:size=${size}`;
+    const memberCached = apiCache.get(memberCacheKey);
+    if (memberCached) return ok(res, memberCached);
+
     let list = db.get('members').value().map(({ password, salt, ...m }) => m);
 
     if (keyword) {
@@ -378,13 +604,33 @@ async function handleAPI(req, res, pathname) {
 
     const total = list.length;
     const items = list.slice((page - 1) * size, page * size);
-    return ok(res, { total, page, size, items });
+    const memberResult = { total, page, size, items };
+    // 缓存查询结果 (TTL 3 分钟)
+    apiCache.set(memberCacheKey, memberResult, 3 * 60 * 1000);
+    return ok(res, memberResult);
   }
 
   /* ── POST /api/members ─── 新增会员 */
   if (pathname === '/api/members' && req.method === 'POST') {
     if (sess.role !== 'admin') return fail(res, '无权限', 403);
     const body = await readBody(req);
+
+    // P0 优化: 请求验证
+    const memberValidErrors = validate(body, {
+      username: { required: true, type: 'string', min: 3, max: 32 },
+      password: { required: true, type: 'string', min: 6, max: 64 },
+      email:    { type: 'string' },
+      phone:    { type: 'string' },
+      realname: { type: 'string' },
+      user_type: { type: 'string' }
+    });
+    if (memberValidErrors.length > 0) {
+      return fail(res, '请求参数验证失败', 400, {
+        errorCode: 'VALIDATION_ERROR',
+        context: { errors: memberValidErrors }
+      });
+    }
+
     const { username, email, password: rawPwd, realname, avatar, phone,
             user_type, level_id, agent_no, commission_rate, parent_id,
             referrer, is_anonymous } = body;
@@ -423,6 +669,8 @@ async function handleAPI(req, res, pathname) {
       created_at:      now(),
     };
     db.get('members').push(member).write();
+    // P0 优化: 清空成员缓存
+    apiCache.invalidate('members');
     const { password, salt: s2, ...safe } = member;
     return ok(res, safe, '用户已创建');
   }
@@ -465,10 +713,14 @@ async function handleAPI(req, res, pathname) {
     }
 
     db.get('members').find({ id }).assign(patch).write();
+    // P0 优化: 清空成员缓存
+    apiCache.invalidate('members');
     const updated = db.get('members').find({ id }).value();
     const { password, salt, ...safe } = updated;
     return ok(res, safe, '用户信息已更新');
   }
+
+
 
   /* ── PATCH /api/members/:id/status ─── 切换状态 */
   const memberStatusMatch = pathname.match(/^\/api\/members\/(\d+)\/status$/);
@@ -725,6 +977,11 @@ async function handleAPI(req, res, pathname) {
     const limit  = parseInt(qs.get('limit')) || 20;
     const kw     = (qs.get('keyword') || '').trim().toLowerCase();
 
+    // P0 优化: 缓存查询结果 (P0 Optimization: Cache query results)
+    const cacheKey = `orders:status=${status}:type=${type}:page=${page}:limit=${limit}:kw=${kw}`;
+    const cached = apiCache.get(cacheKey);
+    if (cached) return ok(res, cached);
+
     let list = db.get('orders').orderBy(['id'], ['desc']).value();
 
     if (status !== null) list = list.filter(o => o.status === status);
@@ -743,19 +1000,43 @@ async function handleAPI(req, res, pathname) {
     const failed  = db.get('orders').filter({ status: 3 }).value().length;
     const refunded = db.get('orders').filter({ status: 4 }).value().length;
 
-    return ok(res, { total, pending, processing, success, failed, refunded, page, limit, items });
+    const result = { total, pending, processing, success, failed, refunded, page, limit, items };
+    
+    // 缓存结果
+    apiCache.set(cacheKey, result);
+    return ok(res, result);
   }
 
   /* ── POST /api/orders ─── 创建订单 */
   if (pathname === '/api/orders' && req.method === 'POST') {
     const body = await readBody(req);
+    
+    // P0 优化: 应用请求验证 (P0 Optimization: Apply request validation)
+    const validationErrors = validate(body, {
+      member_id: { required: true, type: 'number', min: 1 },
+      order_type: { required: true, type: 'string' },
+      amount: { required: true, type: 'number', min: 0.01 },
+      product_id: { type: 'number' },
+      member_name: { type: 'string' },
+      product_name: { type: 'string' },
+      remark: { type: 'string' },
+      account: { type: 'string' }
+    });
+    if (validationErrors.length > 0) {
+      return fail(res, '请求参数验证失败', 400, {
+        errorCode: 'VALIDATION_ERROR',
+        context: { errors: validationErrors }
+      });
+    }
+    
     const { member_id, member_name, order_type, amount, product_id, product_name, remark, account } = body;
 
-    if (!member_id)           return fail(res, '用户ID不能为空');
-    if (!order_type)          return fail(res, '订单类型不能为空');
-    if (!amount || amount <= 0) return fail(res, '金额必须大于0');
+    // 业务逻辑验证
     if (order_type === 'consume' && !product_id) {
-      return fail(res, '消费订单必须指定产品');
+      return fail(res, '消费订单必须指定产品', 400, {
+        errorCode: 'INVALID_ORDER_TYPE',
+        context: { order_type, product_id }
+      });
     }
 
     // 如果是消费订单，获取产品名称
@@ -820,6 +1101,8 @@ async function handleAPI(req, res, pathname) {
       user_agent: ua
     });
 
+    // P0 优化: 清空订单缓存 (P0 Optimization: Invalidate cache)
+    apiCache.invalidate('orders');
     return ok(res, order, '订单创建成功');
   }
 
@@ -1842,6 +2125,12 @@ async function handleAPI(req, res, pathname) {
     const status   = qs.get('status'); // '1'=上架 '0'=下架 ''=全部
     const page     = Math.max(1, parseInt(qs.get('page') || '1'));
     const pageSize = 20;
+    
+    // P0 优化: 缓存查询结果 (P0 Optimization: Cache query results)
+    const cacheKey = `products:kw=${kw}:cat=${catId}:sup=${supId}:status=${status}:page=${page}`;
+    const cached = apiCache.get(cacheKey);
+    if (cached) return ok(res, cached);
+    
     let list = db.get('products').value();
     if (kw)      list = list.filter(p => p.name.toLowerCase().includes(kw));
     if (catId)   list = list.filter(p => p.category_id === catId);
@@ -1849,7 +2138,11 @@ async function handleAPI(req, res, pathname) {
     if (status !== null && status !== '') list = list.filter(p => p.status === parseInt(status));
     const total = list.length;
     const data  = list.slice((page-1)*pageSize, page*pageSize);
-    return ok(res, { list: data, total, page, pageSize });
+    const result = { items: data, total, page, pageSize };
+    
+    // 缓存结果
+    apiCache.set(cacheKey, result);
+    return ok(res, result);
   }
 
   // POST /api/products — 新增产品
@@ -1895,6 +2188,8 @@ async function handleAPI(req, res, pathname) {
       created_at:             now(),
     };
     db.get('products').push(item).write();
+    // P0 优化: 清空产品缓存 (P0 Optimization: Invalidate cache)
+    apiCache.invalidate('products');
     return ok(res, item, '产品已添加');
   }
 
@@ -1932,6 +2227,8 @@ async function handleAPI(req, res, pathname) {
     if (body.sync_price        !== undefined) patch.sync_price              = parseInt(body.sync_price)  === 1 ? 1 : 0;
     if (body.sync_status       !== undefined) patch.sync_status             = parseInt(body.sync_status) === 1 ? 1 : 0;
     db.get('products').find({ id }).assign(patch).write();
+    // P0 优化: 清空产品缓存 (P0 Optimization: Invalidate cache)
+    apiCache.invalidate('products');
     return ok(res, db.get('products').find({ id }).value(), '产品已更新');
   }
 
@@ -1940,6 +2237,8 @@ async function handleAPI(req, res, pathname) {
     if (sess.role !== 'admin') return fail(res, '无权限', 403);
     const id = parseInt(prodIdMatch[1]);
     db.get('products').remove({ id }).write();
+    // P0 优化: 清空产品缓存 (P0 Optimization: Invalidate cache)
+    apiCache.invalidate('products');
     return ok(res, {}, '产品已删除');
   }
 
@@ -2109,6 +2408,35 @@ async function handleAPI(req, res, pathname) {
       `已${dir > 0 ? '上调' : '下调'}${pct}%，共影响 ${targets.length} 条定价`);
   }
 
+  /* ── 监控接口 (P1 优化) ──────────────────────────────────── */
+  if (pathname === '/api/monitor/cache-stats' && req.method === 'GET') {
+    if (sess.role !== 'admin') return fail(res, '无权限', 403);
+    return ok(res, {
+      cache: apiCache.stats(),
+      timestamp: new Date().toISOString()
+    });
+  }
+
+  if (pathname === '/api/monitor/request-logs' && req.method === 'GET') {
+    if (sess.role !== 'admin') return fail(res, '无权限', 403);
+    const qs = new URL(req.url, `http://localhost:${PORT}`).searchParams;
+    const limit = Math.min(parseInt(qs.get('limit')) || 50, 500);
+    return ok(res, {
+      logs: requestLogger.getRecentLogs(limit),
+      stats: requestLogger.getStats(),
+      timestamp: new Date().toISOString()
+    });
+  }
+
+  if (pathname === '/api/monitor/rate-limit' && req.method === 'GET') {
+    if (sess.role !== 'admin') return fail(res, '无权限', 403);
+    return ok(res, {
+      ip,
+      status: rateLimiter.getStatus(ip),
+      timestamp: new Date().toISOString()
+    });
+  }
+
   return fail(res, 'API 接口不存在', 404);
 }
 
@@ -2135,8 +2463,32 @@ function handleStatic(req, res, pathname) {
 const server = http.createServer(async (req, res) => {
   const url      = new URL(req.url, `http://localhost:${PORT}`);
   const pathname = decodeURIComponent(url.pathname);
-  if (pathname.startsWith('/api/')) await handleAPI(req, res, pathname);
-  else handleStatic(req, res, pathname);
+  
+  // P1 优化: 请求超时保护 (30 秒超时)
+  const reqTimeout = setTimeout(() => {
+    if (!res.headersSent) {
+      console.warn(`[TIMEOUT] ${req.method} ${pathname} exceeded 30s`);
+      fail(res, '请求超时，请稍后再试', 504, { errorCode: 'REQUEST_TIMEOUT' });
+    }
+  }, 30000);
+  res.on('finish', () => clearTimeout(reqTimeout));
+
+  if (pathname.startsWith('/api/')) {
+    try {
+      await handleAPI(req, res, pathname);
+    } catch (err) {
+      // P1 优化: 全局异常处理 (Global error handler)
+      console.error(`[UNCAUGHT ERROR] ${req.method} ${pathname}:`, err.message);
+      if (!res.headersSent) {
+        fail(res, '服务器内部错误，请稍后再试', 500, {
+          errorCode: 'INTERNAL_SERVER_ERROR',
+          context: { path: pathname, method: req.method }
+        });
+      }
+    }
+  } else {
+    handleStatic(req, res, pathname);
+  }
 });
 
 server.listen(PORT, () => {
