@@ -262,6 +262,31 @@ class RequestLogger {
 
 const requestLogger = new RequestLogger();
 
+/* ── API 版本控制 (P2 优化) ──────────────────────────────── */
+const API_VERSIONS = {
+  v1: { deprecated: false, description: '初始版本' },
+  v2: { deprecated: false, description: '新增缓存、验证、监控' }
+};
+
+// 提取 API 版本
+function getAPIVersion(pathname) {
+  const match = pathname.match(/^\/api\/v(\d+)\//);
+  return match ? `v${match[1]}` : 'v1'; // 默认 v1
+}
+
+// API 版本不兼容处理
+function handleVersionDeprecation(pathname, version) {
+  if (API_VERSIONS[version]?.deprecated) {
+    return {
+      warning: `API 版本 ${version} 已弃用`,
+      suggestion: `请升级到最新版本`,
+      deprecated_at: '2026-03-01',
+      remove_at: '2026-06-01'
+    };
+  }
+  return null;
+}
+
 /* ══════════════════════════════════════════════════════════════
    API 路由
    ══════════════════════════════════════════════════════════════ */
@@ -275,6 +300,13 @@ async function handleAPI(req, res, pathname) {
 
   const ip = req.socket.remoteAddress || '';
   const ua = req.headers['user-agent'] || '';
+
+  // P2 优化: API 版本检查和兼容性处理
+  const apiVersion = getAPIVersion(pathname);
+  const versionWarning = handleVersionDeprecation(pathname, apiVersion);
+  if (versionWarning) {
+    res.setHeader('X-API-Deprecation-Warning', versionWarning.warning);
+  }
 
   // P1 优化: 速率限制检查 (P1 Optimization: Rate limiting)
   if (!rateLimiter.isAllowed(ip)) {
@@ -2434,6 +2466,33 @@ async function handleAPI(req, res, pathname) {
       ip,
       status: rateLimiter.getStatus(ip),
       timestamp: new Date().toISOString()
+    });
+  }
+
+  /* ── API 版本信息 (P2 优化) ──────────────────────────────── */
+  if (pathname === '/api/version' && req.method === 'GET') {
+    return ok(res, {
+      current_version: apiVersion,
+      supported_versions: API_VERSIONS,
+      api_docs: 'https://docs.example.com/api',
+      timestamp: new Date().toISOString()
+    });
+  }
+
+  if (pathname === '/api/health' && req.method === 'GET') {
+    // 健康检查端点（无需认证）
+    return ok(res, {
+      status: 'healthy',
+      uptime: process.uptime(),
+      timestamp: new Date().toISOString(),
+      version: apiVersion,
+      cache: {
+        hits: apiCache.hits,
+        misses: apiCache.misses,
+        hit_rate: apiCache.hits + apiCache.misses > 0 
+          ? `${((apiCache.hits / (apiCache.hits + apiCache.misses)) * 100).toFixed(2)}%` 
+          : 'N/A'
+      }
     });
   }
 

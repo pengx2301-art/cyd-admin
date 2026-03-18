@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>充易达管理系统 - API 文档</title>
+  <link href="https://cdn.jsdelivr.net/npm/github-markdown-css@5.2.0/github-markdown.css" rel="stylesheet">
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+      line-height: 1.6;
+      color: #24292e;
+      background: #f6f8fa;
+    }
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 20px;
+      background: white;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+    .markdown-body {
+      font-family: inherit;
+    }
+    .header {
+      border-bottom: 2px solid #eaecef;
+      padding-bottom: 20px;
+      margin-bottom: 20px;
+    }
+    .footer {
+      text-align: center;
+      color: #6a737d;
+      font-size: 12px;
+      margin-top: 40px;
+      padding-top: 20px;
+      border-top: 1px solid #eaecef;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>充易达管理系统 API 文档</h1>
+      <p>自动生成于 2026/3/18 09:55:35</p>
+    </div>
+    <div class="markdown-body">
+      <p><h1>API 文档</h1></p><p><strong>生成时间</strong>: 2026/3/18 09:55:35</p><p><h2>目录</h2></p><p><ul><li>[POST /api/auth/login](#0-/api/auth/login)</li>
+<li>[GET /api/products](#1-/api/products)</li>
+<li>[POST /api/orders](#2-/api/orders)</li>
+<li>[GET /api/monitor/request-logs](#3-/api/monitor/request-logs)</li>
+<li>[GET /api/version](#4-/api/version)</li>
+<li>[GET /api/health](#5-/api/health)</li></ul></p><p>---</p><p><h2>1. POST /api/auth/login</h2></p><p><strong>摘要</strong>: 用户登录</p><p><strong>描述</strong>: 使用用户名和密码登录系统</p><p><strong>版本</strong>: v1</p><p><strong>标签</strong>: 认证</p><p><h3>请求参数</h3></p><p>| 参数名 | 类型 | 必需 | 描述 |
+|--------|------|------|------|
+<tr><td>username </td></tr> string | 是 | 用户名（3-20字符） |
+<tr><td>password </td></tr> string | 是 | 密码（6-50字符） |</p><p><h3>响应示例</h3></p><p>```json
+{
+  "code": 0,
+  "msg": "登录成功",
+  "data": {
+    "token": "xxx",
+    "user_id": 1,
+    "role": "admin"
+  }
+}
+```</p><p><h2>2. GET /api/products</h2></p><p><strong>摘要</strong>: 获取产品列表</p><p><strong>描述</strong>: 分页获取所有产品列表（支持搜索、筛选）</p><p><strong>版本</strong>: v1</p><p><strong>标签</strong>: 产品</p><p><strong>缓存</strong>: 是（5分钟）</p><p><h3>请求参数</h3></p><p>| 参数名 | 类型 | 必需 | 描述 |
+|--------|------|------|------|
+<tr><td>page </td></tr> number | 否 | 页码（默认1） |
+<tr><td>pageSize </td></tr> number | 否 | 每页数量（默认20） |
+<tr><td>kw </td></tr> string | 否 | 搜索关键词 |
+<tr><td>cat_id </td></tr> number | 否 | 分类ID |</p><p><h3>响应示例</h3></p><p>```json
+{
+  "code": 0,
+  "msg": "获取成功",
+  "data": {
+    "items": [],
+    "total": 100,
+    "page": 1,
+    "pageSize": 20
+  }
+}
+```</p><p><h2>3. POST /api/orders</h2></p><p><strong>摘要</strong>: 创建订单</p><p><strong>描述</strong>: 创建新的订单</p><p><strong>版本</strong>: v1</p><p><strong>标签</strong>: 订单</p><p><h3>请求参数</h3></p><p>| 参数名 | 类型 | 必需 | 描述 |
+|--------|------|------|------|
+<tr><td>member_id </td></tr> number | 是 | 会员ID |
+<tr><td>order_type </td></tr> string | 是 | 订单类型（consume/recharge） |
+<tr><td>amount </td></tr> number | 是 | 订单金额 |
+<tr><td>product_id </td></tr> number | 否 | 产品ID（消费订单必填） |</p><p><h3>响应示例</h3></p><p>```json
+{
+  "code": 0,
+  "msg": "订单创建成功",
+  "data": {
+    "order_id": 1,
+    "order_no": "ORD20260318001",
+    "status": 0
+  }
+}
+```</p><p><h2>4. GET /api/monitor/request-logs</h2></p><p><strong>摘要</strong>: 获取请求日志</p><p><strong>描述</strong>: 获取最近的 API 请求日志（仅管理员）</p><p><strong>版本</strong>: v1</p><p><strong>标签</strong>: 监控</p><p><strong>认证</strong>: admin</p><p><h3>请求参数</h3></p><p>| 参数名 | 类型 | 必需 | 描述 |
+|--------|------|------|------|
+<tr><td>limit </td></tr> number | 否 | 返回记录数（最多500） |</p><p><h3>响应示例</h3></p><p>```json
+{
+  "code": 0,
+  "msg": "获取成功",
+  "data": {
+    "logs": [],
+    "stats": {
+      "total": 1000,
+      "avgDuration": 45
+    }
+  }
+}
+```</p><p><h2>5. GET /api/version</h2></p><p><strong>摘要</strong>: API 版本信息</p><p><strong>描述</strong>: 获取当前 API 版本和支持的版本列表</p><p><strong>版本</strong>: v1</p><p><strong>标签</strong>: 系统</p><p><h3>响应示例</h3></p><p>```json
+{
+  "code": 0,
+  "msg": "获取成功",
+  "data": {
+    "current_version": "v1",
+    "supported_versions": {
+      "v1": "初始版本",
+      "v2": "新增缓存、验证、监控"
+    }
+  }
+}
+```</p><p><h2>6. GET /api/health</h2></p><p><strong>摘要</strong>: 健康检查</p><p><strong>描述</strong>: 系统健康检查端点（无需认证）</p><p><strong>版本</strong>: v1</p><p><strong>标签</strong>: 系统</p><p><h3>响应示例</h3></p><p>```json
+{
+  "code": 0,
+  "msg": "获取成功",
+  "data": {
+    "status": "healthy",
+    "uptime": 86400,
+    "cache": {
+      "hits": 1000,
+      "misses": 200,
+      "hit_rate": "83.33%"
+    }
+  }
+}
+```</p><p>---</p><p><h2>错误码</h2></p><p>| 错误码 | HTTP状态 | 描述 |
+|--------|----------|------|
+<tr><td>0 </td></tr> 200 | 成功 |
+<tr><td>-1 </td></tr> 401 | 未登录或登录已过期 |
+<tr><td>-2 </td></tr> 403 | 无权限 |
+<tr><td>-3 </td></tr> 400 | 请求参数错误 |
+<tr><td>-4 </td></tr> 429 | 请求过于频繁 |
+<tr><td>-5 </td></tr> 500 | 服务器内部错误 |
+<tr><td>-6 </td></tr> 504 | 请求超时 |</p><p></p>
+    </div>
+    <div class="footer">
+      <p>© 2026 充易达管理系统 - API 文档自动生成</p>
+    </div>
+  </div>
+</body>
+</html>

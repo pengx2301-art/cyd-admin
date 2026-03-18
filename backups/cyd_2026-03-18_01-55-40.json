@@ -1,0 +1,2489 @@
+{
+  "sys_users": [
+    {
+      "id": 1,
+      "username": "admin",
+      "nickname": "超级管理员",
+      "password": "8ade054ea6901d9e5aeed7ac67e33e761291b2ee0a53b058199fc0fe36a594f5",
+      "salt": "063a579b5ddfdf650359c169b03e4fb9",
+      "role": "admin",
+      "email": "",
+      "phone": "",
+      "avatar": "",
+      "status": 1,
+      "last_login": "2026-03-17 18:55:37",
+      "created_at": "2026/3/15 23:10:19",
+      "updated_at": "2026/3/15 23:10:19"
+    }
+  ],
+  "members": [
+    {
+      "id": 6,
+      "username": "test",
+      "email": "test@example.com",
+      "password": "67915c6e81c2b5a8a1a82cafb7ba880ec0c185a9bffc9383df32778a00e5264a",
+      "salt": "d30e5f212b07ce9e6cc3fa13610e55b2",
+      "realname": "测试用户",
+      "avatar": "",
+      "phone": "",
+      "user_type": "普通用户",
+      "level_id": null,
+      "agent_no": "",
+      "commission_rate": 0,
+      "parent_id": null,
+      "referrer": "",
+      "is_anonymous": 0,
+      "status": 1,
+      "balance": 10001,
+      "created_at": "2026-03-17 16:29:05",
+      "updated_at": "2026-03-17 18:15:05"
+    },
+    {
+      "id": 5,
+      "username": "ces",
+      "email": "",
+      "password": "a548c2eebddbf4cdec8705a04d15d168fabdce4057d7181eef798b45e408f089",
+      "salt": "f4e3c3f5c0afac23f55ccd2185525678",
+      "realname": "",
+      "avatar": "",
+      "phone": "",
+      "user_type": "代理",
+      "level_id": 1,
+      "agent_no": "",
+      "commission_rate": 0.01,
+      "parent_id": null,
+      "referrer": "",
+      "is_anonymous": 1,
+      "status": 1,
+      "balance": 1224,
+      "created_at": "2026/3/16 01:23:32",
+      "updated_at": "2026-03-17 16:13:59"
+    },
+    {
+      "id": 4,
+      "username": "user004",
+      "email": "user004@example.com",
+      "realname": "王五",
+      "avatar": "",
+      "user_type": "代理用户",
+      "referrer": "user001",
+      "is_anonymous": 0,
+      "status": 1,
+      "balance": 1202,
+      "created_at": "2026-03-10 11:45:00",
+      "password": "0b8b6a763f2a83f8a4f645e2060a632efd638d8103a2e57d4268e1b271b8987e",
+      "salt": "357b56025405d24fd727757ac58b9307",
+      "updated_at": "2026-03-17 16:14:24"
+    },
+    {
+      "id": 2,
+      "username": "user002",
+      "email": "user002@example.com",
+      "realname": "李四",
+      "avatar": "",
+      "user_type": "VIP用户",
+      "referrer": "user001",
+      "is_anonymous": 0,
+      "status": 1,
+      "balance": 522.5,
+      "created_at": "2026-02-05 14:30:00",
+      "password": "e0939e57251d725115ec7493e310673e351703ef78ef872143a761a6727384fd",
+      "salt": "48e627501dea71cb559e4d996dc68cf2",
+      "updated_at": "2026-03-17 16:22:28"
+    },
+    {
+      "id": 1,
+      "username": "user001",
+      "email": "user001@example.com",
+      "realname": "张三",
+      "avatar": "",
+      "user_type": "普通用户",
+      "referrer": "",
+      "is_anonymous": 0,
+      "status": 1,
+      "balance": 301,
+      "created_at": "2026-01-10 09:00:00",
+      "password": "9d5606bb48ad9d0c5932da553375f84a8ffd2d2b4995adef45e8404302239fae",
+      "salt": "cbff7584258bb5686422ff4ce9816a8f",
+      "updated_at": "2026-03-17 16:14:31"
+    },
+    {
+      "id": 3,
+      "username": "anon003",
+      "email": "",
+      "realname": "",
+      "avatar": "",
+      "user_type": "普通用户",
+      "referrer": "",
+      "is_anonymous": 1,
+      "status": 1,
+      "balance": 2,
+      "created_at": "2026-03-01 08:20:00",
+      "password": "bc9ac7c1bcd71f0ab3605c025b8929bb6faa3c61ca598f46807bda27abfe2002",
+      "salt": "a95b543639c580298571701fae693498",
+      "updated_at": "2026/3/16 01:41:46"
+    }
+  ],
+  "roles": [
+    {
+      "id": 1,
+      "name": "超级管理员",
+      "desc": "拥有所有权限，不可删除",
+      "builtin": 1,
+      "permissions": [
+        "dashboard",
+        "orders.view",
+        "orders.edit",
+        "recharge-records.view",
+        "callback-logs.view",
+        "products.view",
+        "products.edit",
+        "categories.view",
+        "suppliers.view",
+        "agents.view",
+        "agents.edit",
+        "agent-balance.view",
+        "api-users.view",
+        "api-logs.view",
+        "finance-overview.view",
+        "recharge-apply.view",
+        "withdraw-apply.view",
+        "members.view",
+        "members.edit",
+        "members.balance",
+        "roles.view",
+        "roles.edit",
+        "settings.view"
+      ],
+      "created_at": "2026/3/15 23:10:19"
+    },
+    {
+      "id": 2,
+      "name": "运营",
+      "desc": "可查看订单、产品、用户",
+      "builtin": 0,
+      "permissions": [
+        "dashboard",
+        "orders.view",
+        "recharge-records.view",
+        "products.view",
+        "members.view"
+      ],
+      "created_at": "2026/3/15 23:10:19"
+    },
+    {
+      "id": 3,
+      "name": "财务",
+      "desc": "可查看财务相关数据",
+      "builtin": 0,
+      "permissions": [
+        "dashboard",
+        "finance-overview.view",
+        "recharge-apply.view",
+        "withdraw-apply.view",
+        "agent-balance.view"
+      ],
+      "created_at": "2026/3/15 23:10:19"
+    },
+    {
+      "id": 4,
+      "name": "客服",
+      "desc": "可查看用户、订单信息",
+      "builtin": 0,
+      "permissions": [
+        "dashboard",
+        "orders.view",
+        "members.view"
+      ],
+      "created_at": "2026/3/15 23:10:19"
+    }
+  ],
+  "balance_logs": [
+    {
+      "id": 1,
+      "member_id": 1,
+      "username": "user001",
+      "type": "add",
+      "amount": 100,
+      "before": 100,
+      "after": 200,
+      "remark": "管理员充值",
+      "operator": "admin",
+      "created_at": "2026/3/16 00:21:28"
+    },
+    {
+      "id": 2,
+      "member_id": 1,
+      "username": "user001",
+      "type": "sub",
+      "amount": 100,
+      "before": 200,
+      "after": 100,
+      "remark": "管理员扣款",
+      "operator": "admin",
+      "created_at": "2026/3/16 00:21:36"
+    },
+    {
+      "id": 3,
+      "member_id": 1,
+      "username": "user001",
+      "type": "add",
+      "amount": 100,
+      "before": 100,
+      "after": 200,
+      "remark": "管理员充值",
+      "operator": "admin",
+      "created_at": "2026/3/16 00:33:55"
+    },
+    {
+      "id": 4,
+      "member_id": 1,
+      "username": "user001",
+      "type": "add",
+      "amount": 100,
+      "before": 200,
+      "after": 300,
+      "remark": "管理员充值",
+      "operator": "admin",
+      "created_at": "2026/3/16 00:34:10"
+    },
+    {
+      "id": 5,
+      "member_id": 5,
+      "username": "ces",
+      "type": "add",
+      "amount": 111,
+      "before": 0,
+      "after": 111,
+      "remark": "管理员充值",
+      "operator": "admin",
+      "created_at": "2026/3/16 01:24:35"
+    },
+    {
+      "id": 6,
+      "member_id": 4,
+      "username": "user004",
+      "type": "add",
+      "amount": 1111,
+      "before": 88,
+      "after": 1199,
+      "remark": "管理员充值",
+      "operator": "admin",
+      "created_at": "2026/3/16 01:24:49"
+    },
+    {
+      "id": 7,
+      "member_id": 5,
+      "username": "ces",
+      "type": "add",
+      "amount": 1111,
+      "before": 111,
+      "after": 1222,
+      "remark": "管理员充值",
+      "operator": "admin",
+      "created_at": "2026/3/16 01:25:00"
+    },
+    {
+      "id": 8,
+      "member_id": 3,
+      "username": "anon003",
+      "type": "add",
+      "amount": 1,
+      "before": 0,
+      "after": 1,
+      "remark": "管理员充值",
+      "operator": "admin",
+      "created_at": "2026/3/16 01:41:29"
+    },
+    {
+      "id": 9,
+      "member_id": 3,
+      "username": "anon003",
+      "type": "add",
+      "amount": 1,
+      "before": 1,
+      "after": 2,
+      "remark": "管理员充值",
+      "operator": "admin",
+      "created_at": "2026/3/16 01:41:34"
+    },
+    {
+      "id": 10,
+      "member_id": 3,
+      "username": "anon003",
+      "type": "add",
+      "amount": 1,
+      "before": 2,
+      "after": 3,
+      "remark": "管理员充值",
+      "operator": "admin",
+      "created_at": "2026/3/16 01:41:40"
+    },
+    {
+      "id": 11,
+      "member_id": 3,
+      "username": "anon003",
+      "type": "sub",
+      "amount": 1,
+      "before": 3,
+      "after": 2,
+      "remark": "管理员扣款",
+      "operator": "admin",
+      "created_at": "2026/3/16 01:41:46"
+    },
+    {
+      "id": 12,
+      "member_id": 4,
+      "member_name": "user004",
+      "change_type": "admin_add",
+      "amount": 1,
+      "balance_before": 1199,
+      "balance_after": 1200,
+      "remark": "管理员手动调整: 1",
+      "created_at": "2026-03-17 16:07:42"
+    },
+    {
+      "id": 13,
+      "member_id": 2,
+      "member_name": "user002",
+      "change_type": "admin_add",
+      "amount": 1,
+      "balance_before": 520.5,
+      "balance_after": 521.5,
+      "remark": "管理员手动调整: 1",
+      "created_at": "2026-03-17 16:07:55"
+    },
+    {
+      "id": 14,
+      "member_id": 5,
+      "member_name": "ces",
+      "change_type": "admin_add",
+      "amount": 1,
+      "balance_before": 1222,
+      "balance_after": 1223,
+      "remark": "管理员手动调整: 1",
+      "created_at": "2026-03-17 16:13:57"
+    },
+    {
+      "id": 15,
+      "member_id": 5,
+      "member_name": "ces",
+      "change_type": "admin_add",
+      "amount": 1,
+      "balance_before": 1223,
+      "balance_after": 1224,
+      "remark": "管理员手动调整: 1",
+      "created_at": "2026-03-17 16:13:59"
+    },
+    {
+      "id": 16,
+      "member_id": 4,
+      "member_name": "user004",
+      "change_type": "admin_add",
+      "amount": 1,
+      "balance_before": 1200,
+      "balance_after": 1201,
+      "remark": "管理员手动调整: 1",
+      "created_at": "2026-03-17 16:14:23"
+    },
+    {
+      "id": 17,
+      "member_id": 4,
+      "member_name": "user004",
+      "change_type": "admin_add",
+      "amount": 1,
+      "balance_before": 1201,
+      "balance_after": 1202,
+      "remark": "管理员手动调整: 1",
+      "created_at": "2026-03-17 16:14:24"
+    },
+    {
+      "id": 18,
+      "member_id": 1,
+      "member_name": "user001",
+      "change_type": "admin_add",
+      "amount": 1,
+      "balance_before": 300,
+      "balance_after": 301,
+      "remark": "管理员手动调整: 1",
+      "created_at": "2026-03-17 16:14:31"
+    },
+    {
+      "id": 19,
+      "member_id": 2,
+      "member_name": "user002",
+      "change_type": "admin_add",
+      "amount": 1,
+      "balance_before": 521.5,
+      "balance_after": 522.5,
+      "remark": "管理员手动调整: 1",
+      "created_at": "2026-03-17 16:22:28"
+    },
+    {
+      "id": 20,
+      "member_id": 6,
+      "member_name": "test",
+      "change_type": "consume",
+      "amount": 98,
+      "balance_before": 10000,
+      "balance_after": 9902,
+      "remark": "消费订单 undefined 待处理",
+      "created_at": "2026-03-17 17:07:37"
+    },
+    {
+      "id": 21,
+      "member_id": 6,
+      "member_name": "test",
+      "change_type": "refund",
+      "amount": 98,
+      "balance_before": 9902,
+      "balance_after": 10000,
+      "remark": "消费订单 ORD1773767257841948 失败",
+      "created_at": "2026-03-17 17:08:11"
+    },
+    {
+      "id": 22,
+      "member_id": 6,
+      "member_name": "test",
+      "change_type": "admin_add",
+      "amount": 1,
+      "balance_before": 10000,
+      "balance_after": 10001,
+      "remark": "管理员手动调整: 测试",
+      "created_at": "2026-03-17 18:15:05"
+    }
+  ],
+  "login_logs": [
+    {
+      "id": 1,
+      "user_id": 1,
+      "username": "admin",
+      "ip": "::1",
+      "ua": "",
+      "result": "success",
+      "created_at": "2026/3/15 23:21:58"
+    },
+    {
+      "id": 2,
+      "user_id": 1,
+      "username": "admin",
+      "ip": "::1",
+      "ua": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36 Edg/146.0.0.0",
+      "result": "success",
+      "created_at": "2026/3/16 00:21:19"
+    },
+    {
+      "id": 3,
+      "user_id": 1,
+      "username": "admin",
+      "ip": "::1",
+      "ua": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36 Edg/146.0.0.0",
+      "result": "success",
+      "created_at": "2026/3/16 00:33:25"
+    },
+    {
+      "id": 4,
+      "user_id": 1,
+      "username": "admin",
+      "ip": "::1",
+      "ua": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36 Edg/146.0.0.0",
+      "result": "success",
+      "created_at": "2026/3/16 00:58:09"
+    },
+    {
+      "id": 5,
+      "user_id": 1,
+      "username": "admin",
+      "ip": "::1",
+      "ua": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36 Edg/146.0.0.0",
+      "result": "success",
+      "created_at": "2026/3/16 01:20:26"
+    },
+    {
+      "id": 6,
+      "user_id": 1,
+      "username": "admin",
+      "ip": "::1",
+      "ua": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36 Edg/146.0.0.0",
+      "result": "success",
+      "created_at": "2026/3/16 01:40:47"
+    },
+    {
+      "id": 7,
+      "user_id": 1,
+      "username": "admin",
+      "ip": "::1",
+      "ua": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36 Edg/146.0.0.0",
+      "result": "success",
+      "created_at": "2026/3/16 01:43:38"
+    },
+    {
+      "id": 8,
+      "user_id": 1,
+      "username": "admin",
+      "ip": "::1",
+      "ua": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36 Edg/146.0.0.0",
+      "result": "success",
+      "created_at": "2026/3/16 02:05:44"
+    },
+    {
+      "id": 9,
+      "user_id": 1,
+      "username": "admin",
+      "ip": "::1",
+      "ua": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36 Edg/146.0.0.0",
+      "result": "success",
+      "created_at": "2026/3/16 02:12:37"
+    },
+    {
+      "id": 10,
+      "user_id": 1,
+      "username": "admin",
+      "ip": "::1",
+      "ua": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36 Edg/146.0.0.0",
+      "result": "success",
+      "created_at": "2026/3/16 02:13:14"
+    },
+    {
+      "id": 11,
+      "user_id": 1,
+      "username": "admin",
+      "ip": "::1",
+      "ua": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36 Edg/146.0.0.0",
+      "result": "success",
+      "created_at": "2026/3/16 02:18:07"
+    },
+    {
+      "id": 12,
+      "user_id": 1,
+      "username": "admin",
+      "ip": "::1",
+      "ua": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36 Edg/146.0.0.0",
+      "result": "success",
+      "created_at": "2026/3/16 02:19:15"
+    },
+    {
+      "id": 13,
+      "user_id": 1,
+      "username": "admin",
+      "ip": "::1",
+      "ua": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36 Edg/146.0.0.0",
+      "result": "success",
+      "created_at": "2026/3/16 02:49:31"
+    },
+    {
+      "id": 14,
+      "user_id": 1,
+      "username": "admin",
+      "ip": "::1",
+      "ua": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36 Edg/146.0.0.0",
+      "result": "success",
+      "created_at": "2026/3/16 03:00:08"
+    },
+    {
+      "id": 15,
+      "user_id": 1,
+      "username": "admin",
+      "ip": "::1",
+      "ua": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36 Edg/146.0.0.0",
+      "result": "success",
+      "created_at": "2026/3/16 03:29:18"
+    },
+    {
+      "id": 16,
+      "user_id": 1,
+      "username": "admin",
+      "ip": "::1",
+      "ua": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36",
+      "result": "success",
+      "created_at": "2026/3/17 20:56:33"
+    },
+    {
+      "id": 17,
+      "user_id": 1,
+      "username": "admin",
+      "ip": "::1",
+      "ua": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36",
+      "result": "success",
+      "created_at": "2026-03-17 15:59:47"
+    },
+    {
+      "id": 18,
+      "user_id": 1,
+      "username": "admin",
+      "ip": "::1",
+      "ua": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36",
+      "result": "success",
+      "created_at": "2026-03-17 16:02:49"
+    },
+    {
+      "id": 19,
+      "user_id": 1,
+      "username": "admin",
+      "ip": "::1",
+      "ua": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36",
+      "result": "success",
+      "created_at": "2026-03-17 16:06:23"
+    },
+    {
+      "id": 20,
+      "user_id": 1,
+      "username": "admin",
+      "ip": "::1",
+      "ua": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36",
+      "result": "success",
+      "created_at": "2026-03-17 16:07:28"
+    },
+    {
+      "id": 21,
+      "user_id": 1,
+      "username": "admin",
+      "ip": "::1",
+      "ua": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36",
+      "result": "success",
+      "created_at": "2026-03-17 16:13:45"
+    },
+    {
+      "id": 22,
+      "user_id": 1,
+      "username": "admin",
+      "ip": "::1",
+      "ua": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36",
+      "result": "success",
+      "created_at": "2026-03-17 16:31:26"
+    },
+    {
+      "id": 23,
+      "user_id": 1,
+      "username": "admin",
+      "ip": "::1",
+      "ua": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36",
+      "result": "success",
+      "created_at": "2026-03-17 16:33:06"
+    },
+    {
+      "id": 24,
+      "user_id": 1,
+      "username": "admin",
+      "ip": "::1",
+      "ua": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36",
+      "result": "success",
+      "created_at": "2026-03-17 17:00:00"
+    },
+    {
+      "id": 25,
+      "user_id": 1,
+      "username": "admin",
+      "ip": "::1",
+      "ua": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36",
+      "result": "success",
+      "created_at": "2026-03-17 17:07:16"
+    },
+    {
+      "id": 26,
+      "username": "test",
+      "ip": "::1",
+      "ua": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36",
+      "result": "fail",
+      "reason": "账号不存在",
+      "created_at": "2026-03-17 17:09:08"
+    },
+    {
+      "id": 27,
+      "user_id": 1,
+      "username": "admin",
+      "ip": "::1",
+      "ua": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36",
+      "result": "success",
+      "created_at": "2026-03-17 17:09:41"
+    },
+    {
+      "id": 28,
+      "user_id": 1,
+      "username": "admin",
+      "ip": "::1",
+      "ua": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36",
+      "result": "success",
+      "created_at": "2026-03-17 17:20:43"
+    },
+    {
+      "id": 29,
+      "user_id": 1,
+      "username": "admin",
+      "ip": "::1",
+      "ua": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36",
+      "result": "success",
+      "created_at": "2026-03-17 17:27:24"
+    },
+    {
+      "id": 30,
+      "user_id": 1,
+      "username": "admin",
+      "ip": "::1",
+      "ua": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36",
+      "result": "success",
+      "created_at": "2026-03-17 17:30:17"
+    },
+    {
+      "id": 31,
+      "user_id": 1,
+      "username": "admin",
+      "ip": "::1",
+      "ua": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36",
+      "result": "success",
+      "created_at": "2026-03-17 17:31:52"
+    },
+    {
+      "id": 32,
+      "user_id": 1,
+      "username": "admin",
+      "ip": "::1",
+      "ua": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) WorkBuddy/1.100.0 Chrome/132.0.6834.210 Electron/34.5.1 Safari/537.36",
+      "result": "success",
+      "created_at": "2026-03-17 17:32:53"
+    },
+    {
+      "id": 33,
+      "user_id": 1,
+      "username": "admin",
+      "ip": "::1",
+      "ua": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36",
+      "result": "success",
+      "created_at": "2026-03-17 17:33:38"
+    },
+    {
+      "id": 34,
+      "user_id": 1,
+      "username": "admin",
+      "ip": "::1",
+      "ua": "",
+      "result": "success",
+      "created_at": "2026-03-17 18:11:03"
+    },
+    {
+      "id": 35,
+      "user_id": 1,
+      "username": "admin",
+      "ip": "::1",
+      "ua": "",
+      "result": "success",
+      "created_at": "2026-03-17 18:11:20"
+    },
+    {
+      "id": 36,
+      "user_id": 1,
+      "username": "admin",
+      "ip": "::1",
+      "ua": "",
+      "result": "success",
+      "created_at": "2026-03-17 18:11:57"
+    },
+    {
+      "id": 37,
+      "user_id": 1,
+      "username": "admin",
+      "ip": "::1",
+      "ua": "",
+      "result": "success",
+      "created_at": "2026-03-17 18:12:08"
+    },
+    {
+      "id": 38,
+      "user_id": 1,
+      "username": "admin",
+      "ip": "::1",
+      "ua": "",
+      "result": "success",
+      "created_at": "2026-03-17 18:12:17"
+    },
+    {
+      "id": 39,
+      "user_id": 1,
+      "username": "admin",
+      "ip": "::1",
+      "ua": "",
+      "result": "success",
+      "created_at": "2026-03-17 18:12:42"
+    },
+    {
+      "id": 40,
+      "user_id": 1,
+      "username": "admin",
+      "ip": "::1",
+      "ua": "",
+      "result": "success",
+      "created_at": "2026-03-17 18:14:19"
+    },
+    {
+      "id": 41,
+      "user_id": 1,
+      "username": "admin",
+      "ip": "::1",
+      "ua": "",
+      "result": "success",
+      "created_at": "2026-03-17 18:15:05"
+    },
+    {
+      "id": 42,
+      "user_id": 1,
+      "username": "admin",
+      "ip": "::1",
+      "ua": "",
+      "result": "success",
+      "created_at": "2026-03-17 18:15:15"
+    },
+    {
+      "id": 43,
+      "user_id": 1,
+      "username": "admin",
+      "ip": "::1",
+      "ua": "",
+      "result": "success",
+      "created_at": "2026-03-17 18:15:23"
+    },
+    {
+      "id": 44,
+      "user_id": 1,
+      "username": "admin",
+      "ip": "::1",
+      "ua": "",
+      "result": "success",
+      "created_at": "2026-03-17 18:15:32"
+    },
+    {
+      "id": 45,
+      "user_id": 1,
+      "username": "admin",
+      "ip": "::1",
+      "ua": "",
+      "result": "success",
+      "created_at": "2026-03-17 18:15:53"
+    },
+    {
+      "id": 46,
+      "user_id": 1,
+      "username": "admin",
+      "ip": "::1",
+      "ua": "",
+      "result": "success",
+      "created_at": "2026-03-17 18:15:59"
+    },
+    {
+      "id": 47,
+      "user_id": 1,
+      "username": "admin",
+      "ip": "::1",
+      "ua": "",
+      "result": "success",
+      "created_at": "2026-03-17 18:49:28"
+    },
+    {
+      "id": 48,
+      "user_id": 1,
+      "username": "admin",
+      "ip": "::1",
+      "ua": "",
+      "result": "success",
+      "created_at": "2026-03-17 18:50:12"
+    },
+    {
+      "id": 49,
+      "user_id": 1,
+      "username": "admin",
+      "ip": "::1",
+      "ua": "",
+      "result": "success",
+      "created_at": "2026-03-17 18:51:00"
+    },
+    {
+      "id": 50,
+      "user_id": 1,
+      "username": "admin",
+      "ip": "::1",
+      "ua": "",
+      "result": "success",
+      "created_at": "2026-03-17 18:51:35"
+    },
+    {
+      "id": 51,
+      "user_id": 1,
+      "username": "admin",
+      "ip": "::1",
+      "ua": "",
+      "result": "success",
+      "created_at": "2026-03-17 18:52:14"
+    },
+    {
+      "id": 52,
+      "user_id": 1,
+      "username": "admin",
+      "ip": "::1",
+      "ua": "",
+      "result": "success",
+      "created_at": "2026-03-17 18:54:19"
+    },
+    {
+      "id": 53,
+      "user_id": 1,
+      "username": "admin",
+      "ip": "::1",
+      "ua": "",
+      "result": "success",
+      "created_at": "2026-03-17 18:54:54"
+    },
+    {
+      "id": 54,
+      "user_id": 1,
+      "username": "admin",
+      "ip": "::1",
+      "ua": "",
+      "result": "success",
+      "created_at": "2026-03-17 18:55:37"
+    }
+  ],
+  "brand": {
+    "name": "充易达",
+    "tagline": "高效自动充值系统\n专业的代理商管理平台",
+    "copyright": "© 2024 充易达 · 保留所有权利",
+    "termsText": "《服务条款》",
+    "termsUrl": "#",
+    "privacyText": "《隐私政策》",
+    "privacyUrl": "#",
+    "disclaimer": "",
+    "logoType": "emoji",
+    "logoEmoji": "⚡",
+    "logoImage": ""
+  },
+  "_permissions_meta": [
+    {
+      "group": "仪表盘",
+      "key": "dashboard",
+      "label": "查看仪表盘"
+    },
+    {
+      "group": "订单管理",
+      "key": "orders.view",
+      "label": "查看订单"
+    },
+    {
+      "group": "订单管理",
+      "key": "orders.edit",
+      "label": "修改订单"
+    },
+    {
+      "group": "订单管理",
+      "key": "recharge-records.view",
+      "label": "充值记录"
+    },
+    {
+      "group": "订单管理",
+      "key": "callback-logs.view",
+      "label": "回调日志"
+    },
+    {
+      "group": "产品管理",
+      "key": "products.view",
+      "label": "查看产品"
+    },
+    {
+      "group": "产品管理",
+      "key": "products.edit",
+      "label": "编辑产品"
+    },
+    {
+      "group": "产品管理",
+      "key": "categories.view",
+      "label": "产品分类"
+    },
+    {
+      "group": "产品管理",
+      "key": "suppliers.view",
+      "label": "供应商管理"
+    },
+    {
+      "group": "代理管理",
+      "key": "agents.view",
+      "label": "代理列表"
+    },
+    {
+      "group": "代理管理",
+      "key": "agents.edit",
+      "label": "编辑代理"
+    },
+    {
+      "group": "代理管理",
+      "key": "agent-balance.view",
+      "label": "余额管理"
+    },
+    {
+      "group": "API 管理",
+      "key": "api-users.view",
+      "label": "API 用户"
+    },
+    {
+      "group": "API 管理",
+      "key": "api-logs.view",
+      "label": "API 日志"
+    },
+    {
+      "group": "财务管理",
+      "key": "finance-overview.view",
+      "label": "财务概览"
+    },
+    {
+      "group": "财务管理",
+      "key": "recharge-apply.view",
+      "label": "充值申请"
+    },
+    {
+      "group": "财务管理",
+      "key": "withdraw-apply.view",
+      "label": "提现申请"
+    },
+    {
+      "group": "用户管理",
+      "key": "members.view",
+      "label": "查看用户"
+    },
+    {
+      "group": "用户管理",
+      "key": "members.edit",
+      "label": "编辑用户"
+    },
+    {
+      "group": "用户管理",
+      "key": "members.balance",
+      "label": "调整余额"
+    },
+    {
+      "group": "系统管理",
+      "key": "roles.view",
+      "label": "角色管理"
+    },
+    {
+      "group": "系统管理",
+      "key": "roles.edit",
+      "label": "编辑角色"
+    },
+    {
+      "group": "系统管理",
+      "key": "settings.view",
+      "label": "系统设置"
+    }
+  ],
+  "recharge_applies": [
+    {
+      "id": 1,
+      "sn": "RA20260315001",
+      "agent_id": 1,
+      "agent_name": "深圳充值王",
+      "amount": 5000,
+      "pay_type": "银行转账",
+      "voucher": "",
+      "remark": "",
+      "status": "approved",
+      "created_at": "2026-03-15 08:30:00",
+      "reviewed_at": "2026/3/16 00:58:35",
+      "review_note": ""
+    },
+    {
+      "id": 2,
+      "sn": "RA20260315002",
+      "agent_id": 2,
+      "agent_name": "北京极速充",
+      "amount": 3000,
+      "pay_type": "支付宝",
+      "voucher": "",
+      "remark": "急用",
+      "status": "approved",
+      "created_at": "2026-03-15 09:00:00",
+      "reviewed_at": "2026/3/16 00:58:33",
+      "review_note": ""
+    },
+    {
+      "id": 3,
+      "sn": "RA20260314001",
+      "agent_id": 3,
+      "agent_name": "上海优惠充",
+      "amount": 10000,
+      "pay_type": "微信支付",
+      "voucher": "",
+      "remark": "",
+      "status": "approved",
+      "created_at": "2026-03-14 16:20:00",
+      "reviewed_at": "2026-03-14 17:00:00",
+      "review_note": ""
+    },
+    {
+      "id": 4,
+      "sn": "RA20260313001",
+      "agent_id": 4,
+      "agent_name": "广州代理商",
+      "amount": 2000,
+      "pay_type": "银行转账",
+      "voucher": "",
+      "remark": "",
+      "status": "rejected",
+      "created_at": "2026-03-13 11:00:00",
+      "reviewed_at": "2026-03-13 14:00:00",
+      "review_note": "凭证不清晰"
+    }
+  ],
+  "withdraw_applies": [
+    {
+      "id": 1,
+      "sn": "WD20260314001",
+      "agent_id": 4,
+      "agent_name": "广州代理商",
+      "amount": 2000,
+      "pay_type": "支付宝",
+      "account": "13812340004",
+      "account_name": "陈先生",
+      "remark": "",
+      "status": "pending",
+      "created_at": "2026-03-14 18:00:00",
+      "handled_at": "",
+      "handle_note": ""
+    },
+    {
+      "id": 2,
+      "sn": "WD20260313001",
+      "agent_id": 1,
+      "agent_name": "深圳充值王",
+      "amount": 5000,
+      "pay_type": "银行卡",
+      "account": "6222021234567890",
+      "account_name": "张三",
+      "remark": "",
+      "status": "approved",
+      "created_at": "2026-03-13 10:00:00",
+      "handled_at": "2026-03-13 15:00:00",
+      "handle_note": ""
+    },
+    {
+      "id": 3,
+      "sn": "WD20260312001",
+      "agent_id": 2,
+      "agent_name": "北京极速充",
+      "amount": 1500,
+      "pay_type": "微信",
+      "account": "wx_lij_001",
+      "account_name": "李四",
+      "remark": "",
+      "status": "rejected",
+      "created_at": "2026-03-12 09:00:00",
+      "handled_at": "2026-03-12 11:00:00",
+      "handle_note": "余额不足"
+    }
+  ],
+  "payment_methods": [
+    {
+      "id": 1,
+      "type": "alipay",
+      "name": "支付宝",
+      "account": "cyd_finance@alipay.com",
+      "account_name": "充易达财务",
+      "qrcode": "",
+      "status": 1,
+      "sort": 1,
+      "remark": "",
+      "created_at": "2026/3/16 00:56:42"
+    },
+    {
+      "id": 2,
+      "type": "wechat",
+      "name": "微信收款",
+      "account": "cyd_wechat_pay",
+      "account_name": "充易达",
+      "qrcode": "",
+      "status": 1,
+      "sort": 2,
+      "remark": "",
+      "created_at": "2026/3/16 00:56:42"
+    },
+    {
+      "id": 3,
+      "type": "bank",
+      "name": "银行卡",
+      "account": "6222021234567890",
+      "account_name": "充易达科技有限公司",
+      "qrcode": "",
+      "status": 1,
+      "sort": 3,
+      "remark": "中国银行",
+      "created_at": "2026/3/16 00:56:42"
+    }
+  ],
+  "agents": [
+    {
+      "id": 1,
+      "name": "深圳充值王",
+      "contact": "张老板",
+      "phone": "13812340001",
+      "balance": 20800,
+      "status": 1,
+      "created_at": "2026-01-05 10:00:00"
+    },
+    {
+      "id": 2,
+      "name": "北京极速充",
+      "contact": "李经理",
+      "phone": "13812340002",
+      "balance": 11600,
+      "status": 1,
+      "created_at": "2026-02-01 09:00:00"
+    },
+    {
+      "id": 3,
+      "name": "上海优惠充",
+      "contact": "王总",
+      "phone": "13812340003",
+      "balance": 22400,
+      "status": 1,
+      "created_at": "2026-02-15 14:00:00"
+    },
+    {
+      "id": 4,
+      "name": "广州代理商",
+      "contact": "陈先生",
+      "phone": "13812340004",
+      "balance": 5200,
+      "status": 1,
+      "created_at": "2026-03-01 08:00:00"
+    }
+  ],
+  "suppliers": [
+    {
+      "id": 1,
+      "name": "大猿人",
+      "contact": "刘总",
+      "phone": "13900001111",
+      "balance": "0.00",
+      "status": 1,
+      "created_at": "2026-01-01 09:00:00",
+      "api_configured": 1,
+      "updated_at": "2026/3/16 03:30:40",
+      "last_test": "2026-03-17 17:51:28",
+      "test_status": "ok"
+    },
+    {
+      "id": 2,
+      "name": "蜜蜂",
+      "contact": "蔡总",
+      "phone": "13900002222",
+      "balance": 25000,
+      "status": 1,
+      "created_at": "2026-01-08 10:00:00"
+    },
+    {
+      "id": 3,
+      "name": "客客帮",
+      "contact": "周经理",
+      "phone": "13900003333",
+      "balance": 18000,
+      "status": 1,
+      "created_at": "2026-02-01 11:00:00"
+    },
+    {
+      "id": 4,
+      "name": "直冲平台",
+      "contact": "吴总",
+      "phone": "13900004444",
+      "balance": 11500,
+      "status": 1,
+      "created_at": "2026-02-20 14:00:00"
+    }
+  ],
+  "daily_revenue": [
+    {
+      "date": "2026-03-15",
+      "hour": 0,
+      "revenue": 333.24,
+      "orders": 3
+    },
+    {
+      "date": "2026-03-15",
+      "hour": 1,
+      "revenue": 481.79,
+      "orders": 4
+    },
+    {
+      "date": "2026-03-15",
+      "hour": 2,
+      "revenue": 193.49,
+      "orders": 1
+    },
+    {
+      "date": "2026-03-15",
+      "hour": 3,
+      "revenue": 441.42,
+      "orders": 4
+    },
+    {
+      "date": "2026-03-15",
+      "hour": 4,
+      "revenue": 52.69,
+      "orders": 0
+    },
+    {
+      "date": "2026-03-15",
+      "hour": 5,
+      "revenue": 383.24,
+      "orders": 3
+    },
+    {
+      "date": "2026-03-15",
+      "hour": 6,
+      "revenue": 494.17,
+      "orders": 4
+    },
+    {
+      "date": "2026-03-15",
+      "hour": 7,
+      "revenue": 472.55,
+      "orders": 4
+    },
+    {
+      "date": "2026-03-15",
+      "hour": 8,
+      "revenue": 5511.96,
+      "orders": 55
+    },
+    {
+      "date": "2026-03-15",
+      "hour": 9,
+      "revenue": 9336.29,
+      "orders": 93
+    },
+    {
+      "date": "2026-03-15",
+      "hour": 10,
+      "revenue": 9794.61,
+      "orders": 97
+    },
+    {
+      "date": "2026-03-15",
+      "hour": 11,
+      "revenue": 9087.64,
+      "orders": 90
+    },
+    {
+      "date": "2026-03-15",
+      "hour": 12,
+      "revenue": 4827.87,
+      "orders": 48
+    },
+    {
+      "date": "2026-03-15",
+      "hour": 13,
+      "revenue": 9653.5,
+      "orders": 96
+    },
+    {
+      "date": "2026-03-15",
+      "hour": 14,
+      "revenue": 6196.86,
+      "orders": 61
+    },
+    {
+      "date": "2026-03-15",
+      "hour": 15,
+      "revenue": 9087.74,
+      "orders": 90
+    },
+    {
+      "date": "2026-03-15",
+      "hour": 16,
+      "revenue": 3985.99,
+      "orders": 39
+    },
+    {
+      "date": "2026-03-15",
+      "hour": 17,
+      "revenue": 9119.63,
+      "orders": 91
+    },
+    {
+      "date": "2026-03-15",
+      "hour": 18,
+      "revenue": 6875.01,
+      "orders": 68
+    },
+    {
+      "date": "2026-03-15",
+      "hour": 19,
+      "revenue": 8432.17,
+      "orders": 84
+    },
+    {
+      "date": "2026-03-15",
+      "hour": 20,
+      "revenue": 6081.81,
+      "orders": 60
+    },
+    {
+      "date": "2026-03-15",
+      "hour": 21,
+      "revenue": 5584.21,
+      "orders": 55
+    },
+    {
+      "date": "2026-03-15",
+      "hour": 22,
+      "revenue": 4483.25,
+      "orders": 44
+    },
+    {
+      "date": "2026-03-15",
+      "hour": 23,
+      "revenue": 487.23,
+      "orders": 4
+    }
+  ],
+  "agent_levels": [
+    {
+      "id": 1,
+      "name": "一级代理",
+      "desc": "平台直属顶级代理，享受最高折扣",
+      "color": "indigo",
+      "sort": 1,
+      "created_at": "2026/3/16 01:19:06"
+    },
+    {
+      "id": 2,
+      "name": "二级代理",
+      "desc": "由一级代理发展，次级折扣",
+      "color": "cyan",
+      "sort": 2,
+      "created_at": "2026/3/16 01:19:06"
+    },
+    {
+      "id": 3,
+      "name": "三级代理",
+      "desc": "由二级代理发展，基础折扣",
+      "color": "emerald",
+      "sort": 3,
+      "created_at": "2026/3/16 01:19:06"
+    }
+  ],
+  "agent_pricing": [
+    {
+      "id": 1,
+      "member_id": 1,
+      "product_id": 1,
+      "product_name": "中国移动话费 100元",
+      "category": "话费充值",
+      "face_value": 100,
+      "base_price": 98,
+      "agent_price": 96.5,
+      "created_at": "2026/3/16 01:19:06"
+    },
+    {
+      "id": 2,
+      "member_id": 1,
+      "product_id": 2,
+      "product_name": "中国联通话费 50元",
+      "category": "话费充值",
+      "face_value": 50,
+      "base_price": 49,
+      "agent_price": 48.2,
+      "created_at": "2026/3/16 01:19:06"
+    },
+    {
+      "id": 3,
+      "member_id": 1,
+      "product_id": 3,
+      "product_name": "王者荣耀 648点券",
+      "category": "游戏充值",
+      "face_value": 648,
+      "base_price": 600,
+      "agent_price": 588,
+      "created_at": "2026/3/16 01:19:06"
+    },
+    {
+      "id": 4,
+      "member_id": 2,
+      "product_id": 1,
+      "product_name": "中国移动话费 100元",
+      "category": "话费充值",
+      "face_value": 100,
+      "base_price": 98,
+      "agent_price": 97,
+      "created_at": "2026/3/16 01:19:06"
+    },
+    {
+      "id": 5,
+      "member_id": 2,
+      "product_id": 2,
+      "product_name": "中国联通话费 50元",
+      "category": "话费充值",
+      "face_value": 50,
+      "base_price": 49,
+      "agent_price": 48.5,
+      "created_at": "2026/3/16 01:19:06"
+    },
+    {
+      "id": 6,
+      "member_id": 3,
+      "product_id": 1,
+      "product_name": "中国移动话费 100元",
+      "category": "话费充值",
+      "face_value": 100,
+      "base_price": 98,
+      "agent_price": 97.5,
+      "created_at": "2026/3/16 01:19:06"
+    }
+  ],
+  "categories": [
+    {
+      "id": 1,
+      "name": "话费充值",
+      "parent_id": 0,
+      "sort": 1,
+      "status": 1,
+      "created_at": "2026/3/16 02:04:33"
+    },
+    {
+      "id": 5,
+      "name": "视频会员",
+      "parent_id": 0,
+      "sort": 3,
+      "status": 1,
+      "created_at": "2026/3/16 02:04:33"
+    },
+    {
+      "id": 7,
+      "name": "其他充值",
+      "parent_id": 0,
+      "sort": 5,
+      "status": 1,
+      "created_at": "2026/3/16 02:04:33"
+    },
+    {
+      "id": 8,
+      "name": "中国移动",
+      "parent_id": 1,
+      "sort": 99,
+      "status": 1,
+      "created_at": "2026/3/16 02:13:22"
+    }
+  ],
+  "products": [
+    {
+      "id": 1,
+      "name": "中国移动话费 10元",
+      "category_id": 1,
+      "category": "话费充值",
+      "supplier_id": 1,
+      "supplier": "大猿人",
+      "face_value": 10,
+      "cost_price": 9.5,
+      "agent_price": 9.7,
+      "retail_price": 9.9,
+      "status": 1,
+      "is_direct": 0,
+      "created_at": "2026/3/16 02:04:33",
+      "supplier_item_id": "1",
+      "operators": [
+        "中国移动",
+        "中国电信",
+        "中国联通"
+      ],
+      "sort": 99,
+      "daily_limit": 0,
+      "monthly_limit": 0,
+      "allow_order_in_progress": 0,
+      "charge_mode": "supplier",
+      "delay_submit": 0,
+      "sync_price": 1,
+      "sync_status": 1
+    },
+    {
+      "id": 2,
+      "name": "中国联通话费 50元",
+      "category_id": 1,
+      "category": "话费充值",
+      "supplier_id": 2,
+      "supplier": "蜜蜂",
+      "face_value": 50,
+      "cost_price": 47.5,
+      "agent_price": 48.5,
+      "retail_price": 49,
+      "status": 1,
+      "is_direct": 0,
+      "created_at": "2026/3/16 02:04:33"
+    },
+    {
+      "id": 3,
+      "name": "中国移动话费 100元",
+      "category_id": 1,
+      "category": "话费充值",
+      "supplier_id": 1,
+      "supplier": "大猿人",
+      "face_value": 100,
+      "cost_price": 98,
+      "agent_price": 98.5,
+      "retail_price": 99,
+      "status": 1,
+      "is_direct": 0,
+      "created_at": "2026/3/16 02:04:33"
+    },
+    {
+      "id": 5,
+      "name": "爱奇艺视频月卡",
+      "category_id": 5,
+      "category": "视频会员",
+      "supplier_id": 4,
+      "supplier": "直冲平台",
+      "face_value": 25,
+      "cost_price": 18,
+      "agent_price": 20,
+      "retail_price": 22,
+      "status": 0,
+      "is_direct": 1,
+      "created_at": "2026/3/16 02:04:33"
+    },
+    {
+      "id": 6,
+      "name": "腾讯视频月卡",
+      "category_id": 5,
+      "category": "视频会员",
+      "supplier_id": 4,
+      "supplier": "直冲平台",
+      "face_value": 20,
+      "cost_price": 15,
+      "agent_price": 16.5,
+      "retail_price": 18,
+      "status": 1,
+      "is_direct": 1,
+      "created_at": "2026/3/16 02:04:33"
+    }
+  ],
+  "direct_products": [
+    {
+      "id": 1,
+      "name": "爱奇艺月度会员",
+      "charge_type": "账号直充",
+      "face_value": 25,
+      "direct_price": 18,
+      "on_sale": 1,
+      "created_at": "2026/3/16 02:04:33"
+    },
+    {
+      "id": 2,
+      "name": "腾讯视频月卡",
+      "charge_type": "账号直充",
+      "face_value": 20,
+      "direct_price": 15,
+      "on_sale": 1,
+      "created_at": "2026/3/16 02:04:33"
+    },
+    {
+      "id": 3,
+      "name": "网易云音乐月卡",
+      "charge_type": "账号直充",
+      "face_value": 12,
+      "direct_price": 8.5,
+      "on_sale": 0,
+      "created_at": "2026/3/16 02:04:33"
+    }
+  ],
+  "supplier_api_configs": [
+    {
+      "supplier_id": 1,
+      "api_type": "dayuanren",
+      "api_domain": "http://dyr.xyquanyi.cn/yrapi.php",
+      "userid": "2",
+      "api_key": "vIWxMdu3L9lebUzhNCQtsO16cyw27rgB",
+      "notify_url": "",
+      "enabled": 1,
+      "updated_at": "2026/3/16 03:30:40",
+      "id": 1,
+      "created_at": "2026/3/16 03:29:36"
+    }
+  ],
+  "orders": [
+    {
+      "id": 1,
+      "order_no": "ORD177376510337645",
+      "member_id": 6,
+      "member_name": "test",
+      "order_type": "consume",
+      "amount": 9.5,
+      "product_id": 1,
+      "product_name": "中国移动话费 10元",
+      "status": 2,
+      "remark": "1",
+      "created_at": "2026-03-17 16:31:43",
+      "updated_at": "2026-03-17 17:01:26",
+      "member_info": {
+        "id": 6,
+        "username": "test",
+        "balance": 10000
+      },
+      "product_info": {
+        "id": 1,
+        "name": "中国移动话费 10元",
+        "cost_price": 9.5
+      }
+    },
+    {
+      "id": 2,
+      "order_no": "ORD1773766908026335",
+      "member_id": 6,
+      "member_name": "test",
+      "order_type": "consume",
+      "amount": 47.5,
+      "product_id": 2,
+      "product_name": "中国联通话费 50元",
+      "status": 4,
+      "remark": "1",
+      "created_at": "2026-03-17 17:01:48",
+      "updated_at": "2026-03-17 17:03:01",
+      "member_info": {
+        "id": 6,
+        "username": "test",
+        "balance": 10000
+      },
+      "product_info": {
+        "id": 2,
+        "name": "中国联通话费 50元",
+        "cost_price": 47.5
+      }
+    },
+    {
+      "id": 3,
+      "order_no": "ORD1773767257841948",
+      "member_id": 6,
+      "member_name": "test",
+      "order_type": "consume",
+      "amount": 98,
+      "product_id": 3,
+      "product_name": "中国移动话费 100元",
+      "status": 1,
+      "remark": "测试",
+      "created_at": "2026-03-17 17:07:37",
+      "updated_at": "2026-03-17 18:12:17",
+      "member_info": {
+        "id": 6,
+        "username": "test",
+        "balance": 10000
+      },
+      "product_info": {
+        "id": 3,
+        "name": "中国移动话费 100元",
+        "cost_price": 98
+      }
+    }
+  ],
+  "operation_logs": [
+    {
+      "id": 1,
+      "user_id": 1,
+      "username": "admin",
+      "action": "login",
+      "target_type": "user",
+      "target_id": 1,
+      "detail": "用户登录成功, IP: ::1",
+      "ip": "::1",
+      "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36",
+      "created_at": "2026-03-17 15:59:47"
+    },
+    {
+      "id": 2,
+      "user_id": 1,
+      "username": "admin",
+      "action": "login",
+      "target_type": "user",
+      "target_id": 1,
+      "detail": "用户登录成功, IP: ::1",
+      "ip": "::1",
+      "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36",
+      "created_at": "2026-03-17 16:02:49"
+    },
+    {
+      "id": 3,
+      "user_id": 1,
+      "username": "admin",
+      "action": "login",
+      "target_type": "user",
+      "target_id": 1,
+      "detail": "用户登录成功, IP: ::1",
+      "ip": "::1",
+      "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36",
+      "created_at": "2026-03-17 16:06:23"
+    },
+    {
+      "id": 4,
+      "user_id": 1,
+      "username": "admin",
+      "action": "login",
+      "target_type": "user",
+      "target_id": 1,
+      "detail": "用户登录成功, IP: ::1",
+      "ip": "::1",
+      "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36",
+      "created_at": "2026-03-17 16:07:28"
+    },
+    {
+      "id": 5,
+      "user_id": 1,
+      "username": "admin",
+      "action": "manual_adjust_balance",
+      "target_type": "member",
+      "target_id": 4,
+      "detail": "手动调整用户 user004 余额: +¥1, 原因: 1",
+      "ip": "::1",
+      "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36",
+      "created_at": "2026-03-17 16:07:42"
+    },
+    {
+      "id": 6,
+      "user_id": 1,
+      "username": "admin",
+      "action": "manual_adjust_balance",
+      "target_type": "member",
+      "target_id": 2,
+      "detail": "手动调整用户 user002 余额: +¥1, 原因: 1",
+      "ip": "::1",
+      "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36",
+      "created_at": "2026-03-17 16:07:55"
+    },
+    {
+      "id": 7,
+      "user_id": 1,
+      "username": "admin",
+      "action": "login",
+      "target_type": "user",
+      "target_id": 1,
+      "detail": "用户登录成功, IP: ::1",
+      "ip": "::1",
+      "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36",
+      "created_at": "2026-03-17 16:13:45"
+    },
+    {
+      "id": 8,
+      "user_id": 1,
+      "username": "admin",
+      "action": "manual_adjust_balance",
+      "target_type": "member",
+      "target_id": 5,
+      "detail": "手动调整用户 ces 余额: +¥1, 原因: 1",
+      "ip": "::1",
+      "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36",
+      "created_at": "2026-03-17 16:13:57"
+    },
+    {
+      "id": 9,
+      "user_id": 1,
+      "username": "admin",
+      "action": "manual_adjust_balance",
+      "target_type": "member",
+      "target_id": 5,
+      "detail": "手动调整用户 ces 余额: +¥1, 原因: 1",
+      "ip": "::1",
+      "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36",
+      "created_at": "2026-03-17 16:13:59"
+    },
+    {
+      "id": 10,
+      "user_id": 1,
+      "username": "admin",
+      "action": "manual_adjust_balance",
+      "target_type": "member",
+      "target_id": 4,
+      "detail": "手动调整用户 user004 余额: +¥1, 原因: 1",
+      "ip": "::1",
+      "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36",
+      "created_at": "2026-03-17 16:14:23"
+    },
+    {
+      "id": 11,
+      "user_id": 1,
+      "username": "admin",
+      "action": "manual_adjust_balance",
+      "target_type": "member",
+      "target_id": 4,
+      "detail": "手动调整用户 user004 余额: +¥1, 原因: 1",
+      "ip": "::1",
+      "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36",
+      "created_at": "2026-03-17 16:14:24"
+    },
+    {
+      "id": 12,
+      "user_id": 1,
+      "username": "admin",
+      "action": "manual_adjust_balance",
+      "target_type": "member",
+      "target_id": 1,
+      "detail": "手动调整用户 user001 余额: +¥1, 原因: 1",
+      "ip": "::1",
+      "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36",
+      "created_at": "2026-03-17 16:14:31"
+    },
+    {
+      "id": 13,
+      "user_id": 1,
+      "username": "admin",
+      "action": "manual_adjust_balance",
+      "target_type": "member",
+      "target_id": 2,
+      "detail": "手动调整用户 user002 余额: +¥1, 原因: 1",
+      "ip": "::1",
+      "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36",
+      "created_at": "2026-03-17 16:22:28"
+    },
+    {
+      "id": 14,
+      "user_id": 1,
+      "username": "admin",
+      "action": "login",
+      "target_type": "user",
+      "target_id": 1,
+      "detail": "用户登录成功, IP: ::1",
+      "ip": "::1",
+      "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36",
+      "created_at": "2026-03-17 16:31:26"
+    },
+    {
+      "id": 15,
+      "user_id": 1,
+      "username": "admin",
+      "action": "create_order",
+      "target_type": "order",
+      "target_id": 1,
+      "detail": "创建消费订单 ORD177376510337645, 金额 ¥9.5, 账号 111111",
+      "ip": "::1",
+      "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36",
+      "created_at": "2026-03-17 16:31:43"
+    },
+    {
+      "id": 16,
+      "user_id": 1,
+      "username": "admin",
+      "action": "login",
+      "target_type": "user",
+      "target_id": 1,
+      "detail": "用户登录成功, IP: ::1",
+      "ip": "::1",
+      "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36",
+      "created_at": "2026-03-17 16:33:06"
+    },
+    {
+      "id": 17,
+      "user_id": 1,
+      "username": "admin",
+      "action": "login",
+      "target_type": "user",
+      "target_id": 1,
+      "detail": "用户登录成功, IP: ::1",
+      "ip": "::1",
+      "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36",
+      "created_at": "2026-03-17 17:00:00"
+    },
+    {
+      "id": 18,
+      "user_id": 1,
+      "username": "admin",
+      "action": "update_order_status",
+      "target_type": "order",
+      "target_id": 1,
+      "detail": "更新订单 ORD177376510337645 状态: 0 -> 1",
+      "ip": "::1",
+      "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36",
+      "created_at": "2026-03-17 17:01:05"
+    },
+    {
+      "id": 19,
+      "user_id": 1,
+      "username": "admin",
+      "action": "update_order_status",
+      "target_type": "order",
+      "target_id": 1,
+      "detail": "更新订单 ORD177376510337645 状态: 1 -> 2",
+      "ip": "::1",
+      "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36",
+      "created_at": "2026-03-17 17:01:26"
+    },
+    {
+      "id": 20,
+      "user_id": 1,
+      "username": "admin",
+      "action": "create_order",
+      "target_type": "order",
+      "target_id": 2,
+      "detail": "创建消费订单 ORD1773766908026335, 金额 ¥47.5, 账号 111111",
+      "ip": "::1",
+      "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36",
+      "created_at": "2026-03-17 17:01:48"
+    },
+    {
+      "id": 21,
+      "user_id": 1,
+      "username": "admin",
+      "action": "update_order_status",
+      "target_type": "order",
+      "target_id": 2,
+      "detail": "更新订单 ORD1773766908026335 状态: 0 -> 3",
+      "ip": "::1",
+      "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36",
+      "created_at": "2026-03-17 17:02:42"
+    },
+    {
+      "id": 22,
+      "user_id": 1,
+      "username": "admin",
+      "action": "update_order_status",
+      "target_type": "order",
+      "target_id": 2,
+      "detail": "更新订单 ORD1773766908026335 状态: 3 -> 0",
+      "ip": "::1",
+      "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36",
+      "created_at": "2026-03-17 17:02:52"
+    },
+    {
+      "id": 23,
+      "user_id": 1,
+      "username": "admin",
+      "action": "update_order_status",
+      "target_type": "order",
+      "target_id": 2,
+      "detail": "更新订单 ORD1773766908026335 状态: 0 -> 3",
+      "ip": "::1",
+      "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36",
+      "created_at": "2026-03-17 17:02:57"
+    },
+    {
+      "id": 24,
+      "user_id": 1,
+      "username": "admin",
+      "action": "update_order_status",
+      "target_type": "order",
+      "target_id": 2,
+      "detail": "更新订单 ORD1773766908026335 状态: 3 -> 4",
+      "ip": "::1",
+      "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36",
+      "created_at": "2026-03-17 17:03:01"
+    },
+    {
+      "id": 25,
+      "user_id": 1,
+      "username": "admin",
+      "action": "login",
+      "target_type": "user",
+      "target_id": 1,
+      "detail": "用户登录成功, IP: ::1",
+      "ip": "::1",
+      "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36",
+      "created_at": "2026-03-17 17:07:16"
+    },
+    {
+      "id": 26,
+      "user_id": 1,
+      "username": "admin",
+      "action": "create_order",
+      "target_type": "order",
+      "target_id": 3,
+      "detail": "创建消费订单 ORD1773767257841948, 金额 ¥98, 账号 11111",
+      "ip": "::1",
+      "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36",
+      "created_at": "2026-03-17 17:07:37"
+    },
+    {
+      "id": 27,
+      "user_id": 1,
+      "username": "admin",
+      "action": "update_order_status",
+      "target_type": "order",
+      "target_id": 3,
+      "detail": "更新订单 ORD1773767257841948 状态: 0 -> 3",
+      "ip": "::1",
+      "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36",
+      "created_at": "2026-03-17 17:08:11"
+    },
+    {
+      "id": 28,
+      "user_id": 1,
+      "username": "admin",
+      "action": "update_order_status",
+      "target_type": "order",
+      "target_id": 3,
+      "detail": "更新订单 ORD1773767257841948 状态: 3 -> 4",
+      "ip": "::1",
+      "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36",
+      "created_at": "2026-03-17 17:08:21"
+    },
+    {
+      "id": 29,
+      "user_id": 1,
+      "username": "admin",
+      "action": "login",
+      "target_type": "user",
+      "target_id": 1,
+      "detail": "用户登录成功, IP: ::1",
+      "ip": "::1",
+      "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36",
+      "created_at": "2026-03-17 17:09:41"
+    },
+    {
+      "id": 30,
+      "user_id": 1,
+      "username": "admin",
+      "action": "login",
+      "target_type": "user",
+      "target_id": 1,
+      "detail": "用户登录成功, IP: ::1",
+      "ip": "::1",
+      "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36",
+      "created_at": "2026-03-17 17:20:43"
+    },
+    {
+      "id": 31,
+      "user_id": 1,
+      "username": "admin",
+      "action": "login",
+      "target_type": "user",
+      "target_id": 1,
+      "detail": "用户登录成功, IP: ::1",
+      "ip": "::1",
+      "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36",
+      "created_at": "2026-03-17 17:27:24"
+    },
+    {
+      "id": 32,
+      "user_id": 1,
+      "username": "admin",
+      "action": "login",
+      "target_type": "user",
+      "target_id": 1,
+      "detail": "用户登录成功, IP: ::1",
+      "ip": "::1",
+      "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36",
+      "created_at": "2026-03-17 17:30:17"
+    },
+    {
+      "id": 33,
+      "user_id": 1,
+      "username": "admin",
+      "action": "login",
+      "target_type": "user",
+      "target_id": 1,
+      "detail": "用户登录成功, IP: ::1",
+      "ip": "::1",
+      "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36",
+      "created_at": "2026-03-17 17:31:52"
+    },
+    {
+      "id": 34,
+      "user_id": 1,
+      "username": "admin",
+      "action": "login",
+      "target_type": "user",
+      "target_id": 1,
+      "detail": "用户登录成功, IP: ::1",
+      "ip": "::1",
+      "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) WorkBuddy/1.100.0 Chrome/132.0.6834.210 Electron/34.5.1 Safari/537.36",
+      "created_at": "2026-03-17 17:32:53"
+    },
+    {
+      "id": 35,
+      "user_id": 1,
+      "username": "admin",
+      "action": "login",
+      "target_type": "user",
+      "target_id": 1,
+      "detail": "用户登录成功, IP: ::1",
+      "ip": "::1",
+      "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36",
+      "created_at": "2026-03-17 17:33:38"
+    },
+    {
+      "id": 36,
+      "user_id": 1,
+      "username": "admin",
+      "action": "login",
+      "target_type": "user",
+      "target_id": 1,
+      "detail": "用户登录成功, IP: ::1",
+      "ip": "::1",
+      "user_agent": "",
+      "created_at": "2026-03-17 18:11:03"
+    },
+    {
+      "id": 37,
+      "user_id": 1,
+      "username": "admin",
+      "action": "login",
+      "target_type": "user",
+      "target_id": 1,
+      "detail": "用户登录成功, IP: ::1",
+      "ip": "::1",
+      "user_agent": "",
+      "created_at": "2026-03-17 18:11:20"
+    },
+    {
+      "id": 38,
+      "user_id": 1,
+      "username": "admin",
+      "action": "login",
+      "target_type": "user",
+      "target_id": 1,
+      "detail": "用户登录成功, IP: ::1",
+      "ip": "::1",
+      "user_agent": "",
+      "created_at": "2026-03-17 18:11:57"
+    },
+    {
+      "id": 39,
+      "user_id": 1,
+      "username": "admin",
+      "action": "login",
+      "target_type": "user",
+      "target_id": 1,
+      "detail": "用户登录成功, IP: ::1",
+      "ip": "::1",
+      "user_agent": "",
+      "created_at": "2026-03-17 18:12:08"
+    },
+    {
+      "id": 40,
+      "user_id": 1,
+      "username": "admin",
+      "action": "update_order_status",
+      "target_type": "order",
+      "target_id": 3,
+      "detail": "更新订单 ORD1773767257841948 状态: 4 -> 1",
+      "ip": "::1",
+      "user_agent": "",
+      "created_at": "2026-03-17 18:12:08"
+    },
+    {
+      "id": 41,
+      "user_id": 1,
+      "username": "admin",
+      "action": "login",
+      "target_type": "user",
+      "target_id": 1,
+      "detail": "用户登录成功, IP: ::1",
+      "ip": "::1",
+      "user_agent": "",
+      "created_at": "2026-03-17 18:12:17"
+    },
+    {
+      "id": 42,
+      "user_id": 1,
+      "username": "admin",
+      "action": "update_order_status",
+      "target_type": "order",
+      "target_id": 3,
+      "detail": "更新订单 ORD1773767257841948 状态: 1 -> 1",
+      "ip": "::1",
+      "user_agent": "",
+      "created_at": "2026-03-17 18:12:17"
+    },
+    {
+      "id": 43,
+      "user_id": 1,
+      "username": "admin",
+      "action": "login",
+      "target_type": "user",
+      "target_id": 1,
+      "detail": "用户登录成功, IP: ::1",
+      "ip": "::1",
+      "user_agent": "",
+      "created_at": "2026-03-17 18:12:42"
+    },
+    {
+      "id": 44,
+      "user_id": 1,
+      "username": "admin",
+      "action": "login",
+      "target_type": "user",
+      "target_id": 1,
+      "detail": "用户登录成功, IP: ::1",
+      "ip": "::1",
+      "user_agent": "",
+      "created_at": "2026-03-17 18:14:19"
+    },
+    {
+      "id": 45,
+      "user_id": 1,
+      "username": "admin",
+      "action": "login",
+      "target_type": "user",
+      "target_id": 1,
+      "detail": "用户登录成功, IP: ::1",
+      "ip": "::1",
+      "user_agent": "",
+      "created_at": "2026-03-17 18:15:05"
+    },
+    {
+      "id": 46,
+      "user_id": 1,
+      "username": "admin",
+      "action": "manual_adjust_balance",
+      "target_type": "member",
+      "target_id": 6,
+      "detail": "手动调整用户 test 余额: +¥1, 原因: 测试",
+      "ip": "::1",
+      "user_agent": "",
+      "created_at": "2026-03-17 18:15:05"
+    },
+    {
+      "id": 47,
+      "user_id": 1,
+      "username": "admin",
+      "action": "login",
+      "target_type": "user",
+      "target_id": 1,
+      "detail": "用户登录成功, IP: ::1",
+      "ip": "::1",
+      "user_agent": "",
+      "created_at": "2026-03-17 18:15:15"
+    },
+    {
+      "id": 48,
+      "user_id": 1,
+      "username": "admin",
+      "action": "login",
+      "target_type": "user",
+      "target_id": 1,
+      "detail": "用户登录成功, IP: ::1",
+      "ip": "::1",
+      "user_agent": "",
+      "created_at": "2026-03-17 18:15:23"
+    },
+    {
+      "id": 49,
+      "user_id": 1,
+      "username": "admin",
+      "action": "login",
+      "target_type": "user",
+      "target_id": 1,
+      "detail": "用户登录成功, IP: ::1",
+      "ip": "::1",
+      "user_agent": "",
+      "created_at": "2026-03-17 18:15:32"
+    },
+    {
+      "id": 50,
+      "user_id": 1,
+      "username": "admin",
+      "action": "login",
+      "target_type": "user",
+      "target_id": 1,
+      "detail": "用户登录成功, IP: ::1",
+      "ip": "::1",
+      "user_agent": "",
+      "created_at": "2026-03-17 18:15:53"
+    },
+    {
+      "id": 51,
+      "user_id": 1,
+      "username": "admin",
+      "action": "login",
+      "target_type": "user",
+      "target_id": 1,
+      "detail": "用户登录成功, IP: ::1",
+      "ip": "::1",
+      "user_agent": "",
+      "created_at": "2026-03-17 18:15:59"
+    },
+    {
+      "id": 52,
+      "user_id": 1,
+      "username": "admin",
+      "action": "login",
+      "target_type": "user",
+      "target_id": 1,
+      "detail": "用户登录成功, IP: ::1",
+      "ip": "::1",
+      "user_agent": "",
+      "created_at": "2026-03-17 18:49:28"
+    },
+    {
+      "id": 53,
+      "user_id": 1,
+      "username": "admin",
+      "action": "login",
+      "target_type": "user",
+      "target_id": 1,
+      "detail": "用户登录成功, IP: ::1",
+      "ip": "::1",
+      "user_agent": "",
+      "created_at": "2026-03-17 18:50:12"
+    },
+    {
+      "id": 54,
+      "user_id": 1,
+      "username": "admin",
+      "action": "login",
+      "target_type": "user",
+      "target_id": 1,
+      "detail": "用户登录成功, IP: ::1",
+      "ip": "::1",
+      "user_agent": "",
+      "created_at": "2026-03-17 18:51:00"
+    },
+    {
+      "id": 55,
+      "user_id": 1,
+      "username": "admin",
+      "action": "login",
+      "target_type": "user",
+      "target_id": 1,
+      "detail": "用户登录成功, IP: ::1",
+      "ip": "::1",
+      "user_agent": "",
+      "created_at": "2026-03-17 18:51:35"
+    },
+    {
+      "id": 56,
+      "user_id": 1,
+      "username": "admin",
+      "action": "login",
+      "target_type": "user",
+      "target_id": 1,
+      "detail": "用户登录成功, IP: ::1",
+      "ip": "::1",
+      "user_agent": "",
+      "created_at": "2026-03-17 18:52:14"
+    },
+    {
+      "id": 57,
+      "user_id": 1,
+      "username": "admin",
+      "action": "login",
+      "target_type": "user",
+      "target_id": 1,
+      "detail": "用户登录成功, IP: ::1",
+      "ip": "::1",
+      "user_agent": "",
+      "created_at": "2026-03-17 18:54:19"
+    },
+    {
+      "id": 58,
+      "user_id": 1,
+      "username": "admin",
+      "action": "login",
+      "target_type": "user",
+      "target_id": 1,
+      "detail": "用户登录成功, IP: ::1",
+      "ip": "::1",
+      "user_agent": "",
+      "created_at": "2026-03-17 18:54:54"
+    },
+    {
+      "id": 59,
+      "user_id": 1,
+      "username": "admin",
+      "action": "login",
+      "target_type": "user",
+      "target_id": 1,
+      "detail": "用户登录成功, IP: ::1",
+      "ip": "::1",
+      "user_agent": "",
+      "created_at": "2026-03-17 18:55:37"
+    }
+  ]
+}

@@ -1,0 +1,429 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "充易达管理系统 API",
+    "version": "1.0.0",
+    "description": "充易达管理系统后端 API 文档",
+    "contact": {
+      "name": "API 支持",
+      "email": "support@example.com"
+    }
+  },
+  "servers": [
+    {
+      "url": "http://localhost:8899",
+      "description": "本地开发服务器"
+    },
+    {
+      "url": "https://api.example.com",
+      "description": "生产环境"
+    }
+  ],
+  "paths": {
+    "/api/auth/login": {
+      "post": {
+        "summary": "用户登录",
+        "description": "使用用户名和密码登录系统",
+        "tags": [
+          "认证"
+        ],
+        "parameters": [
+          {
+            "name": "username",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "用户名（3-20字符）"
+          },
+          {
+            "name": "password",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "密码（6-50字符）"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "type": "object"
+                        }
+                      }
+                    }
+                  ]
+                },
+                "example": {
+                  "code": 0,
+                  "msg": "登录成功",
+                  "data": {
+                    "token": "xxx",
+                    "user_id": 1,
+                    "role": "admin"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/products": {
+      "get": {
+        "summary": "获取产品列表",
+        "description": "分页获取所有产品列表（支持搜索、筛选）",
+        "tags": [
+          "产品"
+        ],
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "number"
+            },
+            "description": "页码（默认1）"
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "number"
+            },
+            "description": "每页数量（默认20）"
+          },
+          {
+            "name": "kw",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "搜索关键词"
+          },
+          {
+            "name": "cat_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "number"
+            },
+            "description": "分类ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "type": "object"
+                        }
+                      }
+                    }
+                  ]
+                },
+                "example": {
+                  "code": 0,
+                  "msg": "获取成功",
+                  "data": {
+                    "items": [],
+                    "total": 100,
+                    "page": 1,
+                    "pageSize": 20
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/orders": {
+      "post": {
+        "summary": "创建订单",
+        "description": "创建新的订单",
+        "tags": [
+          "订单"
+        ],
+        "parameters": [
+          {
+            "name": "member_id",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "number"
+            },
+            "description": "会员ID"
+          },
+          {
+            "name": "order_type",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "订单类型（consume/recharge）"
+          },
+          {
+            "name": "amount",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "number"
+            },
+            "description": "订单金额"
+          },
+          {
+            "name": "product_id",
+            "in": "body",
+            "required": false,
+            "schema": {
+              "type": "number"
+            },
+            "description": "产品ID（消费订单必填）"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "type": "object"
+                        }
+                      }
+                    }
+                  ]
+                },
+                "example": {
+                  "code": 0,
+                  "msg": "订单创建成功",
+                  "data": {
+                    "order_id": 1,
+                    "order_no": "ORD20260318001",
+                    "status": 0
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/monitor/request-logs": {
+      "get": {
+        "summary": "获取请求日志",
+        "description": "获取最近的 API 请求日志（仅管理员）",
+        "tags": [
+          "监控"
+        ],
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "number"
+            },
+            "description": "返回记录数（最多500）"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "type": "object"
+                        }
+                      }
+                    }
+                  ]
+                },
+                "example": {
+                  "code": 0,
+                  "msg": "获取成功",
+                  "data": {
+                    "logs": [],
+                    "stats": {
+                      "total": 1000,
+                      "avgDuration": 45
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/version": {
+      "get": {
+        "summary": "API 版本信息",
+        "description": "获取当前 API 版本和支持的版本列表",
+        "tags": [
+          "系统"
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "type": "object"
+                        }
+                      }
+                    }
+                  ]
+                },
+                "example": {
+                  "code": 0,
+                  "msg": "获取成功",
+                  "data": {
+                    "current_version": "v1",
+                    "supported_versions": {
+                      "v1": "初始版本",
+                      "v2": "新增缓存、验证、监控"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/health": {
+      "get": {
+        "summary": "健康检查",
+        "description": "系统健康检查端点（无需认证）",
+        "tags": [
+          "系统"
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "type": "object"
+                        }
+                      }
+                    }
+                  ]
+                },
+                "example": {
+                  "code": 0,
+                  "msg": "获取成功",
+                  "data": {
+                    "status": "healthy",
+                    "uptime": 86400,
+                    "cache": {
+                      "hits": 1000,
+                      "misses": 200,
+                      "hit_rate": "83.33%"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "ApiResponse": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "number",
+            "example": 0
+          },
+          "msg": {
+            "type": "string",
+            "example": "成功"
+          },
+          "data": {
+            "type": "object"
+          },
+          "timestamp": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer"
+      }
+    }
+  }
+}
